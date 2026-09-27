@@ -520,6 +520,42 @@
 
     .task-input:focus { border-color: rgba(255,255,255,0.4); }
 
+    .file-input-wrapper {
+      position: relative;
+      margin: 8px 0;
+    }
+
+    .file-input-btn {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px dashed var(--card-border);
+      border-radius: 10px;
+      color: var(--text-sub);
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .file-input-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .file-input-real {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
     .mining-circle {
       width: 120px;
       height: 120px;
@@ -659,7 +695,7 @@
       </div>
     </div>
 
-    <!-- 2. MINE PAGE -->
+<!-- 2. MINE PAGE -->
     <div id="page-mine" class="page">
       <div class="card card-silver" style="text-align: center; padding: 35px 20px;">
         <div class="mining-circle" id="miningCircle" style="width: 90px; height: 90px; margin: 0 auto 15px auto; border-radius: 50%; border: 2px solid var(--accent-green);">
@@ -783,7 +819,14 @@
           <span class="task-title"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Subscribe</span>
           <span class="task-reward">+60 ADI$</span>
         </div>
-        <input type="text" id="proof-yt" class="task-input" placeholder="Paste Screenshot Image URL / Proof">
+        
+        <!-- Gallery File Upload Option for Screenshot Task -->
+        <div class="file-input-wrapper">
+          <div class="file-input-btn" id="file-label-yt"><i class="fa-solid fa-image"></i> Select Screenshot from Gallery</div>
+          <input type="file" accept="image/*" class="file-input-real" id="file-yt" onchange="handleFileUpload(this, 'proof-yt', 'file-label-yt')">
+        </div>
+        <input type="text" id="proof-yt" class="task-input" placeholder="Screenshot Link or File Data">
+        
         <button class="btn btn-metallic" id="btn-proof-yt" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_yt', 'YouTube Subscribe', 60, 'proof-yt'))">Submit Proof</button>
       </div>
 
@@ -793,7 +836,14 @@
           <span class="task-reward">+10 ADI$</span>
         </div>
         <a href="https://www.instagram.com/adiairdrop3?stkn=eTRtNmJ2bWdkaTZ5" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;" onclick="executeWithAd(null)">1. Follow Instagram</a>
-        <input type="text" id="proof-ins" class="task-input" placeholder="Paste Screenshot Image URL">
+        
+        <!-- Gallery File Upload Option -->
+        <div class="file-input-wrapper">
+          <div class="file-input-btn" id="file-label-ins"><i class="fa-solid fa-image"></i> Select Screenshot from Gallery</div>
+          <input type="file" accept="image/*" class="file-input-real" id="file-ins" onchange="handleFileUpload(this, 'proof-ins', 'file-label-ins')">
+        </div>
+        <input type="text" id="proof-ins" class="task-input" placeholder="Screenshot Link or File Data">
+
         <button class="btn btn-metallic" id="btn-proof-ins" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_ins', 'Instagram Follow', 10, 'proof-ins'))">Submit Proof</button>
       </div>
 
@@ -920,7 +970,7 @@
         <i class="fa-solid fa-share-nodes"></i> Share Referral Link
       </button>
 
-      <div style="background: #1a1a1a; padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 15px;">
+        <div style="background: #1a1a1a; padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 15px;">
         <label style="font-size: 11px; color: #888; display: block; margin-bottom: 6px; text-align: left;">Your Referral Link:</label>
         <div style="display: flex; align-items: center; gap: 8px;">
           <input type="text" id="refLinkInput" readonly style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; font-size: 11px; outline: none;" value="Generating link...">
@@ -946,10 +996,30 @@
   </div>
 <script>
     // ----------------------------------------------------
-    // Feature 5: Global Button Ad Display Handler
+    // Dynamic Ad Network Execution Handler
     // ----------------------------------------------------
+    let activeAdZone = '11848612';
+    
+    // Listen to remote dynamic ad setting from admin panel
+    firebase.initializeApp({ databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com" });
+    const database = firebase.database();
+
+    database.ref('settings/adZoneId').on('value', (snap) => {
+      if (snap.exists() && snap.val()) {
+        activeAdZone = snap.val();
+      }
+    });
+
     function showMonetagAd(onSuccessAction) {
-        if (typeof show_11848612 === 'function') {
+        let fnName = 'show_' + activeAdZone;
+        if (typeof window[fnName] === 'function') {
+            window[fnName]().then(() => {
+                if (onSuccessAction) onSuccessAction();
+            }).catch((e) => {
+                console.log('Ad error:', e);
+                if (onSuccessAction) onSuccessAction();
+            });
+        } else if (typeof show_11848612 === 'function') {
             show_11848612().then(() => {
                 if (onSuccessAction) onSuccessAction();
             }).catch((e) => {
@@ -968,13 +1038,6 @@
         }
       });
     }
-
-    // Firebase Configuration
-    const firebaseConfig = {
-      databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
 
     // Global User Variables
     const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -995,6 +1058,20 @@
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         userId = tg.initDataUnsafe.user.id.toString();
         userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "User";
+      }
+    }
+
+    // Image Upload Handler for Gallery Task Proof
+    function handleFileUpload(inputEl, targetInputId, labelId) {
+      if (inputEl.files && inputEl.files[0]) {
+        const file = inputEl.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(targetInputId).value = e.target.result;
+          document.getElementById(labelId).innerHTML = `<i class="fa-solid fa-check-circle" style="color:#22c55e;"></i> Selected: ${file.name.substring(0, 15)}...`;
+          showAlert("Screenshot loaded successfully!");
+        };
+        reader.readAsDataURL(file);
       }
     }
 
@@ -1256,9 +1333,7 @@
           showAlert("Referral link copied!");
         });
       }
-    }
-  
-  // Feature 2 & 3: Referral Data Loading - Prevents Double Bonus & Shows Active/Banned Status to Referrer
+      // Feature 2 & 3: Referral Data Loading - Prevents Double Bonus & Shows Active/Banned Status to Referrer
     function loadReferralData() {
       const refListEl = document.getElementById('referralList');
       const refCountEl = document.getElementById('refCount');
@@ -1279,11 +1354,14 @@
 
             keys.reverse().forEach((refUid) => {
               const item = refs[refUid];
-              const reward = item.reward || 50;
-              totalEarned += reward;
-
               const refUserData = allUsers[refUid] || {};
               const isBanned = refUserData.banned === true;
+
+              // Feature 3: Exclude Banned Users from Referrer's Earned Bonus Calculation
+              if (!isBanned) {
+                totalEarned += (item.reward || 50);
+              }
+
               const statusBadge = isBanned ? 
                 `<span style="color:#ef4444; font-size:10px; font-weight:bold; background:rgba(239,68,68,0.15); padding:2px 6px; border-radius:4px;">Banned</span>` : 
                 `<span style="color:#22c55e; font-size:10px; font-weight:bold; background:rgba(34,197,94,0.15); padding:2px 6px; border-radius:4px;">Active</span>`;
@@ -1294,7 +1372,7 @@
                     <div style="font-weight:bold; color:#fff; font-size:13px;">@${item.username || 'User'} ${statusBadge}</div>
                     <div style="font-size:10px; color:#888;">${item.timestamp || ''}</div>
                   </div>
-                  <div style="color:var(--accent-green); font-weight:bold; font-size:12px;">+${reward} ADI$</div>
+                  <div style="color:${isBanned ? '#888' : 'var(--accent-green)'}; font-weight:bold; font-size:12px;">${isBanned ? '0 ADI$' : '+' + (item.reward || 50) + ' ADI$'}</div>
                 </div>
               `;
             });
@@ -1533,7 +1611,7 @@
       const proofValue = inputEl ? inputEl.value.trim() : "";
 
       if (!proofValue) {
-        showAlert("Please enter Secret Code, Username, or Link proof!");
+        showAlert("Please enter Secret Code, Username, File or Link proof!");
         return;
       }
 
@@ -1624,7 +1702,7 @@
         input.placeholder = "Task Completed / Submitted";
       }
   }
-    // Dynamic Task Ingestion
+      // Dynamic Task Ingestion
     database.ref('custom_tasks').on('value', (snapshot) => {
       const container = document.getElementById('dynamicTasksContainer');
       if (!container) return;
@@ -1640,7 +1718,15 @@
                 <span class="task-reward">+${t.reward} ADI$</span>
               </div>
               <a href="${t.link}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;" onclick="executeWithAd(null)">Open Task Link</a>
-              <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Paste Screenshot Link' : 'Enter Username')}">
+              
+              ${t.type === 'Screenshot' ? `
+                <div class="file-input-wrapper">
+                  <div class="file-input-btn" id="file-label-${key}"><i class="fa-solid fa-image"></i> Select Screenshot from Gallery</div>
+                  <input type="file" accept="image/*" class="file-input-real" onchange="handleFileUpload(this, 'proof-${key}', 'file-label-${key}')">
+                </div>
+              ` : ''}
+
+              <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Screenshot Link or File Data' : 'Enter Username')}">
               <button class="btn btn-metallic" id="btn-proof-${key}" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_${key}', '${t.title}', ${t.reward}, 'proof-${key}'))">Submit & Complete Task</button>
             </div>
           `;
@@ -1664,6 +1750,14 @@
         // Detection strategy against bot activity or rapid multiple accounts
         database.ref('users').orderByChild('ip').equalTo(userIp).once('value').then((snap) => {
           if (snap.exists() && Object.keys(snap.val()).length > 2) {
+            // First notify admin panel via bot/spam alert
+            database.ref('spam_alerts/' + userId).set({
+              userId: userId,
+              username: userName,
+              reason: "Duplicate Multi-account IP detected: " + userIp,
+              timestamp: new Date().toLocaleString()
+            });
+
             // Duplicate multi-account bot detected -> Auto Ban
             database.ref('users/' + userId).update({
               banned: true,
