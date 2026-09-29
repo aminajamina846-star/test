@@ -553,8 +553,11 @@
           <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner <span class="user-badge-label" id="userBadge">Early Supporter</span></p>
         </div>
       </div>
-      <div class="icon-btn" onclick="openNotificationModal()"><i class="fa-regular fa-bell"></i></div>
-    </div> 
+      <div class="icon-btn" id="notifBellBtn" onclick="openNotificationModal()" style="position: relative;">
+    <i class="fa-regular fa-bell"></i>
+    <span id="notifRedBadge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background-color: #ff3b30; border-radius: 50%;"></span>
+</div>
+
 
     <!-- 1. HOME PAGE -->
     <div id="page-home" class="page active">
