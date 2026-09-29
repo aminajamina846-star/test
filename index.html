@@ -1120,9 +1120,9 @@ function triggerAdAndExecute(formatType, callback) {
     }
 
     // FEATURE 2: LUCKY SPIN WHEEL
-    // 1. DYNAMIC ENGLISH POPUP FUNCTION
+    
+        // 1. CUSTOM ENGLISH POPUP MODAL FUNCTION
 function showCustomModal(wonAmount) {
-    // Purono modal thakle muche phela
     const oldModal = document.getElementById('winModal');
     if (oldModal) oldModal.remove();
 
@@ -1147,7 +1147,11 @@ function spinWheel() {
     if (isSpinning) return;
     
     if (lastSpinDate === todayDate && spinsLeft <= 0) {
-        showCustomModal("0 (Limit Reached)");
+        if (typeof showAlert === 'function') {
+            showAlert("Daily spin limit reached! Come back tomorrow.");
+        } else {
+            alert("Daily spin limit reached! Come back tomorrow.");
+        }
         return;
     }
 
@@ -1155,12 +1159,11 @@ function spinWheel() {
     const btn = document.getElementById('spinBtn');
     if (btn) btn.disabled = true;
 
-    // Random reward select
     const randomIndex = Math.floor(Math.random() * wheelRewards.length);
     const selectedReward = wheelRewards[randomIndex];
     const segmentDegrees = 360 / wheelRewards.length;
     
-    // Accurate wheel angle calculation
+    // Exact Pointer angle calculation
     const targetDegree = 360 * 5 + (360 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
 
     const canvas = document.getElementById('wheelCanvas');
@@ -1169,12 +1172,8 @@ function spinWheel() {
         canvas.style.transform = `rotate(${targetDegree}deg)`;
     }
 
-    // Animation 4 sec por execute hobe
     setTimeout(() => {
-        // Step 1: Instant Popup Show (Je kono obosthay dekhabe)
-        showCustomModal(selectedReward);
-
-        // Step 2: Data Update
+        // Balance & Spins update
         userBalance += selectedReward;
         spinsLeft = Math.max(0, spinsLeft - 1);
         lastSpinDate = todayDate;
@@ -1192,9 +1191,16 @@ function spinWheel() {
             timestamp: Date.now()
         };
 
-        // Firebase background update
+        // Firebase Sync
         if (typeof database !== 'undefined' && database.ref) {
-            database.ref().update(updates);
+            database.ref().update(updates).then(() => {
+                showCustomModal(selectedReward);
+            }).catch((err) => {
+                console.error(err);
+                showCustomModal(selectedReward);
+            });
+        } else {
+            showCustomModal(selectedReward);
         }
 
         // Reset Canvas
@@ -1210,6 +1216,15 @@ function spinWheel() {
 
     }, 4000);
 }
+
+// 3. FIXED SPIN UI FUNCTION
+function updateSpinUI() {
+    const txt = document.getElementById('spinLimitText');
+    if (txt) {
+        txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
+    }
+    }
+    
 
 
     // FEATURE 4: MINI TAPPER GAME CHALLENGE
