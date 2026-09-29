@@ -936,50 +936,7 @@
       }
     }
 
-    // ==========================================
-    // AD NETWORK INTEGRATION & TRIGGER HELPERS
-    // ==========================================
-    function initInAppAds() {
-      if (typeof show_11848612 === 'function') {
-        try {
-          show_11848612({
-            type: 'inApp',
-            inAppSettings: {
-              frequency: 2,
-              capping: 0.1,
-              interval: 30,
-              timeout: 5,
-              everyPage: false
-            }
-          });
-        } catch(e) {
-          console.log("InApp Ad Error:", e);
-        }
-      }
-    }
-
-    function triggerAdAndExecute(formatType, callback) {
-      if (typeof show_11848612 !== 'function') {
-        callback();
-        return;
-      }
-
-      if (formatType === 'pop') {
-        show_11848612('pop').then(() => {
-          callback();
-        }).catch(e => {
-          callback();
-        });
-      } else {
-        // Default Rewarded Interstitial
-        show_11848612().then(() => {
-          callback();
-        }).catch(e => {
-          callback();
-        });
-      }
-    }
-
+    
     // ==========================================
     // 20 NOVEMBER COUNTDOWN & GLOBAL TOKEN COUNTER
     // ==========================================
