@@ -1007,10 +1007,61 @@ function triggerAdAndExecute(formatType, callback) {
     });
 }
 
-    // ==========================================
-    // NOTIFICATION SYSTEM (1 - 30 DAYS)
-    // ==========================================
-    function loadNotificationHistory() {
+// ==========================================
+// NOTIFICATION SYSTEM
+// ==========================================
+
+function openNotificationModal() {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+
+    // ক্লিক করার সাথে সাথেই শেষ দেখার টাইম সেভ হবে এবং লাল ডট হাইড হবে
+    localStorage.setItem('lastNotifSeenTime', Date.now());
+    const notifBadge = document.getElementById('notifRedBadge');
+    if (notifBadge) {
+        notifBadge.style.display = 'none';
+    }
+
+    loadNotificationHistory();
+}
+
+function closeNotificationModal() {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function listenForNewNotifications() {
+    if (typeof database === 'undefined' || !database.ref) return;
+
+    // ইউজার শেষবার কখন দেখেছে
+    let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime')) || 0;
+
+    database.ref('notifications').on('value', (snapshot) => {
+        let hasUnseen = false;
+
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            Object.keys(data).forEach(key => {
+                const item = data[key];
+                // ফায়ারবেসে থাকা কোনো নোটিফিকেশনের সময় লাস্ট দেখার চেয়ে বেশি হলেই লাল ডট দেখাবে
+                if (item.timestamp && item.timestamp > lastReadTime) {
+                    hasUnseen = true;
+                }
+            });
+        }
+
+        const notifBadge = document.getElementById('notifRedBadge');
+        if (notifBadge) {
+            notifBadge.style.display = hasUnseen ? 'block' : 'none';
+        }
+    });
+}
+
+function loadNotificationHistory() {
     const container = document.getElementById('notificationHistoryList');
     if (!container) return;
 
@@ -1019,20 +1070,23 @@ function triggerAdAndExecute(formatType, callback) {
     if (typeof database !== 'undefined' && database.ref) {
         database.ref('notifications').once('value', (snapshot) => {
             if (!snapshot.exists()) {
-                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications in the last 30 days.</p>';
+                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
                 return;
             }
 
             const data = snapshot.val();
             let html = '';
-            
-            // ডাটা অ্যারে বানিয়ে রিভার্স করা (লেটেস্ট নোটিফিকেশন উপরে দেখাবে)
             const notifList = [];
+
+            // Firebase-এর সমস্ত নোটিফিকেশন লোড করা
             Object.keys(data).forEach(key => {
                 notifList.push(data[key]);
             });
 
-            notifList.reverse().forEach(item => {
+            // তারিখ বা টাইমস্ট্যাম্প অনুযায়ী সর্ট করে নতুনটা সবার উপরে রাখা
+            notifList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            notifList.forEach(item => {
                 const title = item.title || 'Notification';
                 const message = item.message || '';
                 const timeStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : (item.date || '');
@@ -1049,14 +1103,19 @@ function triggerAdAndExecute(formatType, callback) {
             container.innerHTML = html;
         }).catch((err) => {
             console.error(err);
-                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications in the last 30 days.</p>';
+            container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
         });
     } else {
-        container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications in the last 30 days.</p>';
+        container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
     }
 }
 
-
+// Global Listener Call
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', listenForNewNotifications);
+} else {
+    listenForNewNotifications();
+}
 
     // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
     function processStreakCheck(userData) {
