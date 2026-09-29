@@ -1007,8 +1007,9 @@ function triggerAdAndExecute(formatType, callback) {
     });
 }
 
-// ==========================================
-// NOTIFICATION SYSTEM
+
+    // ==========================================
+// NOTIFICATION SYSTEM (UPDATED FOR GLOBAL_NOTIFICATION)
 // ==========================================
 
 function openNotificationModal() {
@@ -1017,7 +1018,7 @@ function openNotificationModal() {
         modal.style.display = 'flex';
     }
 
-    // ক্লিক করার সাথে সাথেই শেষ দেখার টাইম সেভ হবে এবং লাল ডট হাইড হবে
+    // দেখা মাত্রই দেখার টাইম সেভ হবে এবং লাল ডট বন্ধ হবে
     localStorage.setItem('lastNotifSeenTime', Date.now());
     const notifBadge = document.getElementById('notifRedBadge');
     if (notifBadge) {
@@ -1037,21 +1038,28 @@ function closeNotificationModal() {
 function listenForNewNotifications() {
     if (typeof database === 'undefined' || !database.ref) return;
 
-    // ইউজার শেষবার কখন দেখেছে
     let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime')) || 0;
 
-    database.ref('notifications').on('value', (snapshot) => {
+    // global_notification নোড কল করা হচ্ছে
+    database.ref('global_notification').on('value', (snapshot) => {
         let hasUnseen = false;
 
         if (snapshot.exists()) {
-            const data = snapshot.val();
-            Object.keys(data).forEach(key => {
-                const item = data[key];
-                // ফায়ারবেসে থাকা কোনো নোটিফিকেশনের সময় লাস্ট দেখার চেয়ে বেশি হলেই লাল ডট দেখাবে
-                if (item.timestamp && item.timestamp > lastReadTime) {
+            const item = snapshot.val();
+            // যদি এটি সরাসরি অবজেক্ট হয়
+            if (item.title || item.message) {
+                if (!item.timestamp || item.timestamp > lastReadTime) {
                     hasUnseen = true;
                 }
-            });
+            } else {
+                // যদি ভেতরে অনেকগুলো চাইল্ড থাকে
+                Object.keys(item).forEach(key => {
+                    const child = item[key];
+                    if (child.timestamp && child.timestamp > lastReadTime) {
+                        hasUnseen = true;
+                    }
+                });
+            }
         }
 
         const notifBadge = document.getElementById('notifRedBadge');
@@ -1068,7 +1076,7 @@ function loadNotificationHistory() {
     container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">Loading notifications...</p>';
 
     if (typeof database !== 'undefined' && database.ref) {
-        database.ref('notifications').once('value', (snapshot) => {
+        database.ref('global_notification').once('value', (snapshot) => {
             if (!snapshot.exists()) {
                 container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
                 return;
@@ -1078,24 +1086,30 @@ function loadNotificationHistory() {
             let html = '';
             const notifList = [];
 
-            // Firebase-এর সমস্ত নোটিফিকেশন লোড করা
-            Object.keys(data).forEach(key => {
-                notifList.push(data[key]);
-            });
-
-            // তারিখ বা টাইমস্ট্যাম্প অনুযায়ী সর্ট করে নতুনটা সবার উপরে রাখা
-            notifList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            // data সরাসরি অবজেক্ট নাকি লিস্ট তা হ্যান্ডেল করা
+            if (data.title || data.message) {
+                notifList.push(data);
+            } else {
+                Object.keys(data).forEach(key => {
+                    notifList.push(data[key]);
+                });
+            }
 
             notifList.forEach(item => {
                 const title = item.title || 'Notification';
                 const message = item.message || '';
-                const timeStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : (item.date || '');
+                
+                // Timestamp কনভার্সন
+                let timeStr = '';
+                if (item.timestamp) {
+                    timeStr = new Date(Number(item.timestamp)).toLocaleString();
+                }
 
                 html += `
-                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; margin-bottom: 8px; text-align: left;">
-                        <div style="font-weight: bold; font-size: 13px; color: #ffffff; margin-bottom: 4px;">${title}</div>
-                        <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${message}</div>
-                        <div style="font-size: 9px; color: #888;">${timeStr}</div>
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin-bottom: 8px; text-align: left;">
+                        <div style="font-weight: bold; font-size: 14px; color: #ffffff; margin-bottom: 4px;">${title}</div>
+                        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${message}</div>
+                        ${timeStr ? `<div style="font-size: 10px; color: #888;">${timeStr}</div>` : ''}
                     </div>
                 `;
             });
@@ -1115,8 +1129,8 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', listenForNewNotifications);
 } else {
     listenForNewNotifications();
-}
-
+              }
+    
     // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
     function processStreakCheck(userData) {
       const lastDateStr = userData.lastMineDate || "";
