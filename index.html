@@ -1121,7 +1121,43 @@ function triggerAdAndExecute(formatType, callback) {
 
     // FEATURE 2: LUCKY SPIN WHEEL
     
-        // 1. CUSTOM ENGLISH POPUP MODAL FUNCTION
+        // FEATURE 3: LUCKY SPIN WHEEL
+const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
+let isSpinning = false;
+
+function drawWheel() {
+    const canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const numSegments = wheelRewards.length;
+    const anglePerSegment = (2 * Math.PI) / numSegments;
+
+    ctx.clearRect(0, 0, 200, 200);
+
+    for (let i = 0; i < numSegments; i++) {
+        const angle = i * anglePerSegment;
+        ctx.beginPath();
+        ctx.fillStyle = (i % 2 === 0) ? '#121212' : '#0a0a0a';
+        ctx.moveTo(100, 100);
+        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
+        ctx.lineTo(100, 100);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(100, 100);
+        ctx.rotate(angle + anglePerSegment / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = (i % 2 === 0) ? '#ffffff' : '#aaaaaa';
+        ctx.font = 'bold 11px Plus Jakarta Sans';
+        ctx.fillText(wheelRewards[i] + ' ADI', 85, 4);
+        ctx.restore();
+    }
+}
+
+// English Popup Function
 function showCustomModal(wonAmount) {
     const oldModal = document.getElementById('winModal');
     if (oldModal) oldModal.remove();
@@ -1142,10 +1178,9 @@ function showCustomModal(wonAmount) {
     };
 }
 
-// 2. FIXED SPIN WHEEL FUNCTION
 function spinWheel() {
     if (isSpinning) return;
-    
+
     if (lastSpinDate === todayDate && spinsLeft <= 0) {
         if (typeof showAlert === 'function') {
             showAlert("Daily spin limit reached! Come back tomorrow.");
@@ -1162,18 +1197,15 @@ function spinWheel() {
     const randomIndex = Math.floor(Math.random() * wheelRewards.length);
     const selectedReward = wheelRewards[randomIndex];
     const segmentDegrees = 360 / wheelRewards.length;
-    
-    // Exact Pointer angle calculation
     const targetDegree = 360 * 5 + (360 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
 
     const canvas = document.getElementById('wheelCanvas');
     if (canvas) {
-        canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
+        canvas.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)';
         canvas.style.transform = `rotate(${targetDegree}deg)`;
     }
 
     setTimeout(() => {
-        // Balance & Spins update
         userBalance += selectedReward;
         spinsLeft = Math.max(0, spinsLeft - 1);
         lastSpinDate = todayDate;
@@ -1191,43 +1223,36 @@ function spinWheel() {
             timestamp: Date.now()
         };
 
-        // Firebase Sync
         if (typeof database !== 'undefined' && database.ref) {
             database.ref().update(updates).then(() => {
                 showCustomModal(selectedReward);
-            }).catch((err) => {
-                console.error(err);
+                if (canvas) {
+                    canvas.style.transition = 'none';
+                    canvas.style.transform = 'rotate(0deg)';
+                    drawWheel();
+                }
+                isSpinning = false;
+                if (btn && spinsLeft > 0) btn.disabled = false;
+                updateSpinUI();
+            }).catch(() => {
                 showCustomModal(selectedReward);
+                isSpinning = false;
             });
         } else {
             showCustomModal(selectedReward);
+            isSpinning = false;
         }
-
-        // Reset Canvas
-        if (canvas) {
-            canvas.style.transition = 'none';
-            canvas.style.transform = 'rotate(0deg)';
-            if (typeof drawWheel === 'function') drawWheel();
-        }
-        
-        isSpinning = false;
-        if (btn && spinsLeft > 0) btn.disabled = false;
-        if (typeof updateSpinUI === 'function') updateSpinUI();
-
     }, 4000);
 }
 
-// 3. FIXED SPIN UI FUNCTION
 function updateSpinUI() {
     const txt = document.getElementById('spinLimitText');
     if (txt) {
         txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
     }
-    }
-    
-
-
-    // FEATURE 4: MINI TAPPER GAME CHALLENGE
+                                   }
+                             
+        // FEATURE 4: MINI TAPPER GAME CHALLENGE
     function startTapperGame() {
       tapperScore = 0;
       tapperTimeLeft = 15;
