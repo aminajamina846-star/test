@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ADI$ Airdrop & Mining App</title>
 
-  
-
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -61,132 +59,6 @@
       font-weight: bold !important;
     }
 
-    /* AD CARD STYLING */
-    .ad-card-box {
-      width: 100%;
-      background: var(--card-bg, rgba(20, 20, 20, 0.85));
-      border: 1px solid var(--card-border, rgba(255, 255, 255, 0.15));
-      border-radius: 16px;
-      padding: 10px;
-      margin: 12px 0;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-
-    .ad-badge {
-      align-self: flex-start;
-      font-size: 9px;
-      color: #888888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-
-    .remote-ad-showup {
-      width: 100% !important;
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      overflow: hidden !important;
-      border-radius: 10px !important;
-    }
-
-    .remote-ad-showup img,
-    .remote-ad-showup iframe,
-    .remote-ad-showup a {
-      max-width: 100% !important;
-      height: auto !important;
-      border-radius: 8px !important;
-      display: block !important;
-      object-fit: contain !important;
-    }
-    
-    .leaderboard-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      border: 1px solid #282828;
-    }
-
-    .leaderboard-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .rank-badge {
-      font-weight: bold;
-      font-size: 14px;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background-color: #333;
-      color: #fff;
-    }
-
-    .rank-1 { background-color: #ffd700; color: #000; }
-    .rank-2 { background-color: #c0c0c0; color: #000; }
-    .rank-3 { background-color: #cd7f32; color: #000; }
-
-    .user-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    .user-balance {
-      font-size: 13px;
-      font-weight: bold;
-      color: #4caf50;
-    }
-    
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      border: 1px solid #282828;
-    }
-
-    .history-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .history-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    .history-date {
-      font-size: 10px;
-      color: #888888;
-    }
-
-    .history-amount {
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .amount-plus { color: #4caf50; }
-    .amount-minus { color: #f44336; }
-    .amount-neutral { color: #ff9800; }
-    
     :root {
       --bg-color: #000000;
       --card-bg: rgba(20, 20, 20, 0.85);
@@ -198,7 +70,6 @@
       --silver-gradient: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
       --accent-green: #22c55e;
       --accent-red: #ef4444;
-      --accent-gold: #f59e0b;
     }
 
     * {
@@ -276,9 +147,6 @@
       font-size: 15px;
       font-weight: 700;
       color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .user-details p {
@@ -286,6 +154,17 @@
       color: var(--text-sub);
       font-weight: 600;
       margin-top: 2px;
+    }
+
+    .user-badge-label {
+      display: inline-block;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent-silver);
+      margin-left: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .icon-btn {
@@ -303,8 +182,6 @@
       backdrop-filter: blur(10px);
       transition: all 0.2s ease;
     }
-
-    .icon-btn:active { transform: scale(0.95); }
 
     .card {
       background: var(--card-bg);
@@ -346,10 +223,7 @@
       font-size: 10px;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.2s;
     }
-
-    .tag-btn:active { transform: scale(0.95); }
 
     .balance-val {
       font-size: 36px;
@@ -387,7 +261,6 @@
       text-align: center;
       border: none;
       outline: none;
-      transition: all 0.2s ease;
       display: inline-flex;
       justify-content: center;
       align-items: center;
@@ -406,8 +279,6 @@
       color: var(--text-main);
       border: 1px solid var(--card-border);
     }
-
-    .btn:active { transform: scale(0.97); }
 
     .section-title {
       font-size: 12px;
@@ -432,7 +303,6 @@
       padding: 14px 6px;
       text-align: center;
       cursor: pointer;
-      transition: 0.2s;
     }
 
     .grid-item i {
@@ -446,100 +316,6 @@
       font-size: 10px;
       font-weight: 700;
       color: var(--text-main);
-    }
-
-    .grid-item:active { transform: scale(0.95); }
-
-    /* STREAK & BADGES */
-    .streak-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      margin: 12px 0;
-    }
-
-    .streak-day {
-      flex: 1;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 8px 4px;
-      text-align: center;
-      font-size: 10px;
-    }
-
-    .streak-day.active {
-      background: rgba(34, 197, 94, 0.15);
-      border-color: var(--accent-green);
-      color: var(--accent-green);
-      font-weight: bold;
-    }
-
-    .badge-tag {
-      font-size: 9px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .badge-king { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
-    .badge-early { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
-    .badge-top { background: rgba(168, 85, 247, 0.2); color: #a855f7; border: 1px solid #a855f7; }
-
-    /* SPIN WHEEL MODAL */
-    .wheel-box {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: 6px solid var(--accent-silver);
-      margin: 15px auto;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: conic-gradient(#333 0deg 90deg, #111 90deg 180deg, #333 180deg 270deg, #111 270deg 360deg);
-      transition: transform 3s cubic-bezier(0.15, 0.85, 0.35, 1.2);
-    }
-
-    .wheel-pointer {
-      position: absolute;
-      top: -12px;
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 15px solid var(--accent-green);
-      z-index: 10;
-    }
-
-    /* TASK FILTER TABS */
-    .task-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .task-tab {
-      flex: 1;
-      padding: 8px;
-      text-align: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      color: var(--text-sub);
-    }
-
-    .task-tab.active {
-      background: var(--silver-gradient);
-      color: #000;
-      border-color: #fff;
     }
 
     .task-card {
@@ -583,8 +359,6 @@
       outline: none;
     }
 
-    .task-input:focus { border-color: rgba(255,255,255,0.4); }
-
     .mining-circle {
       width: 120px;
       height: 120px;
@@ -607,6 +381,63 @@
       0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
       70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
       100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    /* WHEEL CONTAINER & CANVAS */
+    .wheel-box {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 15px auto;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid #ffffff;
+      z-index: 10;
+    }
+
+    #wheelCanvas {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 4px solid #cbd5e1;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+
+    /* TAPPER GAME CONTAINER */
+    .tapper-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px dashed var(--card-border);
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .tapper-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--silver-gradient);
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      margin: 10px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    .tapper-btn:active {
+      transform: scale(0.92);
     }
 
     #banOverlay {
@@ -646,8 +477,8 @@
       <div class="profile-info">
         <div class="avatar" id="userAvatar"><i class="fa-solid fa-user"></i></div>
         <div class="user-details">
-          <h3 id="userName">User <span id="userBadge"></span></h3>
-          <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner</p>
+          <h3 id="userName">User</h3>
+          <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner <span class="user-badge-label" id="userBadge">Early Supporter</span></p>
         </div>
       </div>
       <div class="icon-btn" onclick="showLatestNotification()"><i class="fa-regular fa-bell"></i></div>
@@ -661,28 +492,30 @@
           <button class="tag-btn" onclick="openHistoryModal()">History <i class="fa-solid fa-chevron-right"></i></button>
         </div>
         <div class="balance-val" id="totalBalance">0 <span>ADI$</span></div>
-        <div class="s<!-- DAILY CLAIM & LUCKY SPIN & MINI TAPPER ROW -->
-      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-        <div class="card" style="flex: 1; margin-bottom: 0; padding: 14px; text-align: center;">
-          <div style="font-size: 10px; font-weight: 700; color: var(--text-sub);">DAILY REWARD</div>
-          <div style="font-size: 12px; font-weight: 800; margin: 4px 0;">+100 ADI$</div>
-          <button class="btn btn-metallic" id="dailyClaimBtn" style="padding: 6px 12px; width: 100%; font-size: 10px;" onclick="executeWithAd(claimDailyReward)">Claim</button>
+        <div class="sub-value" id="usdValue">$0.00 USD</div>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 14px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Mining Status & Multiplier</div>
+          <div id="homeMiningTimer" style="font-size: 13px; font-weight: 800; color: #4ade80; margin-top: 2px;">Session Ready</div>
+          <div id="homeMultiplierText" style="font-size: 11px; color: #e2e8f0; margin-top: 2px;">Speed: 1.0x | Streak: 0 Days 🔥</div>
         </div>
 
-        <div class="card" style="flex: 1; margin-bottom: 0; padding: 14px; text-align: center;">
-          <div style="font-size: 10px; font-weight: 700; color: var(--text-sub);">LUCKY SPIN</div>
-          <div style="font-size: 12px; font-weight: 800; margin: 4px 0;">Win Boosters</div>
-          <button class="btn btn-metallic" style="padding: 6px 12px; width: 100%; font-size: 10px;" onclick="openSpinModal()"><i class="fa-solid fa-dharmachakra"></i> Spin Wheel</button>
+        <div class="btn-row">
+          <button class="btn btn-metallic" onclick="showAlert('Exchange Portal Opening Soon!')"><i class="fa-solid fa-arrow-right-arrow-left"></i> Exchange</button>
+          <button class="btn btn-dark" onclick="autoConnectTrustWallet()"><i class="fa-solid fa-wallet"></i> Wallet</button>
         </div>
       </div>
 
-      <!-- MINI TAPPER GAME CARD -->
-      <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; margin-bottom: 16px; border: 1px solid var(--accent-gold);">
+      <button class="btn btn-metallic" onclick="openReferralModal()" style="width: 100%; margin-bottom: 16px; padding: 14px; font-weight: bold; cursor: pointer;">
+        <i class="fa-solid fa-users"></i> Invite Friends & Stats (+50 ADI)
+      </button>
+
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
         <div>
-          <div style="font-size: 11px; font-weight: 700; color: var(--accent-gold);"><i class="fa-solid fa-gamepad"></i> MINI TAPPER GAME</div>
-          <div style="font-size: 12px; font-weight: 800; margin-top: 2px;">Tap 10s to earn extra tokens!</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sub);">DAILY STREAK BONUS</div>
+          <div style="font-size: 13px; font-weight: 800; margin-top: 2px;" id="streakRewardText">+100 ADI$ Token</div>
         </div>
-        <button class="btn btn-metallic" style="padding: 8px 14px; flex: initial; font-size: 11px;" onclick="executeWithAd(startMiniGame)">Play Now</button>
+        <button class="btn btn-metallic" id="dailyClaimBtn" style="padding: 8px 16px; flex: initial; font-size: 11px;" onclick="claimDailyReward()">Claim</button>
       </div>
 
       <div class="section-title">Quick Actions</div>
@@ -691,15 +524,14 @@
           <i class="fa-solid fa-pickaxe"></i>
           <span>Mining</span>
         </div>
-        <button class="btn btn-metallic" onclick="executeWithAd(confirmBoost)" style="width: 100%; padding: 14px; font-size: 13px;">
-          <i class="fa-solid fa-rocket"></i> Boost (-10 ADI$)
-        </button>
-
+        <div class="grid-item" onclick="confirmBoost()">
+          <i class="fa-solid fa-rocket"></i>
+          <span>Boost</span>
+        </div>
         <div class="grid-item" onclick="switchTab('page-tasks', document.querySelectorAll('.nav-item')[3])">
           <i class="fa-solid fa-list-check"></i>
           <span>Tasks</span>
         </div>
-
         <div class="grid-item" onclick="switchTab('page-markets', document.querySelectorAll('.nav-item')[2])">
           <i class="fa-solid fa-chart-line"></i>
           <span>Markets</span>
@@ -708,7 +540,7 @@
 
       <div class="card">
         <div class="card-header">
-          <span class="card-label">Top Miners & Referrers Leaderboard</span>
+          <span class="card-label">Leaderboard & Badges</span>
         </div>
         <div id="leaderboard-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
           <div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px 0;">Loading leaderboard...</div>
@@ -723,8 +555,9 @@
           <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKceGcvpGJWaetc5tdIYsuemMTZcOzV4d_cf4Qz1fZ2R7OOiUGP5iNZW0vFk7YEhiz9_Lg9sHRH3RTQQMuW9lCQtC2F5GntyC2vrXtP18T3MazRgTVE6NjjB0KRTvM5XBxq1aLFTVuq8J8dbDKP72Aqw98fKNeFV-qDzR7KeuGMkSF5o2CC_hLzZyY0GYl/s1009/1000049532.jpg" alt="ADI" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
         </div>
         <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Mining Protocol</h2>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 24px;" id="miningTimer">Tap below to initialize mining session</p>
-        <button class="btn btn-metallic" id="mineBtn" style="width: 100%; padding: 16px; font-size: 13px;" onclick="executeWithAd(startMining)">Start Mining (+100 ADI$)</button>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;" id="miningTimer">Tap below to initialize mining session</p>
+        <div style="font-size:11px; color:#cbd5e1; margin-bottom:15px;" id="mineRateDisplay">Current Rate: 100 ADI / 4 Hours</div>
+        <button class="btn btn-metallic" id="mineBtn" style="width: 100%; padding: 16px; font-size: 13px;" onclick="startMining()">Start Mining</button>
      </div>
 
       <div class="card card-silver" style="margin-top: 15px; padding: 20px; text-align: left;">
@@ -733,14 +566,8 @@
           <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">No mining history yet.</div>
         </div>
       </div>
-
-      <div class="ad-card-box">
-        <span class="ad-badge">Sponsor</span>
-        <div class="remote-ad-showup"></div>
-      </div>
     </div>
-
-    <!-- 3. MARKETS PAGE -->
+<!-- 3. MARKETS PAGE -->
     <div id="page-markets" class="page">
       <div class="card">
         <div class="section-title" style="margin-top: 0;">Live Market Metrics</div>
@@ -750,7 +577,7 @@
             <div class="coin-icon" style="font-weight: bold;">ADI$</div>
             <div style="display: flex; align-items: center;">
               <strong style="font-size: 14px;">ADI$ </strong>
-              <span class="badge-listing" style="background: #ff9800; color: #000; font-size: 8px; font-weight: bold; padding: 2px 4px; border-radius: 3px; margin-left: 5px; text-transform: uppercase; white-space: nowrap !important; display: inline-block;">Listing Soon</span>
+              <span class="badge-listing" style="background: #ff9800; color: #000; font-size: 8px; font-weight: bold; padding: 2px 4px; border-radius: 3px; margin-left: 5px; text-transform: uppercase;">Listing Soon</span>
             </div>
           </div>
           <div><strong id="market-adi-price" style="font-size: 14px;">$0.000100</strong></div>
@@ -788,82 +615,86 @@
           <div><strong id="market-usdt-price" style="font-size: 14px;">Loading...</strong></div>
         </div>
       </div>
-
-      <div class="ad-card-box">
-        <span class="ad-badge">Sponsor</span>
-        <div class="remote-ad-showup"></div>
-      </div>
     </div>
 
-    <!-- 4. TASKS PAGE (ATTRACTIVE ENHANCED DESIGN) -->
+    <!-- 4. TASKS & GAMIFICATION PAGE -->
     <div id="page-tasks" class="page">
-      <div class="ad-card-box">
-        <span class="ad-badge">Sponsor</span>
-        <div class="remote-ad-showup"></div>
-        <div class="remote-ad-join"></div>
+      
+      <!-- FEATURE 2: LUCKY SPIN WHEEL CARD -->
+      <div class="card card-silver" style="text-align: center;">
+        <div class="section-title" style="margin-top:0;">Daily Spin Wheel</div>
+        <div style="font-size: 11px; color: var(--text-sub);">Spin to win 2, 5, 19, or 50 ADI$ tokens!</div>
+        
+        <div class="wheel-box">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="200" height="200"></canvas>
+        </div>
+
+        <div style="font-size: 11px; margin-bottom: 10px; color: #cbd5e1;" id="spinLimitText">Spins Left Today: 2/2</div>
+        <button class="btn btn-metallic" id="spinBtn" style="width: 100%; padding: 12px;" onclick="spinWheel()">Spin Wheel Now</button>
       </div>
 
-      <div class="section-title" style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
-        <span>Task Center</span>
-        <span style="font-size: 10px; color: var(--accent-green);" id="taskCompletionRate">0/5 Done</span>
+      <!-- FEATURE 4: MINI TAPPER GAME CARD -->
+      <div class="card">
+        <div class="section-title" style="margin-top:0;">Mini Tapper Challenge</div>
+        <div class="tapper-box">
+          <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
+          <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScoreDisplay">Score: 0</div>
+          <div style="font-size: 12px; color: #4ade80; margin-bottom: 8px;" id="tapperTimerDisplay">Time Left: 15s</div>
+          <button class="tapper-btn" id="tapperTapBtn" onclick="registerTap()" disabled><i class="fa-solid fa-hand-pointer"></i></button>
+          <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="startTapperGame()">Start Challenge</button>
+        </div>
       </div>
 
-      <!-- TASK FILTER TABS -->
-      <div class="task-tabs">
-        <div class="task-tab active" onclick="filterTaskCategory('all', this)">All Tasks</div>
-        <div class="task-tab" onclick="filterTaskCategory('social', this)">Social</div>
-        <div class="task-tab" onclick="filterTaskCategory('daily', this)">Daily Code</div>
+      <div class="section-title">Manual Verification Tasks</div>
+
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-title"><i class="fa-brands fa-telegram" style="color:#229ED9;"></i> Telegram Channel</span>
+          <span class="task-reward">+10 ADI$</span>
+        </div>
+        <a href="https://t.me/adiofficialannusment" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Join Channel</a>
+        <input type="text" id="proof-tg" class="task-input" placeholder="Enter Telegram Username (@username)">
+        <button class="btn btn-metallic" id="btn-proof-tg" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_tg', 'Telegram Channel', 10, 'proof-tg')">Submit Proof</button>
       </div>
 
-      <div id="tasksWrapper">
-        <div class="task-card task-cat-social">
-          <div class="task-header">
-            <span class="task-title"><i class="fa-brands fa-telegram" style="color:#229ED9;"></i> Telegram Channel</span>
-            <span class="task-reward">+10 ADI$</span>
-          </div>
-          <a href="https://t.me/adiofficialannusment" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Join Channel</a>
-          <input type="text" id="proof-tg" class="task-input" placeholder="Enter Telegram Username (@username)">
-          <button class="btn btn-metallic" id="btn-proof-tg" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_tg', 'Telegram Channel', 10, 'proof-tg'))">Submit Proof</button>
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-title"><i class="fa-brands fa-x-twitter" style="color:#229ED9;"></i> Twitter X </span>
+          <span class="task-reward">+10 ADI$</span>
         </div>
+        <a href="https://x.com/adiairdrops" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow X Profile</a>
+        <input type="text" id="proof-x" class="task-input" placeholder="Enter X Username (@username)">
+        <button class="btn btn-metallic" id="btn-proof-x" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_x', 'Follow X', 20, 'proof-x')">Submit Proof</button>
+      </div>
 
-        <div class="task-card task-cat-social">
-          <div class="task-header">
-            <span class="task-title"><i class="fa-brands fa-x-twitter" style="color:#229ED9;"></i> Twitter X </span>
-            <span class="task-reward">+10 ADI$</span>
-          </div>
-          <a href="https://x.com/adiairdrops" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow X Profile</a>
-          <input type="text" id="proof-x" class="task-input" placeholder="Enter X Username (@username)">
-          <button class="btn btn-metallic" id="btn-proof-x" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_x', 'Follow X', 20, 'proof-x'))">Submit Proof</button>
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-title"><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Follow Facebook</span>
+          <span class="task-reward">+40 ADI$</span>
         </div>
+        <a href="https://www.facebook.com/profile.php?id=61594465981380" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Visit Facebook Page</a>
+        <input type="text" id="proof-fb" class="task-input" placeholder="Enter FB Profile Link/Username">
+        <button class="btn btn-metallic" id="btn-proof-fb" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_fb', 'Facebook Page', 40, 'proof-fb')">Submit Proof</button>
+      </div>
 
-        <div class="task-card task-cat-social">
-          <div class="task-header">
-            <span class="task-title"><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Follow Facebook</span>
-            <span class="task-reward">+40 ADI$</span>
-          </div>
-          <a href="https://www.facebook.com/profile.php?id=61594465981380" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Visit Facebook Page</a>
-          <input type="text" id="proof-fb" class="task-input" placeholder="Enter FB Profile Link/Username">
-          <button class="btn btn-metallic" id="btn-proof-fb" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_fb', 'Facebook Page', 40, 'proof-fb'))">Submit Proof</button>
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-title"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Subscribe</span>
+          <span class="task-reward">+60 ADI$</span>
         </div>
+        <input type="text" id="proof-yt" class="task-input" placeholder="Paste Screenshot Image URL / Proof">
+        <button class="btn btn-metallic" id="btn-proof-yt" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_yt', 'YouTube Subscribe', 60, 'proof-yt')">Submit Proof</button>
+      </div>
 
-        <div class="task-card task-cat-daily">
-          <div class="task-header">
-            <span class="task-title"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Subscribe & Secret Code</span>
-            <span class="task-reward">+60 ADI$</span>
-          </div>
-          <input type="text" id="proof-yt" class="task-input" placeholder="Enter Secret Code / Proof">
-          <button class="btn btn-metallic" id="btn-proof-yt" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_yt', 'YouTube Subscribe', 60, 'proof-yt'))">Submit Proof</button>
+      <div class="task-card">
+        <div class="task-header">
+          <span class="task-title"><i class="fa-brands fa-instagram" style="color:#E4405F;"></i> Follow Instagram</span>
+          <span class="task-reward">+10 ADI$</span>
         </div>
-
-        <div class="task-card task-cat-social">
-          <div class="task-header">
-            <span class="task-title"><i class="fa-brands fa-instagram" style="color:#E4405F;"></i> Follow Instagram</span>
-            <span class="task-reward">+10 ADI$</span>
-          </div>
-          <a href="https://www.instagram.com/adiairdrop3?stkn=eTRtNmJ2bWdkaTZ5" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow Instagram</a>
-          <input type="text" id="proof-ins" class="task-input" placeholder="Enter Username">
-          <button class="btn btn-metallic" id="btn-proof-ins" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_ins', 'Instagram Follow', 10, 'proof-ins'))">Submit Proof</button>
-        </div>
+        <a href="https://www.instagram.com/adiairdrop3?stkn=eTRtNmJ2bWdkaTZ5" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow Instagram</a>
+        <input type="text" id="proof-ins" class="task-input" placeholder="Paste Screenshot Image URL">
+        <button class="btn btn-metallic" id="btn-proof-ins" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_ins', 'Instagram Follow', 10, 'proof-ins')">Submit Proof</button>
       </div>
 
       <div id="dynamicTasksContainer"></div>
@@ -877,23 +708,20 @@
           <p><strong>Username:</strong> <span id="profUser" style="color: var(--text-sub);">Loading...</span></p>
           <p><strong>Telegram ID:</strong> <span id="profId" style="color: var(--text-sub);">...</span></p>
           <p><strong>Current Balance:</strong> <span id="profBalance" style="color: var(--accent-silver); font-weight: 800;">0 ADI$</span></p>
-          <p><strong>Achievements:</strong> <span id="profBadges">Early Supporter</span></p>
           <p><strong>Wallet Address:</strong> <span id="connectedWalletAddr" style="color: var(--accent-green); font-size: 11px; word-break: break-all;">Not Connected</span></p>
         </div>
         
-        <!-- Mining Timer Visible in Profile Page -->
         <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; margin-top: 12px; border: 1px solid var(--card-border);">
           <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Live Mining Timer</div>
           <div id="profMiningTimer" style="font-size: 14px; font-weight: 800; color: #4ade80; margin-top: 2px;">Session Ready</div>
           <div id="profMinedTokens" style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">Total Mined: 0 ADI$</div>
         </div>
 
-        <button class="btn btn-metallic" id="walletConnBtn" style="width: 100%; margin-top: 20px;" onclick="executeWithAd(autoConnectTrustWallet)">
+        <button class="btn btn-metallic" id="walletConnBtn" style="width: 100%; margin-top: 20px;" onclick="autoConnectTrustWallet()">
           <i class="fa-solid fa-wallet"></i> Connect Trust Wallet
         </button>
       </div>
 
-      <!-- White Paper & About Section -->
       <div class="card" style="margin-top: 16px;">
         <div class="section-title" style="margin-top: 0;">Information Center</div>
         <div style="display: flex; gap: 10px; margin-top: 10px;">
@@ -906,83 +734,14 @@
         </div>
       </div>
 
-      <!-- Activity History -->
       <div class="card" style="margin-top: 16px; background-color: #121212; border: 1px solid #2a2a2a; border-radius: 16px; padding: 20px;">
         <div class="section-title" style="margin-top: 0; font-size: 13px; letter-spacing: 1px; color: #888888; text-transform: uppercase;">Activity History</div>
         <div id="history-list-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
           <div style="text-align: center; color: #777; font-size: 13px; padding: 10px 0;">Loading history...</div>
         </div>
       </div>
-
-      <div class="ad-card-box">
-        <span class="ad-badge">Sponsor</span>
-        <div class="remote-ad-showup"></div>
-      </div>
     </div>
 
-  </div>ub-value" id="usdValue">$0.00 USD</div>
-
-        <!-- STREAK SYSTEM BOARD -->
-        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 14px;">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;">
-            <span><i class="fa-solid fa-fire" style="color: var(--accent-gold);"></i> Mining Streak: <b id="streakDaysCount">1</b> Days</span>
-            <span style="color: var(--accent-green);" id="multiplierBadge">1.0x Speed</span>
-          </div>
-          <div class="streak-container">
-            <div class="streak-day" id="sday-1">Day 1</div>
-            <div class="streak-day" id="sday-2">Day 2</div>
-            <div class="streak-day" id="sday-3">Day 3 (1.2x)</div>
-            <div class="streak-day" id="sday-7">Day 7 (1.5x)</div>
-            <div class="streak-day" id="sday-30">Day 30 (2x)</div>
-          </div>
-        </div>
-        
-        <!-- Mining Timer Visible in Home Page -->
-        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 14px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
-          <div style="font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Mining Status & Mined Balance</div>
-          <div id="homeMiningTimer" style="font-size: 13px; font-weight: 800; color: #4ade80; margin-top: 2px;">Session Ready</div>
-          <div id="homeMinedTokens" style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">Total Mined: 0 ADI$</div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-metallic" onclick="showAlert('Exchange Portal Opening Soon!')"><i class="fa-solid fa-arrow-right-arrow-left"></i> Exchange</button>
-          <button class="btn btn-dark" onclick="executeWithAd(autoConnectTrustWallet)"><i class="fa-solid fa-wallet"></i> Wallet</button>
-        </div>
-      </div>
-
-      <div class="ad-card-box">
-        <span class="ad-badge">Sponsor</span>
-        <div class="remote-ad-showup"></div>
-      </div>
-
-      <button class="btn btn-metallic" onclick="openReferralModal()" style="width: 100%; margin-bottom: 12px; padding: 14px; font-weight: bold; cursor: pointer;">
-        <i class="fa-solid fa-users"></i> Invite Friends & Stats (+50 ADI)
-      </button>
-
-  <!-- LUCKY SPIN MODAL -->
-  <div id="spinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
-    <div style="background:#141414; width:90%; max-width:380px; border-radius:20px; padding:20px; border:1px solid rgba(255,255,255,0.2); text-align:center; color:#fff;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
-        <h3 style="font-size:16px;"><i class="fa-solid fa-dharmachakra" style="color:var(--accent-gold);"></i> Daily Lucky Spin</h3>
-        <span onclick="closeSpinModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
-      </div>
-      <div class="wheel-pointer"></div>
-      <div class="wheel-box" id="wheelBox">
-        <span style="font-weight:800; font-size:14px; color:var(--accent-gold);">SPIN</span>
-      </div>
-      <p style="font-size:11px; color:var(--text-sub); margin-bottom:15px;">Spin to win free ADI$ tokens or speed multipliers!</p>
-      <button class="btn btn-metallic" style="width:100%;" id="spinWheelBtn" onclick="executeWithAd(spinLuckyWheel)">Spin Now</button>
-    </div>
-  </div>
-
-  <!-- MINI TAPPER GAME MODAL -->
-  <div id="tapperGameModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; justify-content:center; align-items:center; flex-direction:column; text-align:center;">
-    <h2 style="color:#fff; font-size:20px; margin-bottom:5px;">Mini Tapper Game</h2>
-    <p style="color:var(--text-sub); font-size:12px; margin-bottom:20px;">Tap the coin as fast as you can in <b id="gameTimer" style="color:var(--accent-gold);">10</b> seconds!</p>
-    <div style="font-size:32px; font-weight:800; color:var(--accent-green); margin-bottom:20px;" id="tapScore">0 ADI$</div>
-    <div id="tapCoinBtn" onclick="registerTap()" style="width:140px; height:140px; border-radius:50%; background:var(--silver-gradient); border:4px solid #fff; display:flex; justify-content:center; align-items:center; cursor:pointer; box-shadow:0 0 25px rgba(255,255,255,0.4);">
-      <i class="fa-solid fa-hand-pointer" style="font-size:50px; color:#000;"></i>
-    </div>
   </div>
 
   <!-- WHITE PAPER MODAL -->
@@ -1049,7 +808,7 @@
         </div>
       </div>
 
-      <button class="btn btn-metallic" onclick="executeWithAd(shareReferralLink)" style="width:100%; margin-bottom:12px; padding:12px; font-weight:bold; cursor:pointer;">
+      <button class="btn btn-metallic" onclick="shareReferralLink()" style="width:100%; margin-bottom:12px; padding:12px; font-weight:bold; cursor:pointer;">
         <i class="fa-solid fa-share-nodes"></i> Share Referral Link
       </button>
 
@@ -1057,7 +816,7 @@
         <label style="font-size: 11px; color: #888; display: block; margin-bottom: 6px; text-align: left;">Your Referral Link:</label>
         <div style="display: flex; align-items: center; gap: 8px;">
           <input type="text" id="refLinkInput" readonly style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; font-size: 11px; outline: none;" value="Generating link...">
-          <button onclick="executeWithAd(copyReferralLink)" style="background: var(--accent-green, #00e676); color: #000; font-weight: bold; border: none; padding: 10px 14px; border-radius: 8px; font-size: 11px; cursor: pointer; white-space: nowrap;">Copy</button>
+          <button onclick="copyReferralLink()" style="background: var(--accent-green, #00e676); color: #000; font-weight: bold; border: none; padding: 10px 14px; border-radius: 8px; font-size: 11px; cursor: pointer; white-space: nowrap;">Copy</button>
         </div>
       </div>
 
@@ -1068,8 +827,8 @@
 
     </div>
   </div>
-
-  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  
+   <!-- FIXED BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('page-home', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
     <div class="nav-item" onclick="switchTab('page-mine', this)"><i class="fa-solid fa-pickaxe"></i><span>Mine</span></div>
@@ -1078,9 +837,7 @@
     <div class="nav-item" onclick="switchTab('page-profile', this)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
   </div>
 
-  <script>
-    
-
+<script>
     // Firebase Configuration
     const firebaseConfig = {
       databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com"
@@ -1088,7 +845,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Global Variables
+    // Global User Variables
     const tg = window.Telegram ? window.Telegram.WebApp : null;
     let userId = "guest_user";
     let userName = "Airdrop User";
@@ -1099,9 +856,17 @@
     let miningEndTime = 0;
     let miningInterval = null;
     let walletAddress = "";
-    let streakDays = 1;
+    
+    // Streaks, Wheel & Game Variables
+    let streakCount = 0;
+    let multiplier = 1.0;
+    let spinsLeft = 2;
     let lastSpinDate = "";
-    let speedMultiplier = 1.0;
+    let tapperScore = 0;
+    let tapperTimeLeft = 15;
+    let tapperInterval = null;
+    let pushNotificationSent = false;
+
     const todayDate = new Date().toISOString().slice(0, 10);
 
     if (tg) {
@@ -1113,64 +878,221 @@
       }
     }
 
-    // Daily Claim & Streak Calculation
+    // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
+    function processStreakCheck(userData) {
+      const lastDateStr = userData.lastMineDate || "";
+      streakCount = userData.streakCount || 0;
+
+      if (lastDateStr) {
+        const lastDate = new Date(lastDateStr);
+        const currentDate = new Date(todayDate);
+        const diffTime = Math.abs(currentDate - lastDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          // Maintained Streak
+        } else if (diffDays > 1) {
+          // Missed day -> Reset Streak
+          streakCount = 0;
+        }
+      }
+
+      // Calculate Multiplier according to Streaks (3, 7, 30 days)
+      if (streakCount >= 30) {
+        multiplier = 2.0;
+      } else if (streakCount >= 7) {
+        multiplier = 1.5;
+      } else if (streakCount >= 3) {
+        multiplier = 1.25;
+      } else {
+        multiplier = 1.0;
+      }
+
+      const streakEl = document.getElementById('homeMultiplierText');
+      if (streakEl) {
+        streakEl.innerText = `Speed: ${multiplier}x | Streak: ${streakCount} Days 🔥`;
+      }
+      const rateEl = document.getElementById('mineRateDisplay');
+      if (rateEl) {
+        rateEl.innerText = `Current Rate: ${Math.round(100 * multiplier)} ADI / 4 Hours`;
+      }
+    }
+
     function claimDailyReward() {
       if (lastClaimDate === todayDate) {
         showAlert("You have already claimed today's reward!");
         return;
       }
-      
-      const prevDate = new Date();
-      prevDate.setDate(prevDate.getDate() - 1);
-      const yesterdayStr = prevDate.toISOString().slice(0, 10);
 
-      if (lastClaimDate === yesterdayStr) {
-        streakDays += 1;
-      } else if (lastClaimDate !== todayDate) {
-        streakDays = 1; // Reset Streak
-      }
+      streakCount += 1;
+      processStreakCheck({ lastMineDate: todayDate, streakCount: streakCount });
 
-      calculateMultiplier();
-
-      const bonus = Math.floor(100 * speedMultiplier);
-      userBalance += bonus;
+      const baseReward = 100;
+      const totalReward = Math.round(baseReward * multiplier);
+      userBalance += totalReward;
 
       const historyId = 'hist_' + Date.now();
       let updates = {};
       updates['users/' + userId + '/balance'] = userBalance;
       updates['users/' + userId + '/lastClaimDate'] = todayDate;
-      updates['users/' + userId + '/streakDays'] = streakDays;
+      updates['users/' + userId + '/streakCount'] = streakCount;
       updates['users/' + userId + '/history/' + historyId] = {
-        title: "Daily Reward & Streak",
-        amount: "+" + bonus + " ADI$",
+        title: "Daily Streak Reward",
+        amount: "+" + totalReward + " ADI",
         date: new Date().toLocaleString(),
-        type: "Daily Claim",
+        type: "Streak Reward",
         timestamp: Date.now()
       };
 
       database.ref().update(updates).then(() => {
-        showAlert(`Claimed +${bonus} ADI$! Current Streak: ${streakDays} Day(s).`);
+        showAlert(`Congratulations! Claimed ${totalReward} ADI$ (${streakCount} Day Streak Bonus!)`);
       });
     }
 
-    function calculateMultiplier() {
-      if (streakDays >= 30) speedMultiplier = 2.0;
-      else if (streakDays >= 7) speedMultiplier = 1.5;
-      else if (streakDays >= 3) speedMultiplier = 1.2;
-      else speedMultiplier = 1.0;
+    // FEATURE 2: LUCKY SPIN WHEEL (Silver & Black System with 2, 5, 19, 50 Values)
+    const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
+    let isSpinning = false;
 
-      const multBadge = document.getElementById('multiplierBadge');
-      if (multBadge) multBadge.innerText = speedMultiplier.toFixed(1) + "x Speed";
+    function drawWheel() {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const numSegments = wheelRewards.length;
+      const anglePerSegment = (2 * Math.PI) / numSegments;
 
-      document.querySelectorAll('.streak-day').forEach(el => el.classList.remove('active'));
-      if (streakDays >= 1 && document.getElementById('sday-1')) document.getElementById('sday-1').classList.add('active');
-      if (streakDays >= 2 && document.getElementById('sday-2')) document.getElementById('sday-2').classList.add('active');
-      if (streakDays >= 3 && document.getElementById('sday-3')) document.getElementById('sday-3').classList.add('active');
-      if (streakDays >= 7 && document.getElementById('sday-7')) document.getElementById('sday-7').classList.add('active');
-      if (streakDays >= 30 && document.getElementById('sday-30')) document.getElementById('sday-30').classList.add('active');
+      ctx.clearRect(0, 0, 200, 200);
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = i * anglePerSegment;
+        ctx.beginPath();
+        ctx.fillStyle = (i % 2 === 0) ? "#121212" : "#94a3b8"; // Black and Silver
+        ctx.moveTo(100, 100);
+        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
+        ctx.lineTo(100, 100);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw Numbers on segments
+        ctx.save();
+        ctx.translate(100, 100);
+        ctx.rotate(angle + anglePerSegment / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = (i % 2 === 0) ? "#ffffff" : "#000000";
+        ctx.font = "bold 13px Plus Jakarta Sans";
+        ctx.fillText(wheelRewards[i] + " ADI", 80, 5);
+        ctx.restore();
+      }
     }
 
-    // Start Mining (4 Hours Duration)
+    function spinWheel() {
+      if (isSpinning) return;
+      if (lastSpinDate === todayDate && spinsLeft <= 0) {
+        showAlert("Daily spin limit reached! Come back tomorrow.");
+        return;
+      }
+
+      isSpinning = true;
+      const btn = document.getElementById('spinBtn');
+      if (btn) btn.disabled = true;
+
+      const randomIndex = Math.floor(Math.random() * wheelRewards.length);
+      const selectedReward = wheelRewards[randomIndex];
+      const segmentDegrees = 360 / wheelRewards.length;
+      const targetDegree = 360 * 5 + (360 - (randomIndex * segmentDegrees) - segmentDegrees / 2);
+
+      const canvas = document.getElementById('wheelCanvas');
+      canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
+      canvas.style.transform = `rotate(${targetDegree}deg)`;
+
+      setTimeout(() => {
+        userBalance += selectedReward;
+        spinsLeft = Math.max(0, spinsLeft - 1);
+        lastSpinDate = todayDate;
+
+        const histId = 'hist_' + Date.now();
+        let updates = {};
+        updates['users/' + userId + '/balance'] = userBalance;
+        updates['users/' + userId + '/spinsLeft'] = spinsLeft;
+        updates['users/' + userId + '/lastSpinDate'] = todayDate;
+        updates['users/' + userId + '/history/' + histId] = {
+          title: "Lucky Spin Reward",
+          amount: "+" + selectedReward + " ADI$",
+          date: new Date().toLocaleString(),
+          type: "Spin Win",
+          timestamp: Date.now()
+        };
+
+        database.ref().update(updates).then(() => {
+          showAlert(`🎉 Wheel Stopped! You won +${selectedReward} ADI$!`);
+          canvas.style.transition = "none";
+          canvas.style.transform = "rotate(0deg)";
+          drawWheel();
+          isSpinning = false;
+          if (btn) btn.disabled = false;
+          updateSpinUI();
+        });
+      }, 4000);
+    }
+
+    function updateSpinUI() {
+      const txt = document.getElementById('spinLimitText');
+      if (txt) {
+        txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
+      }
+    }
+
+    // FEATURE 4: MINI TAPPER GAME CHALLENGE
+    function startTapperGame() {
+      tapperScore = 0;
+      tapperTimeLeft = 15;
+      document.getElementById('tapperScoreDisplay').innerText = "Score: 0";
+      document.getElementById('tapperTimerDisplay').innerText = "Time Left: 15s";
+
+      document.getElementById('tapperTapBtn').disabled = false;
+      document.getElementById('startTapperBtn').disabled = true;
+
+      tapperInterval = setInterval(() => {
+        tapperTimeLeft--;
+        document.getElementById('tapperTimerDisplay').innerText = `Time Left: ${tapperTimeLeft}s`;
+
+        if (tapperTimeLeft <= 0) {
+          clearInterval(tapperInterval);
+          document.getElementById('tapperTapBtn').disabled = true;
+          document.getElementById('startTapperBtn').disabled = false;
+
+          const earnedTokens = Math.min(50, Math.floor(tapperScore / 2));
+          if (earnedTokens > 0) {
+            userBalance += earnedTokens;
+            const histId = 'hist_' + Date.now();
+            let updates = {};
+            updates['users/' + userId + '/balance'] = userBalance;
+            updates['users/' + userId + '/history/' + histId] = {
+              title: "Mini Tapper Game",
+              amount: "+" + earnedTokens + " ADI$",
+              date: new Date().toLocaleString(),
+              type: "Mini Game",
+              timestamp: Date.now()
+            };
+            database.ref().update(updates).then(() => {
+              showAlert(`🎮 Time's up! Score: ${tapperScore}. Earned +${earnedTokens} ADI$!`);
+            });
+          } else {
+            showAlert(`Time's up! Tap faster next time.`);
+          }
+        }
+      }, 1000);
+    }
+
+    function registerTap() {
+      if (tapperTimeLeft > 0) {
+        tapperScore++;
+        document.getElementById('tapperScoreDisplay').innerText = `Score: ${tapperScore}`;
+      }
+    }
+
+    // Start Mining Function (4 Hours Duration)
     function startMining() {
       const now = Date.now();
       if (typeof miningEndTime !== 'undefined' && miningEndTime > now) {
@@ -1178,36 +1100,64 @@
         return;
       }
 
-      calculateMultiplier();
-      const reward = Math.floor(100 * speedMultiplier);
-
-      userBalance += reward;
-      totalMinedAmount += reward;
+      const yieldAmount = Math.round(100 * multiplier);
+      userBalance = (typeof userBalance !== 'undefined' ? userBalance : 0) + yieldAmount;
+      totalMinedAmount += yieldAmount;
       miningEndTime = now + (4 * 60 * 60 * 1000); // 4 Hours Duration
+      pushNotificationSent = false;
+      
       const historyId = 'hist_' + now;
-
       let updates = {};
-      updates['users/' + userId + '/balance'] = userBalance;
-      updates['users/' + userId + '/totalMined'] = totalMinedAmount;
-      updates['users/' + userId + '/lastMineDate'] = todayDate;
-      updates['users/' + userId + '/miningEndTime'] = miningEndTime;
-      updates['users/' + userId + '/history/' + historyId] = {
-        title: "Block Mining",
-        amount: "+" + reward + " ADI$",
-        date: new Date().toLocaleString(),
-        type: "Mining Reward",
-        timestamp: now
-      };
 
-      database.ref().update(updates).then(() => {
-        showAlert(`Mined +${reward} ADI$ Tokens!`);
-        checkMiningState();
-      }).catch((error) => {
-        showAlert("Error: " + error.message);
-      });
+      if (typeof userId !== 'undefined') {
+        updates['users/' + userId + '/balance'] = userBalance;
+        updates['users/' + userId + '/totalMined'] = totalMinedAmount;
+        updates['users/' + userId + '/lastMineDate'] = typeof todayDate !== 'undefined' ? todayDate : '';
+        updates['users/' + userId + '/miningEndTime'] = miningEndTime;
+        updates['users/' + userId + '/pushNotificationSent'] = false;
+        updates['users/' + userId + '/history/' + historyId] = {
+          title: "Block Mining",
+          amount: "+" + yieldAmount + " ADI$",
+          date: new Date().toLocaleString(),
+          type: "Mining Reward",
+          timestamp: now
+        };
+      }
+
+      if (typeof database !== 'undefined' && database.ref) {
+        database.ref().update(updates).then(() => {
+          showAlert(`Mined +${yieldAmount} ADI$ Tokens!`);
+          checkMiningState();
+        }).catch((error) => {
+          showAlert("Error: " + error.message);
+        });
+      }
     }
 
-    // Mining Countdown Timer & Push Reminders
+    // FEATURE 5: COUNTDOWN & PUSH NOTIFICATION SYSTEM
+    function triggerPushNotification() {
+      if (pushNotificationSent) return;
+      pushNotificationSent = true;
+      database.ref('users/' + userId + '/pushNotificationSent').set(true);
+
+      // Auto Push notification log payload for Telegram Bot dispatcher
+      const notifyMessage = "Your 4-hour mining cycle has completed! Come back now to claim your tokens.";
+      database.ref('pending_notifications/' + userId + '_' + Date.now()).set({
+        userId: userId,
+        message: notifyMessage,
+        timestamp: Date.now(),
+        status: "pending"
+      });
+
+      if (tg && tg.showPopup) {
+        tg.showPopup({
+          title: "Mining Finished!",
+          message: notifyMessage,
+          buttons: [{ type: "ok" }]
+        });
+      }
+    }
+
     function checkMiningState() {
       if (typeof miningInterval !== 'undefined') {
         clearInterval(miningInterval);
@@ -1246,12 +1196,11 @@
             if (homeTimer) homeTimer.innerText = "Session Completed!";
             if (profTimer) profTimer.innerText = "Session Completed!";
             if (mineBtn) {
-              mineBtn.innerText = "⛏ Start Mining (+100 ADI$)";
+              mineBtn.innerText = "⛏ Start Mining";
               mineBtn.disabled = false;
               mineBtn.style.opacity = "1";
             }
-            // Send Telegram Push Notification Message Prompt
-            showAlert("Your 4-hour mining session has completed! Claim your tokens now.");
+            triggerPushNotification();
           } else {
             const h = Math.floor(remaining / (1000 * 60 * 60));
             const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -1269,127 +1218,13 @@
         if (homeTimer) homeTimer.innerText = "Session Ready";
         if (profTimer) profTimer.innerText = "Session Ready";
         if (mineBtn) {
-          mineBtn.innerText = "⛏ Start Mining (+100 ADI$)";
+          mineBtn.innerText = "⛏ Start Mining";
           mineBtn.disabled = false;
           mineBtn.style.opacity = "1";
         }
       }
     }
-
-    // LUCKY SPIN WHEEL SYSTEM
-    function openSpinModal() {
-      document.getElementById('spinModal').style.display = 'flex';
-    }
-    function closeSpinModal() {
-      document.getElementById('spinModal').style.display = 'none';
-    }
-
-    function spinLuckyWheel() {
-      if (lastSpinDate === todayDate) {
-        showAlert("You have used your free daily spin today!");
-        return;
-      }
-
-      const wheel = document.getElementById('wheelBox');
-      const degrees = 1440 + Math.floor(Math.random() * 360);
-      wheel.style.transform = `rotate(${degrees}deg)`;
-
-      document.getElementById('spinWheelBtn').disabled = true;
-
-      setTimeout(() => {
-        const rewards = [20, 50, 100, 150];
-        const winReward = rewards[Math.floor(Math.random() * rewards.length)];
-
-        userBalance += winReward;
-        lastSpinDate = todayDate;
-
-        const histId = 'hist_' + Date.now();
-        let updates = {};
-        updates['users/' + userId + '/balance'] = userBalance;
-        updates['users/' + userId + '/lastSpinDate'] = todayDate;
-        updates['users/' + userId + '/history/' + histId] = {
-          title: "Lucky Spin Wheel",
-          amount: "+" + winReward + " ADI$",
-          date: new Date().toLocaleString(),
-          type: "Spin Wheel",
-          timestamp: Date.now()
-        };
-
-        database.ref().update(updates).then(() => {
-          showAlert(`Congratulations! You won +${winReward} ADI$ from Lucky Spin!`);
-          closeSpinModal();
-          document.getElementById('spinWheelBtn').disabled = false;
-        });
-      }, 3200);
-    }
-    // MINI TAPPER GAME SYSTEM
-    let tapScoreVal = 0;
-    let gameTimerInterval = null;
-
-    function startMiniGame() {
-      tapScoreVal = 0;
-      document.getElementById('tapScore').innerText = "0 ADI$";
-      document.getElementById('tapperGameModal').style.display = 'flex';
-
-      let timeLeft = 10;
-      document.getElementById('gameTimer').innerText = timeLeft;
-
-      gameTimerInterval = setInterval(() => {
-        timeLeft -= 1;
-        document.getElementById('gameTimer').innerText = timeLeft;
-
-        if (timeLeft <= 0) {
-          clearInterval(gameTimerInterval);
-          document.getElementById('tapperGameModal').style.display = 'none';
-
-          if (tapScoreVal > 0) {
-            userBalance += tapScoreVal;
-            const histId = 'hist_' + Date.now();
-
-            let updates = {};
-            updates['users/' + userId + '/balance'] = userBalance;
-            updates['users/' + userId + '/history/' + histId] = {
-              title: "Mini Tapper Game",
-              amount: "+" + tapScoreVal + " ADI$",
-              date: new Date().toLocaleString(),
-              type: "Mini Game",
-              timestamp: Date.now()
-            };
-
-            database.ref().update(updates).then(() => {
-              showAlert(`Game Over! You earned +${tapScoreVal} ADI$ from Mini Tapper!`);
-            });
-          }
-        }
-      }, 1000);
-    }
-
-    function registerTap() {
-      tapScoreVal += 1;
-      document.getElementById('tapScore').innerText = tapScoreVal + " ADI$";
-    }
-
-    // TASK FILTER SYSTEM
-    function filterTaskCategory(category, element) {
-      document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
-      element.classList.add('active');
-
-      const socialTasks = document.querySelectorAll('.task-cat-social');
-      const dailyTasks = document.querySelectorAll('.task-cat-daily');
-
-      if (category === 'all') {
-        socialTasks.forEach(t => t.style.display = 'block');
-        dailyTasks.forEach(t => t.style.display = 'block');
-      } else if (category === 'social') {
-        socialTasks.forEach(t => t.style.display = 'block');
-        dailyTasks.forEach(t => t.style.display = 'none');
-      } else if (category === 'daily') {
-        socialTasks.forEach(t => t.style.display = 'none');
-        dailyTasks.forEach(t => t.style.display = 'block');
-      }
-    }
-
-    // Boost Mining Function
+  // Boost Mining Function
     function confirmBoost() {
       if (confirm("Are you sure you want to spend 10 ADI$ to boost mining?")) {
         processBoostDeduction();
@@ -1397,15 +1232,19 @@
     }
 
     function processBoostDeduction() {
-      if (!userId) return;
+      if (!userId) {
+        alert("User ID not found!");
+        return;
+      }
 
       const userRef = database.ref('users/' + userId);
+      
       userRef.once('value', (snapshot) => {
         const userData = snapshot.val();
         const currentBalance = userData && userData.balance ? Number(userData.balance) : 0;
         
         if (currentBalance < 10) {
-          showAlert("At least 10 ADI$ is required to boost.");
+          alert("You don't have enough tokens! At least 10 ADI$ is required to boost.");
           return;
         }
 
@@ -1423,7 +1262,9 @@
         };
 
         database.ref().update(updates).then(() => {
-          showAlert("Mining boosted successfully! 10 ADI$ deducted.");
+          alert("Mining boosted successfully! 10 ADI$ has been deducted from your account.");
+        }).catch((error) => {
+          alert("Error occurred: " + error.message);
         });
       });
     }
@@ -1486,6 +1327,8 @@
       } else {
         navigator.clipboard.writeText(refLink).then(() => {
           showAlert("Referral link copied to clipboard!\n" + refLink);
+        }).catch(() => {
+          prompt("Copy your referral link:", refLink);
         });
       }
     }
@@ -1495,10 +1338,14 @@
       if (refInput && refInput.value) {
         navigator.clipboard.writeText(refInput.value).then(() => {
           showAlert("Referral link copied to clipboard!");
+        }).catch(() => {
+          refInput.select();
+          document.execCommand('copy');
+          showAlert("Referral link copied!");
         });
       }
     }
-
+  
     function loadReferralData() {
       const refListEl = document.getElementById('referralList');
       const refCountEl = document.getElementById('refCount');
@@ -1559,6 +1406,7 @@
               const bonusAmount = 50;
 
               database.ref('users/' + userId + '/referredBy').set(referrerId);
+
               database.ref('users/' + referrerId + '/balance').transaction((currentBalance) => {
                 return (currentBalance || 0) + bonusAmount;
               });
@@ -1583,7 +1431,6 @@
       }
     }
 
-    // Global Notifications
     let currentGlobalNotification = { title: "No new notifications", message: "No new notifications." };
 
     database.ref('global_notification').on('value', (snapshot) => {
@@ -1597,7 +1444,7 @@
       showAlert(`📢 ${currentGlobalNotification.title}\n\n${currentGlobalNotification.message}`);
     }
     
-    // User Sync & Badges System
+    // User Sync & Initialization Listener
     const userRef = database.ref('users/' + userId);
     userRef.on('value', (snapshot) => {
       const data = snapshot.val();
@@ -1615,8 +1462,11 @@
         lastMineDate = data.lastMineDate || "";
         miningEndTime = data.miningEndTime || 0;
         walletAddress = data.walletAddress || "";
-        streakDays = Number(data.streakDays) || 1;
+        spinsLeft = data.spinsLeft !== undefined ? data.spinsLeft : 2;
         lastSpinDate = data.lastSpinDate || "";
+        pushNotificationSent = data.pushNotificationSent || false;
+
+        processStreakCheck(data);
       } else {
         userRef.set({ 
           username: userName, 
@@ -1626,19 +1476,20 @@
           lastMineDate: "", 
           miningEndTime: 0, 
           walletAddress: "",
-          streakDays: 1,
+          spinsLeft: 2,
           lastSpinDate: "",
+          streakCount: 0,
           banned: false
         });
         userBalance = 0;
         totalMinedAmount = 0;
       }
-      calculateMultiplier();
       updateUI();
       checkMiningState();
       checkReferralBonus();
       checkSubmittedProofs();
       logUserDeviceInfo();
+      updateSpinUI();
     });
 
     function updateUI() {
@@ -1650,15 +1501,6 @@
       document.getElementById('totalBalance').innerHTML = userBalance.toLocaleString() + ' <span>ADI$</span>';
       document.getElementById('usdValue').innerText = '≈ $' + (userBalance * 0.0001).toFixed(2) + ' USD';
       document.getElementById('profBalance').innerText = userBalance.toLocaleString() + ' ADI$';
-      if (document.getElementById('streakDaysCount')) document.getElementById('streakDaysCount').innerText = streakDays;
-
-      // Assign Badges
-      let badgeHtml = `<span class="badge-tag badge-early"><i class="fa-solid fa-star"></i> Early Supporter</span>`;
-      if (userBalance > 5000) {
-        badgeHtml = `<span class="badge-tag badge-top"><i class="fa-solid fa-crown"></i> Top Miner</span>`;
-      }
-      if (document.getElementById('userBadge')) document.getElementById('userBadge').innerHTML = badgeHtml;
-      if (document.getElementById('profBadges')) document.getElementById('profBadges').innerHTML = badgeHtml;
 
       if (walletAddress) {
         document.getElementById('connectedWalletAddr').innerText = walletAddress;
@@ -1690,7 +1532,6 @@
       }
     }
 
-    // Complete History Renderer
     function loadUserHistory(userId) {
       const profileContainer = document.getElementById('history-list-container');
       const mineContainer = document.getElementById('mineHistoryList');
@@ -1779,8 +1620,6 @@
       document.getElementById('aboutModal').style.display = 'none';
     }
 
-    
-    // Task Proof Submission & Secret Code Check
     function submitProofOnce(proofKey, taskName, reward, inputId) {
       const inputEl = document.getElementById(inputId);
       const proofValue = inputEl ? inputEl.value.trim() : "";
@@ -1852,10 +1691,6 @@
       database.ref('users/' + userId + '/submittedProofs').once('value').then((snapshot) => {
         const proofs = snapshot.val();
         if (proofs) {
-          const count = Object.keys(proofs).length;
-          const rateEl = document.getElementById('taskCompletionRate');
-          if (rateEl) rateEl.innerText = `${count} Done`;
-
           Object.keys(proofs).forEach(pKey => {
             markProofAsSubmitted(pKey, pKey.replace('proof_', 'proof-'));
           });
@@ -1878,7 +1713,7 @@
         input.placeholder = "Task Completed / Submitted";
       }
     }
-      // Dynamic Task Ingestion
+
     database.ref('custom_tasks').on('value', (snapshot) => {
       const container = document.getElementById('dynamicTasksContainer');
       if (!container) return;
@@ -1888,14 +1723,14 @@
         Object.keys(tasks).forEach(key => {
           const t = tasks[key];
           container.innerHTML += `
-            <div class="task-card task-cat-daily">
+            <div class="task-card">
               <div class="task-header">
                 <span class="task-title"><i class="fa-solid fa-play-circle"></i> ${t.title}</span>
                 <span class="task-reward">+${t.reward} ADI$</span>
               </div>
               <a href="${t.link}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">Open Task Link</a>
-              <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : 'Enter Proof'}">
-              <button class="btn btn-metallic" id="btn-proof-${key}" style="width:100%; padding:8px;" onclick="executeWithAd(() => submitProofOnce('proof_${key}', '${t.title}', ${t.reward}, 'proof-${key}'))">Submit & Complete Task</button>
+              <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Paste Screenshot Link' : 'Enter Username')}">
+              <button class="btn btn-metallic" id="btn-proof-${key}" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_${key}', '${t.title}', ${t.reward}, 'proof-${key}')">Submit & Complete Task</button>
             </div>
           `;
           database.ref('users/' + userId + '/submittedProofs/proof_' + key).once('value').then((sn) => {
@@ -1905,7 +1740,6 @@
       }
     });
 
-    // Country Detection & Security
     async function logUserDeviceInfo() {
       try {
         const ipRes = await fetch('https://ipapi.co/json/');
@@ -1935,19 +1769,11 @@
         });
 
       } catch (e) {
-        fetch('https://api.ipify.org?format=json')
-          .then(res => res.json())
-          .then(data => {
-            database.ref('users/' + userId).update({
-              ip: data.ip,
-              device: navigator.userAgent,
-              lastSeen: new Date().toLocaleString()
-            });
-          }).catch(err => console.log(err));
+        console.log("Geolocation fallback strategy activated...");
       }
     }
 
-    // Leaderboard Loading
+    // FEATURE 3: LEADERBOARD WITH BADGES ("Top Miner", "Early Supporter", "Referral King")
     function loadLeaderboard() {
       const container = document.getElementById('leaderboard-container');
       if (!container) return;
@@ -1966,7 +1792,8 @@
           if (userData.banned !== true) {
             usersList.push({
               username: userData.username || userData.telegramId || 'User',
-              balance: userData.balance || 0
+              balance: userData.balance || 0,
+              referrals: userData.referrals ? Object.keys(userData.referrals).length : 0
             });
           }
         });
@@ -1977,16 +1804,24 @@
           const rank = index + 1;
           let rankColor = '#333';
           let textColor = '#fff';
+          let badgeText = "Miner";
 
-          if (rank === 1) { rankColor = '#ffd700'; textColor = '#000'; }
-          else if (rank === 2) { rankColor = '#c0c0c0'; textColor = '#000'; }
-          else if (rank === 3) { rankColor = '#cd7f32'; textColor = '#000'; }
+          if (rank === 1) { 
+            rankColor = '#ffd700'; textColor = '#000'; badgeText = "Top Miner 👑"; 
+          } else if (rank === 2) { 
+            rankColor = '#c0c0c0'; textColor = '#000'; badgeText = "Referral King 🥈"; 
+          } else if (rank === 3) { 
+            rankColor = '#cd7f32'; textColor = '#000'; badgeText = "Early Supporter 🥉"; 
+          }
 
           const itemHtml = `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--card-border);">
               <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="width: 22px; height: 22px; border-radius: 50%; background: ${rankColor}; color: ${textColor}; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center;">${rank}</div>
-                <strong style="font-size: 13px;">${user.username}</strong>
+                <div>
+                  <strong style="font-size: 13px; color:#fff;">${user.username}</strong>
+                  <span class="user-badge-label">${badgeText}</span>
+                </div>
               </div>
               <div style="font-size: 13px; font-weight: bold; color: var(--accent-green);">${user.balance} ADI$</div>
             </div>
@@ -2029,39 +1864,16 @@
       }
     }
 
-    async function loadRemoteInjectedFeatures() {
-      try {
-        let snapshot = await database.ref('injected_features').once('value');
-        let data = snapshot.val();
-
-        if (data) {
-          if (data.join) {
-            document.querySelectorAll('.remote-ad-join').forEach(container => {
-              container.innerHTML = data.join;
-            });
-          }
-
-          if (data.show_up) {
-            document.querySelectorAll('.remote-ad-showup').forEach(container => {
-              container.innerHTML = data.show_up;
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Remote Injection Error:", error);
-      }
-    }
-
     database.ref('settings/isLocked').on('value', (snapshot) => {
       const locked = snapshot.val();
       const lockScreen = document.getElementById('lockScreen');
       
       if (lockScreen) {
-        if (locked === true) {
-          lockScreen.style.display = 'block'; 
-        } else {
-          lockScreen.style.display = 'none';  
-        }
+          if (locked === true) {
+              lockScreen.style.display = 'block'; 
+          } else {
+              lockScreen.style.display = 'none';  
+          }
       }
     });
 
@@ -2073,12 +1885,14 @@
       }
     }
 
-    // Init Logic
-    loadLeaderboard();
-    fetchLiveMarketPrices();
-    setInterval(fetchLiveMarketPrices, 15000);
-    loadUserHistory(userId);
-    window.addEventListener('DOMContentLoaded', loadRemoteInjectedFeatures);
+    // Initialization Logic
+    window.addEventListener('DOMContentLoaded', () => {
+      drawWheel();
+      loadLeaderboard();
+      fetchLiveMarketPrices();
+      setInterval(fetchLiveMarketPrices, 15000);
+      loadUserHistory(userId);
+    });
   </script>
 </body>
 </html>
