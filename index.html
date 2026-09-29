@@ -1010,48 +1010,63 @@ function triggerAdAndExecute(formatType, callback) {
     // ==========================================
     // NOTIFICATION SYSTEM (1 - 30 DAYS)
     // ==========================================
-    function openNotificationModal() {
-      document.getElementById('notificationModal').style.display = 'flex';
-      loadNotificationHistory();
+    // UNREAD NOTIFICATION BADGE CHECKER
+function listenForNewNotifications() {
+    if (typeof database === 'undefined' || !database.ref) return;
+
+    // ৩০ দিনের মধ্যকার নোটিফিকেশন ফিল্টার
+    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    
+    // ইউজার শেষবার কখন নোটিফিকেশন দেখেছিল (ডিফল্ট ০ থাকলে প্রথমবার আসার সময় কারেন্ট টাইম ধরবে)
+    let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime'));
+    
+    // ইউজার যদি জীবনেও ফার্স্ট টাইম অ্যাপে ঢোকে, তবে বর্তমান সময়কেই ফার্স্ট রিড টাইম ধরে নেবে
+    if (!lastReadTime) {
+        lastReadTime = Date.now();
+        localStorage.setItem('lastNotifSeenTime', lastReadTime);
     }
 
-    function closeNotificationModal() {
-      document.getElementById('notificationModal').style.display = 'none';
-    }
+    database.ref('notifications').orderByChild('timestamp').startAt(thirtyDaysAgo).on('value', (snapshot) => {
+        let hasUnseen = false;
 
-    function loadNotificationHistory() {
-      const container = document.getElementById('notificationHistoryList');
-      if (!container) return;
-
-      const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-
-      database.ref('notifications').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value', (snapshot) => {
-        container.innerHTML = '';
-
-        if (!snapshot.exists()) {
-          container.innerHTML = '<div style="text-align:center; color:#888; font-size:12px; padding:15px;">No notifications in the last 30 days.</div>';
-          return;
+        if (snapshot.exists()) {
+            snapshot.forEach(child => {
+                const item = child.val();
+                // শুধু ইউজার শেষবার দেখার পর পোস্ট করা নতুন নোটিফিকেশন থাকলেই লাল ডট দেখাবে
+                if (item.timestamp && item.timestamp > lastReadTime) {
+                    hasUnseen = true;
+                }
+            });
         }
 
-        let notificationsArray = [];
-        snapshot.forEach((child) => {
-          notificationsArray.push(child.val());
-        });
+        const notifBadge = document.getElementById('notifRedBadge');
+        if (notifBadge) {
+            notifBadge.style.display = hasUnseen ? 'block' : 'none';
+        }
+    });
+}
 
-        notificationsArray.reverse();
+// MODAL OPEN & MARK ALL AS SEEN
+function openNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'flex';
 
-        notificationsArray.forEach((item) => {
-          const timeStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : '';
-          container.innerHTML += `
-            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px;">
-              <div style="font-weight:bold; font-size:13px; color:#ffffff; margin-bottom:4px;">${item.title || 'System Message'}</div>
-              <div style="font-size:11px; color:#cbd5e1; line-height:1.4; margin-bottom:6px;">${item.message || ''}</div>
-              <div style="font-size:9px; color:#888;">${timeStr}</div>
-            </div>
-          `;
-        });
-      });
-    }
+    // ক্লিক করার সাথে সাথেই দেখার টাইম আপডেট হয়ে যাবে
+    localStorage.setItem('lastNotifSeenTime', Date.now());
+
+    // লাল ডট গায়েব হয়ে যাবে
+    const notifBadge = document.getElementById('notifRedBadge');
+    if (notifBadge) notifBadge.style.display = 'none';
+
+    loadNotificationHistory();
+}
+
+// Page Load listener
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', listenForNewNotifications);
+} else {
+    listenForNewNotifications();
+}
+
 
     // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
     function processStreakCheck(userData) {
