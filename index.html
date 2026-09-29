@@ -1080,27 +1080,7 @@
   </div>
 
   <script>
-    // Monetag Ad Display System (Only for Specific Trigger Buttons)
-    function showMonetagAd(onSuccessAction) {
-      if (typeof show_11848612 === 'function') {
-        show_11848612().then(() => {
-          if (onSuccessAction) onSuccessAction();
-        }).catch((e) => {
-          console.log('Ad error or blocked:', e);
-          if (onSuccessAction) onSuccessAction();
-        });
-      } else {
-        if (onSuccessAction) onSuccessAction();
-      }
-    }
-
-    function executeWithAd(actionFunction) {
-      showMonetagAd(() => {
-        if (typeof actionFunction === 'function') {
-          actionFunction();
-        }
-      });
-    }
+    
 
     // Firebase Configuration
     const firebaseConfig = {
