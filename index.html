@@ -1120,62 +1120,57 @@ function triggerAdAndExecute(formatType, callback) {
     }
 
     // FEATURE 2: LUCKY SPIN WHEEL
-    const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
-    let isSpinning = false;
+    // CUSTOM POPUP MODAL FUNCTION
+function showCustomModal(wonAmount) {
+    const oldModal = document.getElementById('winModal');
+    if (oldModal) oldModal.remove();
 
-    function drawWheel() {
-      const canvas = document.getElementById('wheelCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const numSegments = wheelRewards.length;
-      const anglePerSegment = (2 * Math.PI) / numSegments;
+    const modalHtml = `
+        <div id="winModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:9999;">
+            <div style="background:#1e1e1e; color:#fff; padding:25px; border-radius:15px; text-align:center; max-width:320px; width:90%; border:1px solid #333; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+                <h2 style="color:#4CAF50; margin-top:0; margin-bottom:10px;">Congratulations! 🎉</h2>
+                <p style="font-size:16px; margin-bottom:20px; color:#ddd;">You have successfully won <strong style="color:#fff;">${wonAmount} ADI$</strong> tokens!</p>
+                <button id="claimModalBtn" style="background:#fff; color:#000; border:none; padding:12px 25px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; width:100%;">Claim Reward</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-      ctx.clearRect(0, 0, 200, 200);
+    document.getElementById('claimModalBtn').addEventListener('click', () => {
+        document.getElementById('winModal').remove();
+    });
+}
 
-      for (let i = 0; i < numSegments; i++) {
-        const angle = i * anglePerSegment;
-        ctx.beginPath();
-        ctx.fillStyle = (i % 2 === 0) ? "#121212" : "#94a3b8";
-        ctx.moveTo(100, 100);
-        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
-        ctx.lineTo(100, 100);
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(100, 100);
-        ctx.rotate(angle + anglePerSegment / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = (i % 2 === 0) ? "#ffffff" : "#000000";
-        ctx.font = "bold 13px Plus Jakarta Sans";
-        ctx.fillText(wheelRewards[i] + " ADI", 80, 5);
-        ctx.restore();
-      }
+// FIXED SPIN WHEEL FUNCTION
+function spinWheel() {
+    if (isSpinning) return;
+    
+    // Check spin limits
+    if (lastSpinDate === todayDate && spinsLeft <= 0) {
+        if (typeof showAlert === 'function') showAlert("Daily spin limit reached! Come back tomorrow.");
+        else alert("Daily spin limit reached! Come back tomorrow.");
+        return;
     }
 
-    function spinWheel() {
-      if (isSpinning) return;
-      if (lastSpinDate === todayDate && spinsLeft <= 0) {
-        showAlert("Daily spin limit reached! Come back tomorrow.");
-        return;
-      }
+    isSpinning = true;
+    const btn = document.getElementById('spinBtn');
+    if (btn) btn.disabled = true;
 
-      isSpinning = true;
-      const btn = document.getElementById('spinBtn');
-      if (btn) btn.disabled = true;
+    // Accurate Index Selection
+    const randomIndex = Math.floor(Math.random() * wheelRewards.length);
+    const selectedReward = wheelRewards[randomIndex];
+    const segmentDegrees = 360 / wheelRewards.length;
+    
+    // Exact Pointer Calculation
+    const targetDegree = 360 * 5 + (360 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
 
-      const randomIndex = Math.floor(Math.random() * wheelRewards.length);
-      const selectedReward = wheelRewards[randomIndex];
-      const segmentDegrees = 360 / wheelRewards.length;
-      const targetDegree = 360 * 5 + (360 - (randomIndex * segmentDegrees) - segmentDegrees / 2);
+    const canvas = document.getElementById('wheelCanvas');
+    if (canvas) {
+        canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
+        canvas.style.transform = `rotate(${targetDegree}deg)`;
+    }
 
-      const canvas = document.getElementById('wheelCanvas');
-      canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
-      canvas.style.transform = `rotate(${targetDegree}deg)`;
-
-      setTimeout(() => {
+    setTimeout(() => {
         userBalance += selectedReward;
         spinsLeft = Math.max(0, spinsLeft - 1);
         lastSpinDate = todayDate;
@@ -1184,33 +1179,44 @@ function triggerAdAndExecute(formatType, callback) {
         let updates = {};
         updates['users/' + userId + '/balance'] = userBalance;
         updates['users/' + userId + '/spinsLeft'] = spinsLeft;
-        updates['users/' + userId + '/lastSpinDate'] = todayDate;
+        updates['users/' + userId + '/lastSpinDate'] = lastSpinDate;
         updates['users/' + userId + '/history/' + histId] = {
-          title: "Lucky Spin Reward",
-          amount: "+" + selectedReward + " ADI$",
-          date: new Date().toLocaleString(),
-          type: "Spin Win",
-          timestamp: Date.now()
+            title: "Lucky Spin Reward",
+            amount: "+" + selectedReward + " ADI$",
+            date: new Date().toLocaleString(),
+            type: "Spin Win",
+            timestamp: Date.now()
         };
 
-        database.ref().update(updates).then(() => {
-          showAlert(`🎉 Wheel Stopped! You won +${selectedReward} ADI$!`);
-          canvas.style.transition = "none";
-          canvas.style.transform = "rotate(0deg)";
-          drawWheel();
-          isSpinning = false;
-          if (btn) btn.disabled = false;
-          updateSpinUI();
+        // Firebase-এ ১ টোকেনও যেন বাদ না যায় সেজন্য Global Balance-এও রিয়েলটাইম প্লাস করা
+        database.ref('globalData/totalMined').transaction((currentTotal) => {
+            return (currentTotal || 0) + Number(selectedReward);
         });
-      }, 4000);
-    }
 
-    function updateSpinUI() {
-      const txt = document.getElementById('spinLimitText');
-      if (txt) {
+        database.ref().update(updates).then(() => {
+            // Show Custom English Popup Modal
+            showCustomModal(selectedReward);
+
+            if (canvas) {
+                canvas.style.transition = 'none';
+                canvas.style.transform = 'rotate(0deg)';
+                drawWheel();
+            }
+            isSpinning = false;
+            if (btn && spinsLeft > 0) btn.disabled = false;
+            updateSpinUI();
+        });
+
+    }, 4000);
+}
+
+// FIXED SPIN UI FUNCTION
+function updateSpinUI() {
+    const txt = document.getElementById('spinLimitText');
+    if (txt) {
         txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
-      }
     }
+}
 
     // FEATURE 4: MINI TAPPER GAME CHALLENGE
     function startTapperGame() {
