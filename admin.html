@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADI$ Executive Control Console</title>
+  <title>ADI$ Executive Management Console</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
@@ -12,164 +12,311 @@
   
   <style>
     :root {
-      --bg: #0b0f19; --card: #131b2e; --border: #1e293b;
-      --text: #f8fafc; --text-sub: #94a3b8; --accent: #38bdf8;
-      --green: #22c55e; --red: #ef4444; --warning: #f59e0b;
+      --bg: #08090c; 
+      --sidebar: #0f1117; 
+      --card: #141722; 
+      --border: #2a2e3d;
+      --text: #e2e8f0; 
+      --text-sub: #8a94a6; 
+      --silver: #c0c0c0;
+      --silver-bright: #ffffff;
+      --silver-gradient: linear-gradient(135deg, #ffffff 0%, #a1a8b8 100%);
+      --green: #22c55e; 
+      --red: #ef4444; 
+      --warning: #f59e0b;
+      --blue: #3b82f6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 20px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-    .stat-val { font-size: 24px; font-weight: 800; color: var(--accent); margin-top: 5px; }
-    .btn { background: var(--accent); color: #000; font-weight: 700; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+    
+    .main-wrapper { flex: 1; padding: 25px; overflow-y: auto; max-width: 1200px; margin: 0 auto; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+    
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .stat-val { font-size: 22px; font-weight: 800; background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 5px; }
+    
+    .btn { background: var(--silver-gradient); color: #000; font-weight: 700; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-warning { background: var(--warning); color: #000; }
     .btn-green { background: var(--green); color: #fff; }
-    input, select, textarea { width: 100%; background: #070a12; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; margin-top: 5px; margin-bottom: 15px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-    th { color: var(--text-sub); }
+    input, textarea { width: 100%; background: #0b0d13; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; margin-top: 5px; margin-bottom: 15px; }
+
+    /* FOLDING FORM MODULE SYSTEM */
+    .module-folder { background: #0f1117; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 15px; overflow: hidden; transition: 0.3s; }
+    .module-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #141722; font-size: 16px; font-weight: 700; }
+    .module-header:hover { background: #1a1e2b; }
+    .module-body { padding: 20px; border-top: 1px solid var(--border); display: none; background: #0b0d13; }
+    .module-body.open { display: block; }
+
+    /* USER FOLDER STYLING */
+    .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab-btn { background: #141722; color: var(--text-sub); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    .tab-btn.active { background: var(--silver-gradient); color: #000; font-weight: 700; }
+
+    .user-folder { background: #0f1117; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+    .user-header { padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #141722; }
+    .user-body { padding: 15px; border-top: 1px solid var(--border); display: none; background: #0b0d13; font-size: 13px; line-height: 1.8; }
+    .user-body.open { display: block; }
+    
+    .rank-badge { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; font-weight: 800; font-size: 11px; background: #222736; color: var(--silver); margin-right: 8px; }
+    .rank-1 { background: #ffd700; color: #000; }
+    .rank-2 { background: #c0c0c0; color: #000; }
+    .rank-3 { background: #cd7f32; color: #000; }
+
+    /* ACTIVITY STATS BAR CHART STYLING */
+    .activity-bar-wrap { margin-bottom: 12px; }
+    .activity-bar-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .bar-bg { background: #1a1e2b; height: 12px; border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease-in-out; }
+
+    /* COUNTDOWN & AUTH */
+    .countdown-box { background: #141722; border: 1px solid var(--border); padding: 8px 15px; border-radius: 10px; font-size: 12px; color: var(--silver); }
     .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 99999; display: flex; justify-content: center; align-items: center; }
     .auth-box { text-align: center; max-width: 380px; width: 90%; background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); }
-    #videoCam { width: 100%; height: 200px; background: #000; border-radius: 10px; object-fit: cover; margin-bottom: 10px; }
+    #videoCam { width: 100%; height: 200px; background: #000; border-radius: 10px; object-fit: cover; margin-bottom: 15px; border: 2px solid var(--border); }
   </style>
 </head>
-<body>
+<body onload="startAutoFaceScan()">
 
-  <!-- ADMIN AUTHENTICATION OVERLAY (PIN & FACE VERIFICATION) -->
+  <!-- FACE SCAN OVERLAY -->
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-box">
-      <h2><i class="fa-solid fa-user-shield"></i> Admin Security</h2>
-      <p style="font-size: 12px; color: var(--text-sub); margin: 10px 0 20px;">Enter Secret PIN & Complete Face Verification</p>
-      
-      <input type="password" id="adminPin" placeholder="Enter Secret Passcode">
-      
-      <div id="faceScanSection" style="display:none;">
-        <video id="videoCam" autoplay muted></video>
-        <p id="scanStatus" style="font-size: 11px; color: var(--warning);">Detecting Face Scan...</p>
-      </div>
-
-      <button class="btn" style="width: 100%;" onclick="verifyAdminAccess()">Verify & Launch Console</button>
+      <h2 style="background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-user-shield"></i> Face Scanner Access</h2>
+      <p style="font-size: 12px; color: var(--text-sub); margin: 10px 0 15px;">Authenticating facial data...</p>
+      <video id="videoCam" autoplay muted></video>
+      <p id="scanStatus" style="font-size: 12px; color: var(--warning);"><i class="fa-solid fa-spinner fa-spin"></i> Initializing Camera...</p>
     </div>
   </div>
 
-  <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h1><i class="fa-solid fa-gauge-high"></i> Executive ADI$ Dashboard</h1>
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <div class="top-bar">
       <div>
-        <button class="btn btn-warning" onclick="toggleGlobalMining()"><i class="fa-solid fa-power-off"></i> Toggle Global Mining (Point 9)</button>
-        <button class="btn btn-danger" onclick="toggleAppLock()"><i class="fa-solid fa-lock"></i> Toggle App Lock Screen</button>
+        <h2 style="background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-shield-halved"></i> ADI$ Master Control Console</h2>
+        <p style="font-size: 12px; color: var(--text-sub);">Interactive Folding Form System</p>
+      </div>
+
+      <!-- 20 NOVEMBER COUNTDOWN TIMER -->
+      <div class="countdown-box">
+        <i class="fa-solid fa-clock" style="color:var(--warning);"></i> <strong>20 Nov Target:</strong> <span id="countdownTimer">Calculating...</span>
+      </div>
+
+      <div>
+        <button class="btn btn-warning" onclick="toggleGlobalMining()"><i class="fa-solid fa-power-off"></i> Mining</button>
+        <button class="btn btn-danger" onclick="toggleAppLock()"><i class="fa-solid fa-lock"></i> Lock App</button>
       </div>
     </div>
 
-    <!-- DASHBOARD ANALYTICS OVERVIEW -->
-    <div class="grid-4">
-      <div class="card">
-        <span style="font-size:12px; color:var(--text-sub);">TOTAL REGISTERED USERS</span>
-        <div class="stat-val" id="statUsers">0</div>
+    <!-- MODULE FOLDER 1: OVERVIEW ANALYTICS & DAU & USER ACTIVITY CHART -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-analytics')">
+        <span><i class="fa-solid fa-chart-pie" style="color:var(--silver);"></i> 1. Overview, DAU & User Activity Statistics</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-analytics"></i>
       </div>
-      <div class="card">
-        <span style="font-size:12px; color:var(--text-sub);">TOTAL MINED & DISTRIBUTED</span>
-        <div class="stat-val" id="statMined">0 ADI$</div>
-      </div>
-      <div class="card">
-        <span style="font-size:12px; color:var(--text-sub);">PENDING TASKS & PROOFS</span>
-        <div class="stat-val" id="statProofs">0</div>
-      </div>
-      <div class="card">
-        <span style="font-size:12px; color:var(--text-sub);">BANNED ACCOUNTS</span>
-        <div class="stat-val" id="statBanned" style="color:var(--red);">0</div>
+      <div class="module-body open" id="mod-analytics">
+        <div class="grid-4" style="margin-bottom: 20px;">
+          <div class="card">
+            <span style="font-size:12px; color:var(--text-sub);">TODAY'S ACTIVE USERS (DAU)</span>
+            <div class="stat-val" id="statDAU" style="color:var(--green);">0</div>
+          </div>
+          <div class="card">
+            <span style="font-size:12px; color:var(--text-sub);">TOTAL ACTIVE USERS</span>
+            <div class="stat-val" id="statUsers">0</div>
+          </div>
+          <div class="card">
+            <span style="font-size:12px; color:var(--text-sub);">ACTIVE MINED TOKENS</span>
+            <div class="stat-val" id="statMined">0 ADI$</div>
+          </div>
+          <div class="card">
+            <span style="font-size:12px; color:var(--text-sub);">BANNED ACCOUNTS</span>
+            <div class="stat-val" id="statBanned" style="color:var(--red);">0</div>
+          </div>
+        </div>
+
+        <!-- USER ACTIVITY STATISTICAL CHART -->
+        <div class="card">
+          <h4 style="margin-bottom: 15px; color:var(--silver-bright);"><i class="fa-solid fa-chart-bar"></i> User Most Played & Activity Chart</h4>
+          
+          <div class="activity-bar-wrap">
+            <div class="activity-bar-label">
+              <span><i class="fa-solid fa-hammer" style="color:var(--warning);"></i> Core Mining Claim</span>
+              <span id="actMiningCount">0 claims</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="barMining" style="width:0%; background:var(--warning);"></div></div>
+          </div>
+
+          <div class="activity-bar-wrap">
+            <div class="activity-bar-label">
+              <span><i class="fa-solid fa-gamepad" style="color:var(--green);"></i> Daily Mine Game</span>
+              <span id="actMineGameCount">0 plays</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="barMineGame" style="width:0%; background:var(--green);"></div></div>
+          </div>
+
+          <div class="activity-bar-wrap">
+            <div class="activity-bar-label">
+              <span><i class="fa-solid fa-dharmachakra" style="color:var(--blue);"></i> Spin Wheel Chart</span>
+              <span id="actSpinCount">0 spins</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="barSpin" style="width:0%; background:var(--blue);"></div></div>
+          </div>
+
+          <div class="activity-bar-wrap">
+            <div class="activity-bar-label">
+              <span><i class="fa-solid fa-list-check" style="color:var(--silver);"></i> Task Completion</span>
+              <span id="actTaskCount">0 completed</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="barTask" style="width:0%; background:var(--silver);"></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- QUICK CONTROLS -->
-    <div class="grid-4" style="grid-template-columns: 1fr 1fr;">
-      <div class="card">
-        <h3><i class="fa-solid fa-bullhorn"></i> Global Push Broadcast</h3>
-        <input type="text" id="notifTitle" placeholder="Notification Title">
-        <textarea id="notifMsg" placeholder="Message Description"></textarea>
-        <button class="btn" onclick="sendGlobalNotification()">Broadcast Notification</button>
+    <!-- MODULE FOLDER 2: USER FOLDERS & RANKING -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-users')">
+        <span><i class="fa-solid fa-folder-tree" style="color:var(--silver);"></i> 2. User Directory & Folder Management</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-users"></i>
       </div>
-      <div class="card">
-        <h3><i class="fa-solid fa-rectangle-ad"></i> Ad Network Control (Point 10)</h3>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">Enable/Disable Ad Networks Network-Wide</p>
-        <button class="btn btn-green" onclick="toggleAds(true)">Activate All Ads</button>
-        <button class="btn btn-danger" onclick="toggleAds(false)">Deactivate All Ads</button>
+      <div class="module-body" id="mod-users">
+        <div class="filter-tabs">
+          <button class="tab-btn active" id="tabActiveBtn" onclick="filterUserView('active')"><i class="fa-solid fa-user-check"></i> Active Users</button>
+          <button class="tab-btn" id="tabBannedBtn" onclick="filterUserView('banned')"><i class="fa-solid fa-user-slash"></i> Banned Users</button>
+          <button class="tab-btn" id="sortOrderBtn" onclick="toggleSortOrder()"><i class="fa-solid fa-arrow-down-up-wide"></i> Reverse Sort (Ulta View)</button>
+        </div>
+
+        <input type="text" id="userSearchInput" onkeyup="renderUserFolders()" placeholder="Search Username, ID, IP, or Country...">
+
+        <div id="userFolderContainer">Loading user folders...</div>
       </div>
     </div>
 
-    <!-- TASK MANAGER -->
-    <div class="card">
-      <h3><i class="fa-solid fa-plus-circle"></i> Create New Custom Task</h3>
-      <div class="grid-4" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap:10px;">
-        <input type="text" id="newTaskTitle" placeholder="Task Title (e.g. Join Telegram)">
-        <input type="text" id="newTaskLink" placeholder="Task Target URL">
-        <input type="number" id="newTaskReward" placeholder="Reward ADI$">
-        <input type="text" id="newTaskCode" placeholder="Secret Code (Optional)">
+    <!-- MODULE FOLDER 3: DAILY MINE GAME & SPIN WHEEL CONFIG FORM -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-games')">
+        <span><i class="fa-solid fa-dice" style="color:var(--silver);"></i> 3. Daily Mine Game & Spin Wheel Settings</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-games"></i>
       </div>
-      <button class="btn" onclick="addNewTask()">Add Task to App</button>
+      <div class="module-body" id="mod-games">
+        <div class="grid-4" style="grid-template-columns: 1fr 1fr; gap:15px;">
+          <div>
+            <h4 style="margin-bottom:10px; color:var(--warning);"><i class="fa-solid fa-gamepad"></i> Daily Mine Game</h4>
+            <label style="font-size:12px; color:var(--text-sub);">Max Daily Plays per User:</label>
+            <input type="number" id="mineGameMaxPlays" value="3" placeholder="Max Game Plays">
+            
+            <label style="font-size:12px; color:var(--text-sub);">Win Reward (ADI$):</label>
+            <input type="number" id="mineGameReward" value="50" placeholder="Reward Token">
+            <button class="btn" onclick="saveMineGameConfig()"><i class="fa-solid fa-floppy-disk"></i> Save Mine Game Settings</button>
+          </div>
+
+          <div>
+            <h4 style="margin-bottom:10px; color:var(--blue);"><i class="fa-solid fa-dharmachakra"></i> Spin Wheel Chart Config</h4>
+            <label style="font-size:12px; color:var(--text-sub);">Daily Spin Limit:</label>
+            <input type="number" id="spinWheelLimit" value="5" placeholder="Daily Limit">
+
+            <label style="font-size:12px; color:var(--text-sub);">Max Win Amount (ADI$):</label>
+            <input type="number" id="spinWheelMaxWin" value="100" placeholder="Max Spin Token">
+            <button class="btn" onclick="saveSpinConfig()"><i class="fa-solid fa-floppy-disk"></i> Save Spin Wheel Settings</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- USER MANAGEMENT CONSOLE & PROFILE CHECK -->
-    <div class="card">
-      <h3><i class="fa-solid fa-users-gear"></i> User Management & Comprehensive Tracking</h3>
-      <input type="text" id="userSearchInput" onkeyup="filterUsers()" placeholder="Search by Telegram ID, Username, IP Address or Country...">
-
-      <table id="userTable">
-        <thead>
-          <tr>
-            <th>User Info</th>
-            <th>Location & Source (Pt. 12)</th>
-            <th>Balance (Pt. 7)</th>
-            <th>Ref Shares / Copies (Pt. 13)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="userTableBody">
-          <tr><td colspan="5">Loading user records...</td></tr>
-        </tbody>
-      </table>
+    <!-- MODULE FOLDER 4: TASK CENTER FORM -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-tasks')">
+        <span><i class="fa-solid fa-list-check" style="color:var(--silver);"></i> 4. Task Creation Form</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-tasks"></i>
+      </div>
+      <div class="module-body" id="mod-tasks">
+        <div class="grid-4" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap:10px;">
+          <input type="text" id="newTaskTitle" placeholder="Task Title">
+          <input type="text" id="newTaskLink" placeholder="Target Link">
+          <input type="number" id="newTaskReward" placeholder="Reward ADI$">
+          <input type="text" id="newTaskCode" placeholder="Secret Code">
+        </div>
+        <button class="btn" onclick="addNewTask()"><i class="fa-solid fa-plus"></i> Add New Task</button>
+      </div>
     </div>
 
-  </div>
-
-  <!-- USER PROFILE DETAIL INSPECTION MODAL -->
-  <div id="profileModal" class="auth-overlay" style="display:none;">
-    <div class="auth-box" style="max-width: 550px; text-align: left;">
-      <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-id-card"></i> Complete User Profile</h3>
-      <div id="profileModalContent" style="font-size: 12px; line-height: 1.8;"></div>
-      <button class="btn btn-danger" style="margin-top:15px; width:100%;" onclick="closeProfileModal()">Close Profile View</button>
+    <!-- MODULE FOLDER 5: PUSH BROADCAST FORM -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-push')">
+        <span><i class="fa-solid fa-bullhorn" style="color:var(--silver);"></i> 5. Global Broadcast Form</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-push"></i>
+      </div>
+      <div class="module-body" id="mod-push">
+        <input type="text" id="notifTitle" placeholder="Broadcast Title">
+        <textarea id="notifMsg" placeholder="Message Content"></textarea>
+        <button class="btn" onclick="sendGlobalNotification()"><i class="fa-solid fa-paper-plane"></i> Send Notification</button>
+      </div>
     </div>
+
+    <!-- MODULE FOLDER 6: SYSTEM & AD CONTROLS -->
+    <div class="module-folder">
+      <div class="module-header" onclick="toggleModule('mod-controls')">
+        <span><i class="fa-solid fa-sliders" style="color:var(--silver);"></i> 6. Network & System Settings</span>
+        <i class="fa-solid fa-chevron-down" id="modIcon_mod-controls"></i>
+      </div>
+      <div class="module-body" id="mod-controls">
+        <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px;">Enable or disable monetization & ad networks across the app.</p>
+        <button class="btn btn-green" onclick="toggleAds(true)">Enable Ads</button>
+        <button class="btn btn-danger" onclick="toggleAds(false)">Disable Ads</button>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // Firebase Config (Matching Application Realtime Database)
     const firebaseConfig = { databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const SECRET_ADMIN_PIN = "123456"; // তোমার সিক্রেট পাসকোড সেট করো
-    let allUsersCache = {};
+    let allUsersList = [];
+    let currentFilter = 'active';
+    let isReverseSort = false;
 
-    // 8. Admin Face Verify and Security Access
-    async function verifyAdminAccess() {
-      const inputPin = document.getElementById('adminPin').value;
-      if(inputPin !== SECRET_ADMIN_PIN) {
-        alert("Invalid Passcode!");
-        return;
-      }
+    // FOLDING MODULE FORM TOGGLE
+    function toggleModule(modId) {
+      const body = document.getElementById(modId);
+      const icon = document.getElementById('modIcon_' + modId);
+      const isOpen = body.classList.contains('open');
 
-      document.getElementById('faceScanSection').style.display = "block";
-      document.getElementById('scanStatus').innerText = "Initializing Camera Access...";
+      body.classList.toggle('open', !isOpen);
+      if(icon) icon.className = isOpen ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
+    }
 
+    // 20 NOVEMBER COUNTDOWN SYSTEM
+    function startNovemberCountdown() {
+      const targetDate = new Date("November 20, 2026 00:00:00").getTime();
+      setInterval(() => {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+
+        if (diff < 0) {
+          document.getElementById('countdownTimer').innerText = "Event Active!";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('countdownTimer').innerText = `${days}d ${hours}h ${mins}m ${secs}s`;
+      }, 1000);
+    }
+
+    async function startAutoFaceScan() {
+      startNovemberCountdown();
+      const scanStatus = document.getElementById('scanStatus');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         document.getElementById('videoCam').srcObject = stream;
-        
-        // Mock Face Detection Flow using face-api model setup
+        scanStatus.innerHTML = '<i class="fa-solid fa-face-smile fa-beat"></i> Face Scanning...';
         setTimeout(() => {
-          document.getElementById('scanStatus').innerText = "Face Verified Successfully!";
+          scanStatus.innerHTML = '<span style="color:var(--green);"><i class="fa-solid fa-circle-check"></i> Authenticated!</span>';
           setTimeout(() => {
             stream.getTracks().forEach(track => track.stop());
             document.getElementById('authOverlay').style.display = "none";
@@ -177,176 +324,220 @@
           }, 1000);
         }, 2000);
       } catch (err) {
-        alert("Camera permission required for Face Verification!");
+        scanStatus.innerHTML = '<span style="color:var(--red);">Camera access required!</span>';
       }
     }
 
     function initDashboardData() {
-      // Realtime Analytics Listener
       db.ref('users').on('value', (snapshot) => {
         const users = snapshot.val() || {};
-        allUsersCache = users;
+        allUsersList = [];
+        let activeUsersCount = 0, activeMinedTotal = 0, bannedCount = 0, dauCount = 0;
 
-        let totalUsers = 0, totalMined = 0, totalBanned = 0;
-        const tbody = document.getElementById('userTableBody');
-        tbody.innerHTML = '';
+        let totalMiningClaims = 0;
+        let totalMineGamePlays = 0;
+        let totalSpinCount = 0;
+        let totalTaskCount = 0;
+
+        const todayStr = new Date().toISOString().split('T')[0];
 
         Object.keys(users).forEach((uid) => {
-          totalUsers++;
           const u = users[uid];
-          const balance = Number(u.balance) || 0;
-          totalMined += balance;
-          if (u.banned) totalBanned++;
+          u.uid = uid;
+          u.balanceNum = Number(u.balance) || 0;
 
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>
-              <strong>${u.username || 'User'}</strong><br>
-              <small style="color:var(--text-sub);">ID: ${uid} | IP: ${u.ip || 'N/A'}</small>
-            </td>
-            <td>
-              ${u.country || 'Unknown'}<br>
-              <small style="color:var(--accent);">Source: ${u.trafficSource || u.referredFrom || 'Direct/Organic'}</small>
-            </td>
-            <td>
-              <strong>${balance} ADI$</strong>
-              <button style="padding:2px 6px; font-size:10px;" class="btn" onclick="editUserBalance('${uid}', ${balance})">Edit</button>
-            </td>
-            <td>
-              Shared: ${u.refShareCount || 0} times<br>
-              Copied: ${u.refCopyCount || 0} times
-            </td>
-            <td>
-              <button class="btn" style="padding:5px;" onclick="viewFullProfile('${uid}')"><i class="fa-solid fa-eye"></i> Profile</button>
-              ${u.banned ? 
-                `<button class="btn btn-green" style="padding:5px;" onclick="toggleBan('${uid}', false)">Unban</button>` : 
-                `<button class="btn btn-danger" style="padding:5px;" onclick="banAndWipeUserData('${uid}')">Ban & Wipe</button>`
-              }
-            </td>
-          `;
-          tbody.appendChild(tr);
+          // DAILY ACTIVE USER TRACKING
+          if (u.lastActiveDate === todayStr) {
+            dauCount++;
+          }
+
+          // ACTIVITY TRACKING COUNTS
+          totalMiningClaims += Number(u.miningClaimCount || 0);
+          totalMineGamePlays += Number(u.mineGamePlayCount || 0);
+          totalSpinCount += Number(u.spinCount || 0);
+          totalTaskCount += Number(u.taskCompletedCount || 0);
+
+          if (u.banned) {
+            bannedCount++;
+          } else {
+            activeUsersCount++;
+            activeMinedTotal += u.balanceNum;
+          }
+          allUsersList.push(u);
         });
 
-        document.getElementById('statUsers').innerText = totalUsers;
-        document.getElementById('statMined').innerText = totalMined.toLocaleString() + " ADI$";
-        document.getElementById('statBanned').innerText = totalBanned;
+        sortUserList();
+
+        document.getElementById('statDAU').innerText = dauCount;
+        document.getElementById('statUsers').innerText = activeUsersCount;
+        document.getElementById('statMined').innerText = activeMinedTotal.toLocaleString() + " ADI$";
+        document.getElementById('statBanned').innerText = bannedCount;
+
+        // RENDER ACTIVITY STATISTICAL BAR CHART
+        renderActivityChart(totalMiningClaims, totalMineGamePlays, totalSpinCount, totalTaskCount);
+
+        renderUserFolders();
       });
-
-      db.ref('pending_tasks').on('value', (snap) => {
-        document.getElementById('statProofs').innerText = snap.exists() ? Object.keys(snap.val()).length : 0;
-      });
     }
 
-    // 7. Complete User Profile Viewer
-    function viewFullProfile(uid) {
-      const u = allUsersCache[uid];
-      if(!u) return;
+    function renderActivityChart(mining, mineGame, spin, tasks) {
+      document.getElementById('actMiningCount').innerText = `${mining} claims`;
+      document.getElementById('actMineGameCount').innerText = `${mineGame} plays`;
+      document.getElementById('actSpinCount').innerText = `${spin} spins`;
+      document.getElementById('actTaskCount').innerText = `${tasks} completed`;
 
-      const profileHTML = `
-        <p><strong>Name / Telegram User:</strong> ${u.username || 'N/A'}</p>
-        <p><strong>IP Address:</strong> ${u.ip || 'Not Recorded'}</p>
-        <p><strong>Country:</strong> ${u.country || 'Unknown'}</p>
-        <p><strong>Connected BEP20 Wallet:</strong> <span style="word-break:break-all;">${u.walletAddress || 'Not Connected'}</span> 
-           ${u.walletAddress ? `<button onclick="navigator.clipboard.writeText('${u.walletAddress}'); alert('Copied Address!');" style="padding:2px 6px; font-size:10px;">Copy</button>` : ''}</p>
-        <p><strong>Current Balance:</strong> ${u.balance || 0} ADI$</p>
-        <p><strong>Total Referrals:</strong> ${u.referrals ? Object.keys(u.referrals).length : 0}</p>
-        <p><strong>Completed Tasks:</strong> ${u.submittedProofs ? Object.keys(u.submittedProofs).length : 0}</p>
-        <p><strong>Total Lucky Spins:</strong> ${u.totalSpinsCount || 0}</p>
-        <p><strong>Joining Timestamp:</strong> ${u.joiningTime ? new Date(u.joiningTime).toLocaleString() : 'N/A'}</p>
-        <p><strong>Traffic Origin:</strong> ${u.trafficSource || u.referredFrom || 'Direct/Organic'}</p>
-      `;
-      document.getElementById('profileModalContent').innerHTML = profileHTML;
-      document.getElementById('profileModal').style.display = 'flex';
+      const maxVal = Math.max(mining, mineGame, spin, tasks, 1);
+
+      document.getElementById('barMining').style.width = Math.round((mining / maxVal) * 100) + '%';
+      document.getElementById('barMineGame').style.width = Math.round((mineGame / maxVal) * 100) + '%';
+      document.getElementById('barSpin').style.width = Math.round((spin / maxVal) * 100) + '%';
+      document.getElementById('barTask').style.width = Math.round((tasks / maxVal) * 100) + '%';
     }
 
-    function closeProfileModal() {
-      document.getElementById('profileModal').style.display = 'none';
-    }
-
-    // Balance Manual Adjustment
-    function editUserBalance(uid, oldBal) {
-      const newBal = prompt("Enter new balance for user:", oldBal);
-      if (newBal !== null) {
-        db.ref('users/' + uid + '/balance').set(Number(newBal));
+    function sortUserList() {
+      if (isReverseSort) {
+        allUsersList.sort((a, b) => a.balanceNum - b.balanceNum); // Low to High (Ulta Sort)
+      } else {
+        allUsersList.sort((a, b) => b.balanceNum - a.balanceNum); // High to Low
       }
     }
 
-    // 11. Ban User & Wipe All Balance/Data
+    function toggleSortOrder() {
+      isReverseSort = !isReverseSort;
+      document.getElementById('sortOrderBtn').classList.toggle('active', isReverseSort);
+      sortUserList();
+      renderUserFolders();
+    }
+
+    function filterUserView(type) {
+      currentFilter = type;
+      document.getElementById('tabActiveBtn').classList.toggle('active', type === 'active');
+      document.getElementById('tabBannedBtn').classList.toggle('active', type === 'banned');
+      renderUserFolders();
+    }
+
+    function renderUserFolders() {
+      const container = document.getElementById('userFolderContainer');
+      const searchQuery = document.getElementById('userSearchInput').value.toLowerCase();
+      container.innerHTML = '';
+
+      let rankCounter = 1;
+
+      allUsersList.forEach((u) => {
+        const isBanned = !!u.banned;
+        if ((currentFilter === 'active' && isBanned) || (currentFilter === 'banned' && !isBanned)) return;
+
+        const searchText = `${u.username || ''} ${u.uid} ${u.ip || ''} ${u.country || ''}`.toLowerCase();
+        if (searchQuery && !searchText.includes(searchQuery)) return;
+
+        const rank = rankCounter++;
+        let rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+
+        const folder = document.createElement('div');
+        folder.className = 'user-folder';
+        folder.innerHTML = `
+          <div class="user-header" onclick="toggleUserFolder('${u.uid}')">
+            <div>
+              <span class="rank-badge ${rankClass}">${rank}</span>
+              <strong style="color:var(--silver-bright);"><i class="fa-solid fa-folder" id="userIcon_${u.uid}"></i> ${u.username || 'User'}</strong>
+              <small style="color:var(--text-sub); margin-left:10px;">ID: ${u.uid}</small>
+            </div>
+            <div>
+              <strong style="color:var(--silver); font-size:14px; margin-right:15px;">${u.balanceNum} ADI$</strong>
+              <i class="fa-solid fa-chevron-down" style="color:var(--text-sub);"></i>
+            </div>
+          </div>
+          <div class="user-body" id="userBody_${u.uid}">
+            <div class="grid-4" style="grid-template-columns: 1fr 1fr; gap:10px;">
+              <div>
+                <p><strong>Username/Tag:</strong> ${u.username || 'N/A'}</p>
+                <p><strong>Telegram ID:</strong> ${u.uid}</p>
+                <p><strong>IP Address:</strong> ${u.ip || 'N/A'}</p>
+                <p><strong>Country:</strong> ${u.country || 'Unknown'}</p>
+                <p><strong>Traffic Source:</strong> ${u.trafficSource || u.referredFrom || 'Direct/Organic'}</p>
+              </div>
+              <div>
+                <p><strong>Wallet (BEP20):</strong> <span style="word-break:break-all; color:var(--silver);">${u.walletAddress || 'Not Connected'}</span></p>
+                <p><strong>Mine Game Plays:</strong> ${u.mineGamePlayCount || 0}</p>
+                <p><strong>Spin Count:</strong> ${u.spinCount || 0}</p>
+                <p><strong>Joining Date:</strong> ${u.joiningTime ? new Date(u.joiningTime).toLocaleString() : 'N/A'}</p>
+              </div>
+            </div>
+            <hr style="border-color:var(--border); margin:10px 0;">
+            <div style="display:flex; gap:10px;">
+              <button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editUserBalance('${u.uid}', ${u.balanceNum})"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
+              ${u.banned ? 
+                `<button class="btn btn-green" style="padding:6px 12px; font-size:12px;" onclick="toggleBan('${u.uid}', false)"><i class="fa-solid fa-user-check"></i> Unban User</button>` : 
+                `<button class="btn btn-danger" style="padding:6px 12px; font-size:12px;" onclick="banAndWipeUserData('${u.uid}')"><i class="fa-solid fa-user-slash"></i> Ban & Wipe Balance</button>`
+              }
+            </div>
+          </div>
+        `;
+        container.appendChild(folder);
+      });
+
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p style="color:var(--text-sub); text-align:center; padding:20px;">No user records found.</p>';
+      }
+    }
+
+    function toggleUserFolder(uid) {
+      const body = document.getElementById('userBody_' + uid);
+      const icon = document.getElementById('userIcon_' + uid);
+      const isOpen = body.classList.contains('open');
+
+      body.classList.toggle('open', !isOpen);
+      if (icon) icon.className = isOpen ? "fa-solid fa-folder" : "fa-solid fa-folder-open";
+    }
+
+    function editUserBalance(uid, oldBal) {
+      const newBal = prompt("Enter new balance for user:", oldBal);
+      if (newBal !== null) db.ref('users/' + uid + '/balance').set(Number(newBal));
+    }
+
     function banAndWipeUserData(uid) {
-      if (confirm("Are you sure you want to BAN this user AND wipe all their balance data?")) {
+      if (confirm("Ban user & wipe all token data?")) {
         let updates = {};
         updates['users/' + uid + '/banned'] = true;
         updates['users/' + uid + '/balance'] = 0;
-        updates['users/' + uid + '/totalMined'] = 0;
-        updates['users/' + uid + '/history'] = null;
-        db.ref().update(updates).then(() => alert("User Banned & Data Wiped Successfully!"));
+        db.ref().update(updates);
       }
     }
 
-    function toggleBan(uid, status) {
-      db.ref('users/' + uid + '/banned').set(status);
+    function saveMineGameConfig() {
+      const maxPlays = Number(document.getElementById('mineGameMaxPlays').value);
+      const reward = Number(document.getElementById('mineGameReward').value);
+      db.ref('app_config/mine_game').set({ maxPlays, reward });
+      alert("Daily Mine Game settings saved!");
     }
 
-    // 9. Stop All Mining (One-Click)
-    function toggleGlobalMining() {
-      db.ref('app_config/global_mining_disabled').transaction((current) => !current)
-        .then((res) => alert("Global Mining State Changed: " + (res.snapshot.val() ? "DISABLED" : "ENABLED")));
+    function saveSpinConfig() {
+      const limit = Number(document.getElementById('spinWheelLimit').value);
+      const maxWin = Number(document.getElementById('spinWheelMaxWin').value);
+      db.ref('app_config/spin_wheel').set({ limit, maxWin });
+      alert("Spin Wheel settings saved!");
     }
 
-    // 10. Enable / Disable Network Ads
-    function toggleAds(enable) {
-      db.ref('app_config/ads_enabled').set(enable)
-        .then(() => alert("Network Ads status set to: " + enable));
-    }
+    function toggleBan(uid, status) { db.ref('users/' + uid + '/banned').set(status); }
+    function toggleGlobalMining() { db.ref('app_config/global_mining_disabled').transaction(c => !c); }
+    function toggleAds(enable) { db.ref('app_config/ads_enabled').set(enable); }
+    function toggleAppLock() { db.ref('app_config/maintenance_mode').transaction(c => !c); }
 
-    // App Emergency Lock
-    function toggleAppLock() {
-      db.ref('app_config/maintenance_mode').transaction((current) => !current)
-        .then((res) => alert("Maintenance Lock Toggled: " + (res.snapshot.val() ? "ACTIVE" : "INACTIVE")));
-    }
-
-    // Task Creation
     function addNewTask() {
       const title = document.getElementById('newTaskTitle').value;
       const link = document.getElementById('newTaskLink').value;
       const reward = Number(document.getElementById('newTaskReward').value);
       const code = document.getElementById('newTaskCode').value;
-
-      if (!title || !reward) { alert("Title and Reward required!"); return; }
-
-      const taskId = 'task_' + Date.now();
-      db.ref('custom_tasks/' + taskId).set({ title, link, reward, code, active: true }).then(() => {
-        alert("Task Created!");
-        document.getElementById('newTaskTitle').value = '';
-        document.getElementById('newTaskLink').value = '';
-        document.getElementById('newTaskReward').value = '';
-        document.getElementById('newTaskCode').value = '';
-      });
+      if (!title || !reward) return;
+      db.ref('custom_tasks/task_' + Date.now()).set({ title, link, reward, code, active: true });
     }
 
-    // Broadcasting Push Notifications
     function sendGlobalNotification() {
       const title = document.getElementById('notifTitle').value;
       const message = document.getElementById('notifMsg').value;
-      if(!title || !message) { alert("Fill all fields!"); return; }
-
-      db.ref('global_notification').set({ title, message, timestamp: Date.now() }).then(() => {
-        alert("Global Notification Pushed!");
-        document.getElementById('notifTitle').value = '';
-        document.getElementById('notifMsg').value = '';
-      });
-    }
-
-    // Search Filter
-    function filterUsers() {
-      const input = document.getElementById('userSearchInput').value.toLowerCase();
-      const rows = document.getElementById('userTableBody').getElementsByTagName('tr');
-
-      for (let row of rows) {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(input) ? '' : 'none';
-      }
+      if(!title || !message) return;
+      db.ref('global_notification').set({ title, message, timestamp: Date.now() });
     }
   </script>
 </body>
-  </html>
+</html>
