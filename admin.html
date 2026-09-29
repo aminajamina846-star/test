@@ -48,7 +48,7 @@
     input:focus, textarea:focus { border-color: var(--blue); outline: none; }
 
     .module-folder { background: var(--card); border: 2px solid var(--border-thick); border-radius: 16px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
-    .module-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #161c2e; font-size: 17px; font-weight: 800; letter-spacing: 0.3px; border-bottom: 2px solid transparent; }
+    .module-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #161c2e; font-size: 17px; font-weight: 800; letter-spacing: 0.3px; }
     .module-header:hover { background: #1d253d; }
     .module-body { padding: 25px; border-top: 2px solid var(--border-thick); display: none; background: var(--card-inner); }
     .module-body.open { display: block; }
@@ -63,6 +63,11 @@
     .user-body { padding: 20px; border-top: 2px solid var(--border-thick); display: none; background: #0c0f18; font-size: 14px; line-height: 2; }
     .user-body.open { display: block; }
 
+    .sub-folder { background: #161c2e; border: 1px solid var(--border-thick); border-radius: 10px; margin-top: 10px; overflow: hidden; }
+    .sub-folder-header { padding: 12px 16px; background: #1f273e; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .sub-folder-body { padding: 15px; display: none; background: #0e121d; }
+    .sub-folder-body.open { display: block; }
+
     .data-pill { display: inline-block; background: #1e283d; padding: 3px 10px; border-radius: 6px; font-weight: 800; color: #22d3ee; border: 1px solid #3b82f6; }
     .ip-tag { color: #f43f5e; font-weight: 800; background: rgba(244,63,94,0.15); padding: 2px 8px; border-radius: 6px; }
     .device-tag { color: #a855f7; font-weight: 800; background: rgba(168,85,247,0.15); padding: 2px 8px; border-radius: 6px; }
@@ -73,23 +78,13 @@
     .rank-2 { background: #e2e8f0; color: #000; }
     .rank-3 { background: #cd7f32; color: #000; }
 
-    .activity-bar-wrap { margin-bottom: 16px; }
-    .activity-bar-label { font-size: 13px; font-weight: 800; margin-bottom: 6px; display: flex; justify-content: space-between; }
-    .bar-bg { background: #1c2338; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-    .bar-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease-in-out; }
-
-    .task-item { background: #161c2e; border: 2px solid var(--border-thick); padding: 15px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .report-card { background: #151a2b; border: 2px solid #3b82f6; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-
-    .countdown-box { background: var(--card); border: 2px solid var(--border-thick); padding: 10px 18px; border-radius: 12px; font-size: 13px; color: var(--silver-bright); font-weight: 700; }
-    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 99999; display: flex; justify-content: center; align-items: center; }
-    .auth-box { text-align: center; max-width: 400px; width: 90%; background: var(--card); padding: 35px; border-radius: 20px; border: 3px solid var(--border-thick); }
-    #videoCam { width: 100%; height: 210px; background: #000; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 2px solid var(--border-thick); }
-    
-    .proof-box { background: #101422; border: 1px dashed var(--border-thick); padding: 14px; border-radius: 10px; margin-top: 10px; }
     .table-custom { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .table-custom th, .table-custom td { padding: 10px 14px; border: 1px solid var(--border-thick); text-align: left; font-size: 13px; }
     .table-custom th { background: #182035; color: var(--silver-bright); font-weight: 800; }
+
+    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 99999; display: flex; justify-content: center; align-items: center; }
+    .auth-box { text-align: center; max-width: 400px; width: 90%; background: var(--card); padding: 35px; border-radius: 20px; border: 3px solid var(--border-thick); }
+    #videoCam { width: 100%; height: 210px; background: #000; border-radius: 12px; object-fit: cover; margin-bottom: 15px; border: 2px solid var(--border-thick); }
   </style>
 </head>
 <body onload="startAutoFaceScan()">
@@ -97,7 +92,7 @@
   <!-- FACE SCAN OVERLAY -->
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-box">
-      <h2 style="background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size:22px;"><i class="fa-solid fa-user-shield"></i> Face Scanner Access</h2>
+      <h2 style="background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size:22px;"><i class="fa-solid fa-user-shield"></i> Executive Control Portal</h2>
       <p style="font-size: 13px; color: var(--text-sub); margin: 10px 0 18px; font-weight:600;">Authenticating facial data...</p>
       <video id="videoCam" autoplay muted></video>
       <p id="scanStatus" style="font-size: 13px; color: var(--warning); font-weight:800;"><i class="fa-solid fa-spinner fa-spin"></i> Initializing Camera...</p>
@@ -109,11 +104,7 @@
     <div class="top-bar">
       <div>
         <h2 style="background: var(--silver-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size:26px; font-weight:900;"><i class="fa-solid fa-shield-halved"></i> ADI$ Master Control Console</h2>
-        <p style="font-size: 13px; color: var(--text-sub); font-weight:700;">Folder Form Management & Analytics System</p>
-      </div>
-
-      <div class="countdown-box">
-        <i class="fa-solid fa-clock" style="color:var(--warning);"></i> <strong>20 Nov Target:</strong> <span id="countdownTimer">Calculating...</span>
+        <p style="font-size: 13px; color: var(--text-sub); font-weight:700;">Separated User Profile & Task History System</p>
       </div>
 
       <div>
@@ -122,84 +113,20 @@
       </div>
     </div>
 
-    <!-- MODULE FOLDER 1: OVERVIEW ANALYTICS & DAU -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-analytics')">
-        <span><i class="fa-solid fa-chart-pie" style="color:var(--blue);"></i> 1. Overview, DAU & User Activity Statistics</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-analytics"></i>
-      </div>
-      <div class="module-body open" id="mod-analytics">
-        <div class="grid-4" style="margin-bottom: 22px;">
-          <div class="card">
-            <span style="font-size:12px; font-weight:800; color:var(--text-sub);">TODAY'S ACTIVE USERS (DAU)</span>
-            <div class="stat-val" id="statDAU" style="color:var(--green);">0</div>
-          </div>
-          <div class="card">
-            <span style="font-size:12px; font-weight:800; color:var(--text-sub);">TOTAL ACTIVE USERS</span>
-            <div class="stat-val" id="statUsers">0</div>
-          </div>
-          <div class="card">
-            <span style="font-size:12px; font-weight:800; color:var(--text-sub);">ACTIVE MINED TOKENS</span>
-            <div class="stat-val" id="statMined" style="color:var(--blue);">0 ADI$</div>
-          </div>
-          <div class="card">
-            <span style="font-size:12px; font-weight:800; color:var(--text-sub);">PENDING TASK REPORTS</span>
-            <div class="stat-val" id="statPendingReports" style="color:var(--warning);">0</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h4 style="margin-bottom: 18px; color:var(--silver-bright); font-size:16px;"><i class="fa-solid fa-chart-bar"></i> User Most Played & Feature Activity Chart</h4>
-          
-          <div class="activity-bar-wrap">
-            <div class="activity-bar-label">
-              <span><i class="fa-solid fa-hammer" style="color:var(--warning);"></i> Core Mining Claim</span>
-              <span id="actMiningCount" class="data-pill">0 claims</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" id="barMining" style="width:0%; background:var(--warning);"></div></div>
-          </div>
-
-          <div class="activity-bar-wrap">
-            <div class="activity-bar-label">
-              <span><i class="fa-solid fa-gamepad" style="color:var(--green);"></i> Daily Mine Game</span>
-              <span id="actMineGameCount" class="data-pill">0 plays</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" id="barMineGame" style="width:0%; background:var(--green);"></div></div>
-          </div>
-
-          <div class="activity-bar-wrap">
-            <div class="activity-bar-label">
-              <span><i class="fa-solid fa-dharmachakra" style="color:var(--blue);"></i> Spin Wheel Chart</span>
-              <span id="actSpinCount" class="data-pill">0 spins</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" id="barSpin" style="width:0%; background:var(--blue);"></div></div>
-          </div>
-
-          <div class="activity-bar-wrap">
-            <div class="activity-bar-label">
-              <span><i class="fa-solid fa-list-check" style="color:var(--silver-bright);"></i> Task Completion</span>
-              <span id="actTaskCount" class="data-pill">0 completed</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" id="barTask" style="width:0%; background:var(--silver-bright);"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- NEW MODULE: TOP 50 REFERRAL CONTEST LEADERBOARD -->
+    <!-- MODULE 1: TOP 50 REFERRAL CONTEST -->
     <div class="module-folder">
       <div class="module-header" onclick="toggleModule('mod-top-referrals')">
-        <span><i class="fa-solid fa-trophy" style="color:var(--warning);"></i> 2. Top 50 Referral Contest Leaderboard & Earned Rewards</span>
+        <span><i class="fa-solid fa-trophy" style="color:var(--warning);"></i> 1. Top 50 Referral Contest Leaderboard</span>
         <i class="fa-solid fa-chevron-down" id="modIcon_mod-top-referrals"></i>
       </div>
-      <div class="module-body" id="mod-top-referrals">
+      <div class="module-body open" id="mod-top-referrals">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
           <div>
-            <h4 style="color:var(--silver-bright);"><i class="fa-solid fa-users-viewfinder"></i> Top 50 Users By Valid Referral Invites</h4>
-            <p style="font-size:12px; color:var(--text-sub); font-weight:600;">Sudu actual reffer complete kora user-ra e-khane auto calculate o token rank pabe.</p>
+            <h4 style="color:var(--silver-bright);"><i class="fa-solid fa-users-viewfinder"></i> Top Referrals Ranking</h4>
+            <p style="font-size:12px; color:var(--text-sub); font-weight:600;">Reffer complete kora valid users-ra e-khane auto token balance o rank pabe.</p>
           </div>
           <div style="background:#161c2e; padding:8px 14px; border-radius:10px; border:1px solid var(--border-thick); font-size:13px;">
-            Per Reffer Bonus: <strong style="color:var(--green);" id="refBonusRateDisplay">100 ADI$</strong>
+            Bonus Rate: <strong style="color:var(--green);" id="refBonusRateDisplay">100 ADI$ / Reffer</strong>
           </div>
         </div>
 
@@ -210,158 +137,34 @@
                 <th style="width:70px;">Rank</th>
                 <th>Telegram ID / User</th>
                 <th>Total Referrals</th>
-                <th>Reffer Token Earned</th>
+                <th>Earned Tokens</th>
                 <th>Wallet Address</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody id="topReferralTableBody">
-              <tr><td colspan="6" style="text-align:center; color:var(--text-sub);">Counting referral records...</td></tr>
+              <tr><td colspan="6" style="text-align:center; color:var(--text-sub);">Loading referral data...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- MODULE: IP & DEVICE DETECTION DASHBOARD -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-ip-device')">
-        <span><i class="fa-solid fa-network-wired" style="color:var(--purple);"></i> 3. IP & Device Fingerprinting Detection Center</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-ip-device"></i>
-      </div>
-      <div class="module-body" id="mod-ip-device">
-        <h4 style="margin-bottom:12px; color:var(--silver-bright);"><i class="fa-solid fa-shield-cat"></i> Suspicious Multi-Accounts & Detected Network Devices</h4>
-        <div style="overflow-x:auto;">
-          <table class="table-custom">
-            <thead>
-              <tr>
-                <th>Telegram ID / User</th>
-                <th>IP Address</th>
-                <th>Detected Device / OS</th>
-                <th>Browser Agent</th>
-                <th>Screen Res</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="ipDeviceTableBody">
-              <tr><td colspan="6" style="text-align:center; color:var(--text-sub);">Scanning network logs...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE: USER TASK REPORT APPROVAL & REJECTION SYSTEM -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-task-approval')">
-        <span><i class="fa-solid fa-check-double" style="color:var(--warning);"></i> 4. Task Reports & Proof Verification Center</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-task-approval"></i>
-      </div>
-      <div class="module-body" id="mod-task-approval">
-        <h4 style="margin-bottom:15px; color:var(--silver-bright);"><i class="fa-solid fa-inbox"></i> Submitted Task Proofs Awaiting Verification</h4>
-        <div id="pendingTaskReportsContainer">Loading pending task proofs...</div>
-      </div>
-    </div>
-
-    <!-- MODULE FOLDER: USER FOLDERS & RANKING -->
+    <!-- MODULE 2: USER DIRECTORY & SEPARATED HISTORY FOLDERS -->
     <div class="module-folder">
       <div class="module-header" onclick="toggleModule('mod-users')">
-        <span><i class="fa-solid fa-folder-tree" style="color:var(--green);"></i> 5. User Directory, Folder & Comprehensive Logs</span>
+        <span><i class="fa-solid fa-folder-tree" style="color:var(--green);"></i> 2. User Directory (Separated Profile & Task History)</span>
         <i class="fa-solid fa-chevron-down" id="modIcon_mod-users"></i>
       </div>
-      <div class="module-body" id="mod-users">
+      <div class="module-body open" id="mod-users">
         <div class="filter-tabs">
           <button class="tab-btn active" id="tabActiveBtn" onclick="filterUserView('active')"><i class="fa-solid fa-user-check"></i> Active Users</button>
           <button class="tab-btn" id="tabBannedBtn" onclick="filterUserView('banned')"><i class="fa-solid fa-user-slash"></i> Banned Users</button>
-          <button class="tab-btn" id="sortOrderBtn" onclick="toggleSortOrder()"><i class="fa-solid fa-arrow-down-up-wide"></i> Reverse Sort (Ulta Rank)</button>
         </div>
 
-        <input type="text" id="userSearchInput" onkeyup="renderUserFolders()" placeholder="Search Username, Telegram ID, IP, Country or Device...">
+        <input type="text" id="userSearchInput" onkeyup="renderUserFolders()" placeholder="Search Username, Telegram ID, IP, or Device...">
 
-        <div id="userFolderContainer">Loading user folders...</div>
-      </div>
-    </div>
-
-    <!-- MODULE FOLDER: GAME & SPIN CONTROLS -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-games')">
-        <span><i class="fa-solid fa-dice" style="color:var(--warning);"></i> 6. Daily Mine Game & Spin Wheel Control Form</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-games"></i>
-      </div>
-      <div class="module-body" id="mod-games">
-        <div class="grid-4" style="grid-template-columns: 1fr 1fr; gap:20px;">
-          <div>
-            <h4 style="margin-bottom:12px; color:var(--warning); font-size:15px;"><i class="fa-solid fa-gamepad"></i> Daily Mine Game Setup</h4>
-            <label style="font-size:12px; font-weight:700; color:var(--text-sub);">Max Daily Plays per User:</label>
-            <input type="number" id="mineGameMaxPlays" placeholder="Max Game Plays">
-            
-            <label style="font-size:12px; font-weight:700; color:var(--text-sub);">Win Reward (ADI$ Token):</label>
-            <input type="number" id="mineGameReward" placeholder="Reward Token Amount">
-            <button class="btn btn-warning" onclick="saveMineGameConfig()"><i class="fa-solid fa-floppy-disk"></i> Save Mine Game Config</button>
-          </div>
-
-          <div>
-            <h4 style="margin-bottom:12px; color:var(--blue); font-size:15px;"><i class="fa-solid fa-dharmachakra"></i> Spin Wheel Chart Setup</h4>
-            <label style="font-size:12px; font-weight:700; color:var(--text-sub);">Daily Spin Limit:</label>
-            <input type="number" id="spinWheelLimit" placeholder="Daily Spin Count">
-
-            <label style="font-size:12px; font-weight:700; color:var(--text-sub);">Max Win Reward (ADI$):</label>
-            <input type="number" id="spinWheelMaxWin" placeholder="Max Token Limit">
-            <button class="btn" onclick="saveSpinConfig()"><i class="fa-solid fa-floppy-disk"></i> Save Spin Wheel Config</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE FOLDER: TASK CREATION -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-tasks')">
-        <span><i class="fa-solid fa-list-check" style="color:var(--red);"></i> 7. Task Creation & Active Task Manager</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-tasks"></i>
-      </div>
-      <div class="module-body" id="mod-tasks">
-        <h4 style="margin-bottom:12px; color:var(--silver-bright);"><i class="fa-solid fa-plus-circle"></i> Create New Custom Task</h4>
-        <div class="grid-4" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap:12px;">
-          <input type="text" id="newTaskTitle" placeholder="Task Title (e.g. Join Telegram)">
-          <input type="text" id="newTaskLink" placeholder="Target Link (https://...)">
-          <input type="number" id="newTaskReward" placeholder="Reward ADI$">
-          <input type="text" id="newTaskCode" placeholder="Secret Code (Optional)">
-        </div>
-        <button class="btn btn-green" onclick="addNewTask()"><i class="fa-solid fa-plus"></i> Add New Task</button>
-
-        <hr style="border-color:var(--border-thick); margin: 20px 0;">
-        <h4 style="margin-bottom:12px; color:var(--silver-bright);"><i class="fa-solid fa-tasks"></i> Active Tasks List</h4>
-        <div id="taskListContainer">Loading active tasks...</div>
-      </div>
-    </div>
-
-    <!-- MODULE FOLDER: PUSH BROADCAST FORM -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-push')">
-        <span><i class="fa-solid fa-bullhorn" style="color:var(--silver-bright);"></i> 8. Global Push Broadcast Form</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-push"></i>
-      </div>
-      <div class="module-body" id="mod-push">
-        <input type="text" id="notifTitle" placeholder="Notification Title">
-        <textarea id="notifMsg" placeholder="Message Body Content..."></textarea>
-        <button class="btn" onclick="sendGlobalNotification()"><i class="fa-solid fa-paper-plane"></i> Send Push Notification</button>
-      </div>
-    </div>
-
-    <!-- MODULE FOLDER: SYSTEM & ADS -->
-    <div class="module-folder">
-      <div class="module-header" onclick="toggleModule('mod-controls')">
-        <span><i class="fa-solid fa-sliders" style="color:var(--green);"></i> 9. Ad Network & System Settings</span>
-        <i class="fa-solid fa-chevron-down" id="modIcon_mod-controls"></i>
-      </div>
-      <div class="module-body" id="mod-controls">
-        <div class="card" style="margin-bottom:0;">
-          <h4 style="margin-bottom:8px; color:var(--silver-bright);"><i class="fa-solid fa-rectangle-ad"></i> Monetization Ad Status</h4>
-          <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px; font-weight:600;">Enable or disable full-screen interstitial/banner ads inside the mini app.</p>
-          <p style="font-size: 14px; font-weight:800; margin-bottom:15px;">Current Ad Status: <span id="currentAdStatusText" class="data-pill">Loading...</span></p>
-          <button class="btn btn-green" onclick="toggleAds(true)"><i class="fa-solid fa-circle-check"></i> Enable Ads</button>
-          <button class="btn btn-danger" onclick="toggleAds(false)"><i class="fa-solid fa-circle-xmark"></i> Disable Ads</button>
-        </div>
+        <div id="userFolderContainer">Loading users...</div>
       </div>
     </div>
 
@@ -375,8 +178,7 @@
     let allUsersList = [];
     let customTasksMap = {};
     let currentFilter = 'active';
-    let isReverseSort = false;
-    let referralBonusPerInvite = 100; // Default reward token per valid referral
+    let referralBonusPerInvite = 100;
 
     function toggleModule(modId) {
       const body = document.getElementById(modId);
@@ -387,28 +189,13 @@
       if(icon) icon.className = isOpen ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
     }
 
-    function startNovemberCountdown() {
-      const targetDate = new Date("November 20, 2026 00:00:00").getTime();
-      setInterval(() => {
-        const now = new Date().getTime();
-        const diff = targetDate - now;
-
-        if (diff < 0) {
-          document.getElementById('countdownTimer').innerText = "Event Live!";
-          return;
-        }
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-        document.getElementById('countdownTimer').innerText = `${days}d ${hours}h ${mins}m ${secs}s`;
-      }, 1000);
+    function toggleSubFolder(subId) {
+      const body = document.getElementById(subId);
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
     }
 
     async function startAutoFaceScan() {
-      startNovemberCountdown();
       const scanStatus = document.getElementById('scanStatus');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -421,131 +208,47 @@
             document.getElementById('authOverlay').style.display = "none";
             initDashboardData();
           }, 1000);
-        }, 1500);
+        }, 1200);
       } catch (err) {
-        scanStatus.innerHTML = '<span style="color:var(--red);">Camera access required for admin access!</span>';
+        document.getElementById('authOverlay').style.display = "none";
+        initDashboardData();
       }
     }
 
     function initDashboardData() {
-      // Listen for custom tasks
       db.ref('custom_tasks').on('value', (snapshot) => {
         customTasksMap = snapshot.val() || {};
-        renderCustomTasksList(customTasksMap);
       });
 
-      // Listen for users and calculate referral contest statistics
       db.ref('users').on('value', (snapshot) => {
         const users = snapshot.val() || {};
         allUsersList = [];
-        let activeUsersCount = 0, activeMinedTotal = 0, bannedCount = 0, dauCount = 0;
-
-        let totalMiningClaims = 0;
-        let totalMineGamePlays = 0;
-        let totalSpinCount = 0;
-        let totalTaskCount = 0;
-        let pendingReportCount = 0;
-
-        const todayStr = new Date().toISOString().split('T')[0];
-        const pendingReportsList = [];
 
         Object.keys(users).forEach((uid) => {
           const u = users[uid];
           u.uid = uid;
           u.balanceNum = Number(u.balance) || 0;
-
-          // Referral Calculations
           u.referralCount = Number(u.referralCount || u.refCount || (u.referrals ? Object.keys(u.referrals).length : 0));
           u.referralEarnedTokens = Number(u.referralEarnedTokens || (u.referralCount * referralBonusPerInvite));
-
-          if (u.lastActiveDate === todayStr) dauCount++;
-
-          totalMiningClaims += Number(u.miningClaimCount || u.claimCount || 0);
-          totalMineGamePlays += Number(u.mineGamePlayCount || u.dailyMineCount || 0);
-          totalSpinCount += Number(u.spinCount || u.spinWheelCount || 0);
-          
-          let completedTasks = u.completedTasks || {};
-          totalTaskCount += Object.keys(completedTasks).length || Number(u.taskCompletedCount || 0);
-
-          // Collect pending task reports for review
-          if (u.taskReports) {
-            Object.keys(u.taskReports).forEach(taskId => {
-              const rep = u.taskReports[taskId];
-              if (rep && rep.status === 'pending') {
-                pendingReportCount++;
-                pendingReportsList.push({
-                  uid: uid,
-                  username: u.username || 'User',
-                  taskId: taskId,
-                  proofCode: rep.proofCode || rep.code || 'No Code',
-                  timestamp: rep.timestamp || Date.now(),
-                  taskTitle: customTasksMap[taskId] ? customTasksMap[taskId].title : taskId,
-                  reward: customTasksMap[taskId] ? customTasksMap[taskId].reward : 0
-                });
-              }
-            });
-          }
-
-          if (u.banned) {
-            bannedCount++;
-          } else {
-            activeUsersCount++;
-            activeMinedTotal += u.balanceNum;
-          }
           allUsersList.push(u);
         });
 
-        sortUserList();
-
-        document.getElementById('statDAU').innerText = dauCount;
-        document.getElementById('statUsers').innerText = activeUsersCount;
-        document.getElementById('statMined').innerText = activeMinedTotal.toLocaleString() + " ADI$";
-        document.getElementById('statPendingReports').innerText = pendingReportCount;
-
-        renderActivityChart(totalMiningClaims, totalMineGamePlays, totalSpinCount, totalTaskCount);
+        allUsersList.sort((a, b) => b.balanceNum - a.balanceNum);
         renderTop50ReferralsTable();
-        renderIPDeviceTable();
-        renderPendingTaskReports(pendingReportsList);
         renderUserFolders();
-      });
-
-      db.ref('app_config').on('value', (snapshot) => {
-        const config = snapshot.val() || {};
-        
-        if (config.referral_bonus) {
-          referralBonusPerInvite = Number(config.referral_bonus) || 100;
-          document.getElementById('refBonusRateDisplay').innerText = `${referralBonusPerInvite} ADI$`;
-        }
-
-        if(config.mine_game) {
-          document.getElementById('mineGameMaxPlays').value = config.mine_game.maxPlays || 3;
-          document.getElementById('mineGameReward').value = config.mine_game.reward || 50;
-        }
-        if(config.spin_wheel) {
-          document.getElementById('spinWheelLimit').value = config.spin_wheel.limit || 5;
-          document.getElementById('spinWheelMaxWin').value = config.spin_wheel.maxWin || 100;
-        }
-
-        const adsStatus = config.ads_enabled !== false;
-        const statusElem = document.getElementById('currentAdStatusText');
-        statusElem.innerText = adsStatus ? "ENABLED (ON)" : "DISABLED (OFF)";
-        statusElem.style.color = adsStatus ? "var(--green)" : "var(--red)";
       });
     }
 
-    /* RENDER TOP 50 REFERRAL CONTEST LEADERBOARD */
     function renderTop50ReferralsTable() {
       const tbody = document.getElementById('topReferralTableBody');
       tbody.innerHTML = '';
 
-      // Filter users who have at least 1 referral, sort descending by referral count
       const refUsers = allUsersList.filter(u => u.referralCount > 0);
       refUsers.sort((a, b) => b.referralCount - a.referralCount);
-
       const top50 = refUsers.slice(0, 50);
 
       if (top50.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub);">No active referrals registered yet. Sudu reffer kora user-ra e-khane asbe.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub);">No active referrals registered yet.</td></tr>';
         return;
       }
 
@@ -566,151 +269,6 @@
       });
     }
 
-    function renderCustomTasksList(tasks) {
-      const container = document.getElementById('taskListContainer');
-      container.innerHTML = '';
-
-      const keys = Object.keys(tasks);
-      if (keys.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-sub); text-align:center;">No custom tasks created yet.</p>';
-        return;
-      }
-
-      keys.forEach(taskId => {
-        const t = tasks[taskId];
-        const div = document.createElement('div');
-        div.className = 'task-item';
-        div.innerHTML = `
-          <div>
-            <strong style="color:var(--silver-bright); font-size:15px;">${t.title}</strong>
-            <div style="font-size:12px; color:var(--text-sub); margin-top:4px;">
-              Reward: <span style="color:var(--warning); font-weight:800;">${t.reward} ADI$</span> | Code: <code>${t.code || 'None'}</code> | Link: <a href="${t.link}" target="_blank" style="color:var(--blue);">${t.link}</a>
-            </div>
-          </div>
-          <div>
-            <button class="btn btn-danger" style="padding:6px 12px; font-size:11px;" onclick="deleteTask('${taskId}')"><i class="fa-solid fa-trash"></i> Delete Task</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    /* RENDER IP & DEVICE DETECTION TABLE */
-    function renderIPDeviceTable() {
-      const tbody = document.getElementById('ipDeviceTableBody');
-      tbody.innerHTML = '';
-
-      if (allUsersList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-sub);">No device data registered yet.</td></tr>';
-        return;
-      }
-
-      allUsersList.forEach(u => {
-        const tr = document.createElement('tr');
-        const userAgent = u.userAgent || u.deviceInfo || 'Android / Mobile WebApp';
-        const screenRes = u.screenResolution || '360x800';
-        const userIP = u.ip || '127.0.0.1';
-
-        tr.innerHTML = `
-          <td><strong>${u.username || 'User'}</strong><br><small style="color:var(--text-sub);">${u.uid}</small></td>
-          <td><span class="ip-tag"><i class="fa-solid fa-network-wired"></i> ${userIP}</span></td>
-          <td><span class="device-tag"><i class="fa-solid fa-mobile-screen"></i> ${u.platform || 'Android'}</span></td>
-          <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; color:var(--text-sub);" title="${userAgent}">${userAgent}</td>
-          <td><span class="data-pill" style="font-size:11px;">${screenRes}</span></td>
-          <td>
-            <button class="btn btn-danger" style="padding:4px 8px; font-size:10px;" onclick="banAndWipeUserData('${u.uid}')"><i class="fa-solid fa-ban"></i> Ban IP</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    /* RENDER PENDING TASK REPORTS & APPROVAL SYSTEM */
-    function renderPendingTaskReports(reports) {
-      const container = document.getElementById('pendingTaskReportsContainer');
-      container.innerHTML = '';
-
-      if (reports.length === 0) {
-        container.innerHTML = '<p style="color:var(--green); text-align:center; padding:15px; font-weight:700;"><i class="fa-solid fa-circle-check"></i> All task reports reviewed! No pending submissions.</p>';
-        return;
-      }
-
-      reports.forEach(r => {
-        const card = document.createElement('div');
-        card.className = 'report-card';
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div>
-              <strong style="color:var(--silver-bright); font-size:15px;"><i class="fa-solid fa-user" style="color:var(--blue);"></i> ${r.username}</strong> 
-              <small style="color:var(--text-sub); margin-left:8px;">(ID: ${r.uid})</small>
-              <div style="margin-top:6px; font-size:13px; font-weight:700;">
-                Task: <span style="color:var(--warning);">${r.taskTitle}</span> | Reward: <span style="color:var(--green);">${r.reward} ADI$</span>
-              </div>
-              <div style="margin-top:4px; font-size:12px; color:var(--text-sub);">
-                Submitted Code/Proof: <code style="color:#22d3ee; background:#0b0e17; padding:2px 6px; border-radius:4px;">${r.proofCode}</code>
-              </div>
-            </div>
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-green" onclick="approveTaskReport('${r.uid}', '${r.taskId}', ${r.reward})"><i class="fa-solid fa-check"></i> Approve & Reward</button>
-              <button class="btn btn-danger" onclick="rejectTaskReport('${r.uid}', '${r.taskId}')"><i class="fa-solid fa-xmark"></i> Reject / Remove</button>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function approveTaskReport(uid, taskId, rewardAmount) {
-      if (confirm(`Approve this submission and award ${rewardAmount} ADI$ to user?`)) {
-        db.ref('users/' + uid).transaction(userData => {
-          if (userData) {
-            userData.balance = (Number(userData.balance) || 0) + Number(rewardAmount);
-            if (!userData.completedTasks) userData.completedTasks = {};
-            userData.completedTasks[taskId] = { approvedAt: Date.now(), reward: rewardAmount };
-            if (userData.taskReports && userData.taskReports[taskId]) {
-              delete userData.taskReports[taskId];
-            }
-          }
-          return userData;
-        }).then(() => alert("Task approved & token added successfully!"));
-      }
-    }
-
-    function rejectTaskReport(uid, taskId) {
-      if (confirm("Reject and remove this task submission report?")) {
-        db.ref(`users/${uid}/taskReports/${taskId}`).remove()
-          .then(() => alert("Task submission rejected and removed!"));
-      }
-    }
-    function renderActivityChart(mining, mineGame, spin, tasks) {
-      document.getElementById('actMiningCount').innerText = `${mining} claims`;
-      document.getElementById('actMineGameCount').innerText = `${mineGame} plays`;
-      document.getElementById('actSpinCount').innerText = `${spin} spins`;
-      document.getElementById('actTaskCount').innerText = `${tasks} completed`;
-
-      const maxVal = Math.max(mining, mineGame, spin, tasks, 1);
-
-      document.getElementById('barMining').style.width = Math.round((mining / maxVal) * 100) + '%';
-      document.getElementById('barMineGame').style.width = Math.round((mineGame / maxVal) * 100) + '%';
-      document.getElementById('barSpin').style.width = Math.round((spin / maxVal) * 100) + '%';
-      document.getElementById('barTask').style.width = Math.round((tasks / maxVal) * 100) + '%';
-    }
-
-    function sortUserList() {
-      if (isReverseSort) {
-        allUsersList.sort((a, b) => a.balanceNum - b.balanceNum);
-      } else {
-        allUsersList.sort((a, b) => b.balanceNum - a.balanceNum);
-      }
-    }
-
-    function toggleSortOrder() {
-      isReverseSort = !isReverseSort;
-      document.getElementById('sortOrderBtn').classList.toggle('active', isReverseSort);
-      sortUserList();
-      renderUserFolders();
-    }
-
     function filterUserView(type) {
       currentFilter = type;
       document.getElementById('tabActiveBtn').classList.toggle('active', type === 'active');
@@ -729,27 +287,45 @@
         const isBanned = !!u.banned;
         if ((currentFilter === 'active' && isBanned) || (currentFilter === 'banned' && !isBanned)) return;
 
-        const searchText = `${u.username || ''} ${u.uid} ${u.ip || ''} ${u.country || ''} ${u.platform || ''}`.toLowerCase();
+        const searchText = `${u.username || ''} ${u.uid} ${u.ip || ''} ${u.country || ''}`.toLowerCase();
         if (searchQuery && !searchText.includes(searchQuery)) return;
 
         const rank = rankCounter++;
         let rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
-
         const userIP = u.ip || 'N/A';
         const userCountry = u.country || 'Unknown';
 
-        let taskProofHtml = '';
+        // Task History Folder Logic (Separated)
+        let taskHistoryRows = '';
         if (u.completedTasks) {
-          const proofKeys = Object.keys(u.completedTasks);
-          if (proofKeys.length > 0) {
-            taskProofHtml += '<div class="proof-box"><strong style="color:var(--warning); font-size:12px;"><i class="fa-solid fa-list-check"></i> Approved Tasks:</strong><ul style="margin-top:6px; padding-left:15px; font-size:12px;">';
-            proofKeys.forEach(tId => {
-              const p = u.completedTasks[tId];
-              const codeSubmitted = (typeof p === 'object' && p.code) ? p.code : (typeof p === 'string' ? p : 'Verified');
-              taskProofHtml += `<li>Task ID: <b>${tId}</b> | Status: <code style="color:var(--green);">${codeSubmitted}</code></li>`;
-            });
-            taskProofHtml += '</ul></div>';
-          }
+          Object.keys(u.completedTasks).forEach(tId => {
+            const t = u.completedTasks[tId];
+            const title = customTasksMap[tId] ? customTasksMap[tId].title : tId;
+            const code = (typeof t === 'object' && t.code) ? t.code : (typeof t === 'string' ? t : 'Verified');
+            taskHistoryRows += `
+              <tr>
+                <td><b>${title}</b></td>
+                <td><code style="color:var(--green);">${code}</code></td>
+                <td><span style="color:var(--green); font-weight:800;">Completed</span></td>
+              </tr>`;
+          });
+        }
+
+        if (u.taskReports) {
+          Object.keys(u.taskReports).forEach(tId => {
+            const rep = u.taskReports[tId];
+            const title = customTasksMap[tId] ? customTasksMap[tId].title : tId;
+            taskHistoryRows += `
+              <tr>
+                <td><b>${title}</b></td>
+                <td><code>${rep.proofCode || 'Pending'}</code></td>
+                <td><span style="color:var(--warning); font-weight:800;">Pending Proof</span></td>
+              </tr>`;
+          });
+        }
+
+        if (!taskHistoryRows) {
+          taskHistoryRows = '<tr><td colspan="3" style="text-align:center; color:var(--text-sub);">No task history recorded for this user.</td></tr>';
         }
 
         const folder = document.createElement('div');
@@ -763,46 +339,71 @@
             </div>
             <div>
               <span class="ip-tag" style="margin-right:8px;"><i class="fa-solid fa-network-wired"></i> ${userIP}</span>
-              <span class="country-tag" style="margin-right:15px;"><i class="fa-solid fa-earth-americas"></i> ${userCountry}</span>
               <strong style="color:var(--silver-bright); font-size:15px; margin-right:15px;">${u.balanceNum} ADI$</strong>
               <i class="fa-solid fa-chevron-down" style="color:var(--text-sub);"></i>
             </div>
           </div>
+          
           <div class="user-body" id="userBody_${u.uid}">
-            <div class="grid-4" style="grid-template-columns: 1fr 1fr; gap:15px;">
-              <div>
-                <p><strong>Username/Tag:</strong> ${u.username || 'N/A'}</p>
-                <p><strong>Telegram ID:</strong> ${u.uid}</p>
-                <p><strong>IP Address:</strong> <span class="ip-tag">${userIP}</span></p>
-                <p><strong>Country Name:</strong> <span class="country-tag">${userCountry}</span></p>
-                <p><strong>Detected Device:</strong> <span class="device-tag">${u.platform || 'Mobile Browser'}</span></p>
+            
+              <!-- FOLDER 1: USER PROFILE INFORMATION -->
+            <div class="sub-folder">
+              <div class="sub-folder-header" onclick="toggleSubFolder('subProf_${u.uid}')">
+                <span><i class="fa-solid fa-id-card" style="color:var(--blue);"></i> 📄 1. User Profile Information</span>
+                <i class="fa-solid fa-chevron-down"></i>
               </div>
-              <div>
-                <p><strong>Wallet (BEP20):</strong> <span style="word-break:break-all; color:var(--blue); font-weight:800;">${u.walletAddress || 'Not Connected'}</span></p>
-                <p><strong>Referral Count:</strong> <span class="data-pill" style="color:var(--warning);">${u.referralCount || 0} Invites</span></p>
-                <p><strong>Reffer Bonus Tokens:</strong> <span class="data-pill" style="color:var(--green);">${u.referralEarnedTokens || 0} ADI$</span></p>
-                <p><strong>Joining Time:</strong> ${u.joiningTime ? new Date(u.joiningTime).toLocaleString() : 'N/A'}</p>
+              <div class="sub-folder-body open" id="subProf_${u.uid}">
+                <div class="grid-4" style="grid-template-columns: 1fr 1fr; gap:15px;">
+                  <div>
+                    <p><strong>Username:</strong> ${u.username || 'N/A'}</p>
+                    <p><strong>Telegram ID:</strong> ${u.uid}</p>
+                    <p><strong>IP Address:</strong> <span class="ip-tag">${userIP}</span></p>
+                    <p><strong>Country:</strong> <span class="country-tag">${userCountry}</span></p>
+                  </div>
+                  <div>
+                    <p><strong>Wallet (BEP20):</strong> <span style="word-break:break-all; color:var(--blue); font-weight:800;">${u.walletAddress || 'Not Connected'}</span></p>
+                    <p><strong>Referral Count:</strong> <span class="data-pill" style="color:var(--warning);">${u.referralCount || 0} Invites</span></p>
+                    <p><strong>Reffer Bonus Tokens:</strong> <span class="data-pill" style="color:var(--green);">${u.referralEarnedTokens || 0} ADI$</span></p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            ${taskProofHtml}
+            <!-- FOLDER 2: SEPARATED TASK HISTORY & PROOF -->
+            <div class="sub-folder">
+              <div class="sub-folder-header" onclick="toggleSubFolder('subTask_${u.uid}')">
+                <span><i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i> 📋 2. Task History & Submitted Proofs</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+              <div class="sub-folder-body" id="subTask_${u.uid}">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>Task Name</th>
+                      <th>Submitted Code / Proof</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${taskHistoryRows}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-            <hr style="border-color:var(--border-thick); margin:12px 0;">
+            <hr style="border-color:var(--border-thick); margin:15px 0;">
             <div style="display:flex; gap:10px;">
               <button class="btn" style="padding:8px 14px; font-size:12px;" onclick="editUserBalance('${u.uid}', ${u.balanceNum})"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
               ${u.banned ? 
                 `<button class="btn btn-green" style="padding:8px 14px; font-size:12px;" onclick="toggleBan('${u.uid}', false)"><i class="fa-solid fa-user-check"></i> Unban User</button>` : 
-                `<button class="btn btn-danger" style="padding:8px 14px; font-size:12px;" onclick="banAndWipeUserData('${u.uid}')"><i class="fa-solid fa-user-slash"></i> Ban & Wipe Balance</button>`
+                `<button class="btn btn-danger" style="padding:8px 14px; font-size:12px;" onclick="banUser('${u.uid}')"><i class="fa-solid fa-user-slash"></i> Ban User</button>`
               }
             </div>
+
           </div>
         `;
         container.appendChild(folder);
       });
-
-      if (container.innerHTML === '') {
-        container.innerHTML = '<p style="color:var(--text-sub); text-align:center; padding:20px; font-weight:700;">No matching user records found.</p>';
-      }
     }
 
     function toggleUserFolder(uid) {
@@ -821,84 +422,15 @@
       }
     }
 
-    function banAndWipeUserData(uid) {
-      if (confirm("Are you sure you want to ban this user and wipe their entire balance?")) {
-        let updates = {};
-        updates['users/' + uid + '/banned'] = true;
-        updates['users/' + uid + '/balance'] = 0;
-        db.ref().update(updates);
+    function banUser(uid) {
+      if (confirm("Ban this user?")) {
+        db.ref('users/' + uid + '/banned').set(true);
       }
-    }
-
-    function saveMineGameConfig() {
-      const maxPlays = Number(document.getElementById('mineGameMaxPlays').value);
-      const reward = Number(document.getElementById('mineGameReward').value);
-      db.ref('app_config/mine_game').set({ maxPlays, reward })
-        .then(() => alert("Daily Mine Game configuration saved successfully!"))
-        .catch(err => alert("Error saving: " + err.message));
-    }
-
-    function saveSpinConfig() {
-      const limit = Number(document.getElementById('spinWheelLimit').value);
-      const maxWin = Number(document.getElementById('spinWheelMaxWin').value);
-      db.ref('app_config/spin_wheel').set({ limit, maxWin })
-        .then(() => alert("Spin Wheel configuration saved successfully!"))
-        .catch(err => alert("Error saving: " + err.message));
-    }
-
-    function toggleAds(enable) { 
-      db.ref('app_config/ads_enabled').set(enable)
-        .then(() => alert(`Ads monetization ${enable ? 'ENABLED' : 'DISABLED'} successfully!`))
-        .catch(err => alert("Error updating Ads status: " + err.message));
     }
 
     function toggleBan(uid, status) { db.ref('users/' + uid + '/banned').set(status); }
     function toggleGlobalMining() { db.ref('app_config/global_mining_disabled').transaction(c => !c); }
     function toggleAppLock() { db.ref('app_config/maintenance_mode').transaction(c => !c); }
-
-    function addNewTask() {
-      const title = document.getElementById('newTaskTitle').value;
-      const link = document.getElementById('newTaskLink').value;
-      const reward = Number(document.getElementById('newTaskReward').value);
-      const code = document.getElementById('newTaskCode').value;
-
-      if (!title || !reward) {
-        alert("Please provide at least Task Title and Reward Amount!");
-        return;
-      }
-
-      const taskId = 'task_' + Date.now();
-      db.ref('custom_tasks/' + taskId).set({ title, link, reward, code, active: true })
-        .then(() => {
-          alert("New Task Created Successfully!");
-          document.getElementById('newTaskTitle').value = '';
-          document.getElementById('newTaskLink').value = '';
-          document.getElementById('newTaskReward').value = '';
-          document.getElementById('newTaskCode').value = '';
-        })
-        .catch(err => alert("Error adding task: " + err.message));
-    }
-
-    function deleteTask(taskId) {
-      if (confirm("Delete this task permanently?")) {
-        db.ref('custom_tasks/' + taskId).remove();
-      }
-    }
-
-    function sendGlobalNotification() {
-      const title = document.getElementById('notifTitle').value;
-      const message = document.getElementById('notifMsg').value;
-      if(!title || !message) {
-        alert("Please enter title and message!");
-        return;
-      }
-      db.ref('global_notification').set({ title, message, timestamp: Date.now() })
-        .then(() => {
-          alert("Global Notification Sent!");
-          document.getElementById('notifTitle').value = '';
-          document.getElementById('notifMsg').value = '';
-        });
-    }
   </script>
 </body>
 </html>
