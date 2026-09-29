@@ -1120,8 +1120,64 @@ function triggerAdAndExecute(formatType, callback) {
     }
 
     // FEATURE 2: LUCKY SPIN WHEEL
-    
-        function spinWheel() {
+    // FEATURE 3: LUCKY SPIN WHEEL
+const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
+let isSpinning = false;
+
+function drawWheel() {
+    const canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const numSegments = wheelRewards.length;
+    const anglePerSegment = (2 * Math.PI) / numSegments;
+
+    ctx.clearRect(0, 0, 200, 200);
+
+    for (let i = 0; i < numSegments; i++) {
+        const angle = i * anglePerSegment;
+        ctx.beginPath();
+        ctx.fillStyle = (i % 2 === 0) ? '#121212' : '#0a0a0a';
+        ctx.moveTo(100, 100);
+        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
+        ctx.lineTo(100, 100);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(100, 100);
+        ctx.rotate(angle + anglePerSegment / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = (i % 2 === 0) ? '#ffffff' : '#aaaaaa';
+        ctx.font = 'bold 11px Plus Jakarta Sans';
+        ctx.fillText(wheelRewards[i] + ' ADI', 85, 4);
+        ctx.restore();
+    }
+}
+
+// ENGLISH POPUP MODAL
+function showCustomModal(wonAmount) {
+    const oldModal = document.getElementById('winModal');
+    if (oldModal) oldModal.remove();
+
+    const modalHtml = `
+        <div id="winModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:99999;">
+            <div style="background:#1e1e1e; color:#fff; padding:25px; border-radius:15px; text-align:center; max-width:320px; width:85%; border:1px solid #333; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+                <h2 style="color:#4CAF50; margin-top:0; margin-bottom:10px;">Congratulations! 🎉</h2>
+                <p style="font-size:16px; margin-bottom:20px; color:#ddd;">You have successfully won <strong style="color:#fff;">${wonAmount} ADI$</strong> tokens!</p>
+                <button id="claimModalBtn" style="background:#fff; color:#000; border:none; padding:12px 25px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; width:100%;">Claim Reward</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    document.getElementById('claimModalBtn').onclick = function() {
+        document.getElementById('winModal').remove();
+    };
+}
+
+function spinWheel() {
     if (isSpinning) return;
 
     if (lastSpinDate === todayDate && spinsLeft <= 0) {
@@ -1137,15 +1193,12 @@ function triggerAdAndExecute(formatType, callback) {
     const btn = document.getElementById('spinBtn');
     if (btn) btn.disabled = true;
 
-    // Random Index Select
     const randomIndex = Math.floor(Math.random() * wheelRewards.length);
     const selectedReward = wheelRewards[randomIndex];
     
-    // Exact Top-Pointer Degree Calculation
+    // Top Pointer Center Angle Alignment
     const numSegments = wheelRewards.length;
     const segmentDegrees = 360 / numSegments;
-    
-    // Top Pointer (270° offset for Canvas Top Center)
     const targetDegree = (360 * 5) + (270 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
 
     const canvas = document.getElementById('wheelCanvas');
@@ -1172,27 +1225,43 @@ function triggerAdAndExecute(formatType, callback) {
             timestamp: Date.now()
         };
 
+        const finishSpin = () => {
+            showCustomModal(selectedReward);
+            if (canvas) {
+                canvas.style.transition = 'none';
+                canvas.style.transform = 'rotate(0deg)';
+                drawWheel();
+            }
+            isSpinning = false;
+            if (btn && spinsLeft > 0) btn.disabled = false;
+            updateSpinUI();
+        };
+
         if (typeof database !== 'undefined' && database.ref) {
-            database.ref().update(updates).then(() => {
-                showCustomModal(selectedReward);
-                if (canvas) {
-                    canvas.style.transition = 'none';
-                    canvas.style.transform = 'rotate(0deg)';
-                    drawWheel();
-                }
-                isSpinning = false;
-                if (btn && spinsLeft > 0) btn.disabled = false;
-                updateSpinUI();
-            }).catch(() => {
-                showCustomModal(selectedReward);
-                isSpinning = false;
+            database.ref().update(updates).then(finishSpin).catch((err) => {
+                console.error(err);
+                finishSpin();
             });
         } else {
-            showCustomModal(selectedReward);
-            isSpinning = false;
+            finishSpin();
         }
     }, 4000);
-                     }
+}
+
+function updateSpinUI() {
+    const txt = document.getElementById('spinLimitText');
+    if (txt) {
+        txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
+    }
+}
+
+// Page Load-e Wheel Draw kora
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', drawWheel);
+} else {
+    drawWheel();
+}
+
     
                              
         // FEATURE 4: MINI TAPPER GAME CHALLENGE
