@@ -646,59 +646,16 @@
         </div>
       </div>
 
-      <div class="section-title">Manual Verification Tasks</div>
+<!-- MANUAL & DYNAMIC VERIFICATION TASKS SECTION -->
+<div class="section-title">Tasks Management</div>
 
-      <div class="task-card">
-        <div class="task-header">
-          <span class="task-title"><i class="fa-brands fa-telegram" style="color:#229ED9;"></i> Telegram Channel</span>
-          <span class="task-reward">+10 ADI$</span>
-        </div>
-        <a href="https://t.me/adiofficialannusment" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Join Channel</a>
-        <input type="text" id="proof-tg" class="task-input" placeholder="Enter Telegram Username (@username)">
-        <button class="btn btn-metallic" id="btn-proof-tg" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_tg', 'Telegram Channel', 10, 'proof-tg')">Submit Proof</button>
-      </div>
+<!-- Dynamic Active Tasks List (Admin add korle ekhane asbe) -->
+<div id="dynamicTasksContainer"></div>
 
-      <div class="task-card">
-        <div class="task-header">
-          <span class="task-title"><i class="fa-brands fa-x-twitter" style="color:#229ED9;"></i> Twitter X </span>
-          <span class="task-reward">+10 ADI$</span>
-        </div>
-        <a href="https://x.com/adiairdrops" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow X Profile</a>
-        <input type="text" id="proof-x" class="task-input" placeholder="Enter X Username (@username)">
-        <button class="btn btn-metallic" id="btn-proof-x" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_x', 'Follow X', 20, 'proof-x')">Submit Proof</button>
-      </div>
+<!-- Task Completed History Section -->
+<div class="section-title" style="margin-top: 20px;">Task History</div>
+<div id="taskHistoryContainer"></div>
 
-      <div class="task-card">
-        <div class="task-header">
-          <span class="task-title"><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Follow Facebook</span>
-          <span class="task-reward">+40 ADI$</span>
-        </div>
-        <a href="https://www.facebook.com/profile.php?id=61594465981380" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Visit Facebook Page</a>
-        <input type="text" id="proof-fb" class="task-input" placeholder="Enter FB Profile Link/Username">
-        <button class="btn btn-metallic" id="btn-proof-fb" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_fb', 'Facebook Page', 40, 'proof-fb')">Submit Proof</button>
-      </div>
-
-      <div class="task-card">
-        <div class="task-header">
-          <span class="task-title"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Subscribe</span>
-          <span class="task-reward">+60 ADI$</span>
-        </div>
-        <input type="text" id="proof-yt" class="task-input" placeholder="Paste Screenshot Image URL / Proof">
-        <button class="btn btn-metallic" id="btn-proof-yt" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_yt', 'YouTube Subscribe', 60, 'proof-yt')">Submit Proof</button>
-      </div>
-
-      <div class="task-card">
-        <div class="task-header">
-          <span class="task-title"><i class="fa-brands fa-instagram" style="color:#E4405F;"></i> Follow Instagram</span>
-          <span class="task-reward">+10 ADI$</span>
-        </div>
-        <a href="https://www.instagram.com/adiairdrop3?stkn=eTRtNmJ2bWdkaTZ5" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">1. Follow Instagram</a>
-        <input type="text" id="proof-ins" class="task-input" placeholder="Paste Screenshot Image URL">
-        <button class="btn btn-metallic" id="btn-proof-ins" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_ins', 'Instagram Follow', 10, 'proof-ins')">Submit Proof</button>
-      </div>
-
-      <div id="dynamicTasksContainer"></div>
-    </div>
 
     <!-- 5. PROFILE PAGE -->
     <div id="page-profile" class="page">
