@@ -979,19 +979,19 @@ function triggerAdAndExecute(formatType, callback) {
     }
 
     function listenGlobalStats() {
-      database.ref('users').on('value', (snapshot) => {
+    database.ref('users').on('value', (snapshot) => {
         let globalTotalMined = 0;
         let activeMiners = 0;
 
         if (snapshot.exists()) {
-          const users = snapshot.val();
-          activeMiners = Object.keys(users).length;
+            const users = snapshot.val();
+            activeMiners = Object.keys(users).length;
 
-          Object.values(users).forEach(u => {
-            if (u.totalMined) {
-              globalTotalMined += Number(u.totalMined);
-            }
-          });
+            Object.values(users).forEach(u => {
+                // u.totalMined er bodole u.balance va u.totalMined duitai check kora hocche
+                const userToken = u.balance !== undefined ? u.balance : (u.totalMined || 0);
+                globalTotalMined += Number(userToken) || 0;
+            });
         }
 
         const globalEl = document.getElementById('globalMinedDisplay');
@@ -999,8 +999,8 @@ function triggerAdAndExecute(formatType, callback) {
 
         const minersEl = document.getElementById('globalMinersDisplay');
         if (minersEl) minersEl.innerText = activeMiners.toLocaleString();
-      });
-    }
+    });
+}
 
     // ==========================================
     // NOTIFICATION SYSTEM (1 - 30 DAYS)
