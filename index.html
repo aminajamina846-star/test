@@ -935,7 +935,16 @@
         userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "User";
       }
     }
+function initInAppAds() {
+    // Ad system disabled
+}
 
+function triggerAdAndExecute(formatType, callback) {
+    if (typeof callback === 'function') {
+        callback();
+    }
+}
+    
     
     // ==========================================
     // 20 NOVEMBER COUNTDOWN & GLOBAL TOKEN COUNTER
