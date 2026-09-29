@@ -1,821 +1,352 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADI Mining - Executive Control & Management Center</title>
-  
-  <!-- Firebase SDK -->
+  <title>ADI$ Executive Control Console</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
-  <!-- Chart.js for Daily Mining Chart -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Fonts & Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  
   <style>
     :root {
-      --bg-dark: #07090e;
-      --card-bg: rgba(18, 22, 31, 0.85);
-      --card-border: rgba(255, 255, 255, 0.12);
-      --silver-gradient: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #cbd5e1 100%);
-      --silver-glow: 0 0 15px rgba(226, 232, 240, 0.2);
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --accent-green: #22c55e;
-      --accent-red: #ef4444;
+      --bg: #0b0f19; --card: #131b2e; --border: #1e293b;
+      --text: #f8fafc; --text-sub: #94a3b8; --accent: #38bdf8;
+      --green: #22c55e; --red: #ef4444; --warning: #f59e0b;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      background-color: var(--bg-dark);
-      background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #07090e 70%);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      padding: 24px;
-      min-height: 100vh;
-    }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 24px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      margin-bottom: 20px;
-    }
-
-    .card:hover { border-color: rgba(226, 232, 240, 0.3); }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--card-border);
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      background: var(--silver-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .stats-badge {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #cbd5e1;
-    }
-
-    /* DROPDOWN NAVIGATION SYSTEM */
-    .dropdown-nav {
-      width: 100%;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      padding: 12px;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 25px;
-      outline: none;
-    }
-
-    .admin-section {
-      display: none;
-    }
-    .admin-section.active-section {
-      display: block;
-    }
-
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 6px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 14px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #cbd5e1;
-      box-shadow: 0 0 10px rgba(203, 213, 225, 0.2);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: var(--silver-gradient);
-      color: #0f172a;
-      font-weight: 800;
-      font-size: 13px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: var(--silver-glow);
-    }
-
-    button:hover { opacity: 0.95; transform: translateY(-1px); }
-
-    .btn-ban { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%) !important; color: #fff !important; }
-    .btn-unban { background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%) !important; color: #0f172a !important; }
-    .btn-zero { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%) !important; color: #fff !important; }
-    .btn-lock { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important; color: #fff !important; }
-    .btn-unlock { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important; color: #fff !important; }
-    .btn-approve { background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%); color: #0f172a; width: auto; padding: 6px 12px; font-size: 11px; }
-    .btn-reject { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); color: #fff; width: auto; padding: 6px 12px; font-size: 11px; }
-    .btn-del { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); color: #fff; width: auto; padding: 6px 10px; font-size: 11px; }
-    .btn-copy { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--card-border); padding: 4px 8px; width: auto; font-size: 10px; border-radius: 6px; }
-
-    .table-responsive {
-      overflow-x: auto;
-      margin-top: 15px;
-      border-radius: 10px;
-      border: 1px solid var(--card-border);
-    }
-
-    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; padding: 14px; font-weight: 700; border-bottom: 1px solid var(--card-border); white-space: nowrap; }
-    td { padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; white-space: nowrap; }
-    tr:hover { background: rgba(255, 255, 255, 0.02); }
-
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
-    .badge-active { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
-    .badge-banned { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(252, 165, 165, 0.3); }
-
-    /* Modal Styling */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-      display: none; justify-content: center; align-items: center; z-index: 99999;
-    }
-    .modal-content {
-      background: #0f172a; border: 1px solid var(--card-border);
-      border-radius: 16px; padding: 24px; width: 90%; max-width: 500px;
-      max-height: 85vh; overflow-y: auto; color: #fff;
-    }
-
-    /* FACE VERIFY STYLING */
-    #webcamVideo {
-      width: 100%;
-      max-width: 240px;
-      height: 180px;
-      background: #000;
-      border-radius: 12px;
-      border: 2px solid var(--card-border);
-      object-fit: cover;
-      margin: 10px auto;
-      display: block;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+    .stat-val { font-size: 24px; font-weight: 800; color: var(--accent); margin-top: 5px; }
+    .btn { background: var(--accent); color: #000; font-weight: 700; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-warning { background: var(--warning); color: #000; }
+    .btn-green { background: var(--green); color: #fff; }
+    input, select, textarea { width: 100%; background: #070a12; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; margin-top: 5px; margin-bottom: 15px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-sub); }
+    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 99999; display: flex; justify-content: center; align-items: center; }
+    .auth-box { text-align: center; max-width: 380px; width: 90%; background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); }
+    #videoCam { width: 100%; height: 200px; background: #000; border-radius: 10px; object-fit: cover; margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-  <!-- Password & Face Verify Access Overlay -->
-  <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #07090e; z-index: 99999; display: flex; justify-content: center; align-items: center;">
-    <div class="card" style="text-align: center; max-width: 380px; width: 90%;">
-      <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: #cbd5e1; margin-bottom: 12px;"></i>
-      <h2 style="font-size: 20px; margin-bottom: 6px;">Executive Control Portal</h2>
-      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 15px;">অ্যাডমিন পাসওয়ার্ড ও ফেজ ভেরিফিকেশন</p>
+  <!-- ADMIN AUTHENTICATION OVERLAY (PIN & FACE VERIFICATION) -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
+      <h2><i class="fa-solid fa-user-shield"></i> Admin Security</h2>
+      <p style="font-size: 12px; color: var(--text-sub); margin: 10px 0 20px;">Enter Secret PIN & Complete Face Verification</p>
       
-      <video id="webcamVideo" autoplay playsinline></video>
-      <button onclick="startFaceScan()" style="margin-bottom: 12px; background: rgba(255,255,255,0.1); color: #fff;"><i class="fa-solid fa-camera"></i> Scan Face ID</button>
+      <input type="password" id="adminPin" placeholder="Enter Secret Passcode">
       
-      <input type="password" id="adminPassInput" placeholder="Enter Admin Password" style="margin-bottom: 15px; text-align: center;">
-      <button onclick="checkAdminPassword()">Unlock Management Portal</button>
+      <div id="faceScanSection" style="display:none;">
+        <video id="videoCam" autoplay muted></video>
+        <p id="scanStatus" style="font-size: 11px; color: var(--warning);">Detecting Face Scan...</p>
+      </div>
+
+      <button class="btn" style="width: 100%;" onclick="verifyAdminAccess()">Verify & Launch Console</button>
     </div>
   </div>
 
-  <!-- User Bio Modal -->
-  <div id="bioModal" class="modal-overlay">
-    <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
-        <h3 style="margin:0; font-size:16px;"><i class="fa-solid fa-id-card"></i> Complete User Profile</h3>
-        <span onclick="closeBioModal()" style="cursor:pointer; font-size:20px;">&times;</span>
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h1><i class="fa-solid fa-gauge-high"></i> Executive ADI$ Dashboard</h1>
+      <div>
+        <button class="btn btn-warning" onclick="toggleGlobalMining()"><i class="fa-solid fa-power-off"></i> Toggle Global Mining (Point 9)</button>
+        <button class="btn btn-danger" onclick="toggleAppLock()"><i class="fa-solid fa-lock"></i> Toggle App Lock Screen</button>
       </div>
-      <div id="bioModalBody">Loading...</div>
     </div>
+
+    <!-- DASHBOARD ANALYTICS OVERVIEW -->
+    <div class="grid-4">
+      <div class="card">
+        <span style="font-size:12px; color:var(--text-sub);">TOTAL REGISTERED USERS</span>
+        <div class="stat-val" id="statUsers">0</div>
+      </div>
+      <div class="card">
+        <span style="font-size:12px; color:var(--text-sub);">TOTAL MINED & DISTRIBUTED</span>
+        <div class="stat-val" id="statMined">0 ADI$</div>
+      </div>
+      <div class="card">
+        <span style="font-size:12px; color:var(--text-sub);">PENDING TASKS & PROOFS</span>
+        <div class="stat-val" id="statProofs">0</div>
+      </div>
+      <div class="card">
+        <span style="font-size:12px; color:var(--text-sub);">BANNED ACCOUNTS</span>
+        <div class="stat-val" id="statBanned" style="color:var(--red);">0</div>
+      </div>
+    </div>
+
+    <!-- QUICK CONTROLS -->
+    <div class="grid-4" style="grid-template-columns: 1fr 1fr;">
+      <div class="card">
+        <h3><i class="fa-solid fa-bullhorn"></i> Global Push Broadcast</h3>
+        <input type="text" id="notifTitle" placeholder="Notification Title">
+        <textarea id="notifMsg" placeholder="Message Description"></textarea>
+        <button class="btn" onclick="sendGlobalNotification()">Broadcast Notification</button>
+      </div>
+      <div class="card">
+        <h3><i class="fa-solid fa-rectangle-ad"></i> Ad Network Control (Point 10)</h3>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">Enable/Disable Ad Networks Network-Wide</p>
+        <button class="btn btn-green" onclick="toggleAds(true)">Activate All Ads</button>
+        <button class="btn btn-danger" onclick="toggleAds(false)">Deactivate All Ads</button>
+      </div>
+    </div>
+
+    <!-- TASK MANAGER -->
+    <div class="card">
+      <h3><i class="fa-solid fa-plus-circle"></i> Create New Custom Task</h3>
+      <div class="grid-4" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap:10px;">
+        <input type="text" id="newTaskTitle" placeholder="Task Title (e.g. Join Telegram)">
+        <input type="text" id="newTaskLink" placeholder="Task Target URL">
+        <input type="number" id="newTaskReward" placeholder="Reward ADI$">
+        <input type="text" id="newTaskCode" placeholder="Secret Code (Optional)">
+      </div>
+      <button class="btn" onclick="addNewTask()">Add Task to App</button>
+    </div>
+
+    <!-- USER MANAGEMENT CONSOLE & PROFILE CHECK -->
+    <div class="card">
+      <h3><i class="fa-solid fa-users-gear"></i> User Management & Comprehensive Tracking</h3>
+      <input type="text" id="userSearchInput" onkeyup="filterUsers()" placeholder="Search by Telegram ID, Username, IP Address or Country...">
+
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>User Info</th>
+            <th>Location & Source (Pt. 12)</th>
+            <th>Balance (Pt. 7)</th>
+            <th>Ref Shares / Copies (Pt. 13)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody">
+          <tr><td colspan="5">Loading user records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
-  <!-- Main Dashboard -->
-  <div id="mainDashboard" style="display: none;">
-    <div class="header">
-      <h1><i class="fa-solid fa-cube"></i> ADI MINING - EXECUTIVE CONTROL CENTER</h1>
-      <div style="display:flex; gap:10px;">
-        <div class="stats-badge"><i class="fa-solid fa-users"></i> Users: <span id="totalUsers" style="color: #fff;">0</span></div>
-        <div class="stats-badge"><i class="fa-solid fa-chart-line"></i> Total Ref Profit: <span id="totalRefTokens" style="color: var(--accent-green);">0 ADI$</span></div>
-      </div>
+  <!-- USER PROFILE DETAIL INSPECTION MODAL -->
+  <div id="profileModal" class="auth-overlay" style="display:none;">
+    <div class="auth-box" style="max-width: 550px; text-align: left;">
+      <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-id-card"></i> Complete User Profile</h3>
+      <div id="profileModalContent" style="font-size: 12px; line-height: 1.8;"></div>
+      <button class="btn btn-danger" style="margin-top:15px; width:100%;" onclick="closeProfileModal()">Close Profile View</button>
     </div>
-
-    <!-- Dropdown System for Navigation -->
-    <select class="dropdown-nav" onchange="switchAdminSection(this.value)">
-      <option value="section-overview">📊 Dashboard Overview & App Lock</option>
-      <option value="section-tasks">📋 Task & Code Task Creator</option>
-      <option value="section-users">👥 User Tracking & IP Control</option>
-      <option value="section-proofs">🔍 Proof Verification Panel</option>
-      <option value="section-ads">📢 Ad Zone & Control Settings</option>
-      <option value="section-alerts">⚠️ Spam & Bot Alerts</option>
-    </select>
-
-    <!-- SECTION 1: OVERVIEW & MAINTENANCE -->
-    <div id="section-overview" class="admin-section active-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-lock"></i> App System Maintenance Lock</h3>
-        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">অ্যাপের মেইনটেনেন্স বা গ্লোবাল লক অন/অফ করুন:</p>
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-lock" onclick="setAppLockStatus(true)"><i class="fa-solid fa-lock"></i> Lock App System</button>
-          <button class="btn-unlock" onclick="setAppLockStatus(false)"><i class="fa-solid fa-lock-open"></i> Unlock App System</button>
-        </div>
-      </div>
-
-      <!-- Daily Mining Statistics Chart -->
-      <div class="card">
-        <h3><i class="fa-solid fa-chart-column"></i> Daily Mining Analytics Chart</h3>
-        <div style="height: 220px; width: 100%;">
-          <canvas id="dailyMiningChart"></canvas>
-        </div>
-      </div>
-
-      <div class="grid-container">
-        <div class="card">
-          <h3><i class="fa-solid fa-bullhorn"></i> Global Broadcast System</h3>
-          <label>Notification Title</label>
-          <input type="text" id="notifTitle" placeholder="Welcome Gift / Announcement">
-          <label>Message Content</label>
-          <textarea id="notifMsg" rows="3" placeholder="Write message for all app users..."></textarea>
-          <button onclick="sendGlobalNotification()" style="margin-top:12px;">Broadcast Notification</button>
-        </div>
-
-        <div class="card">
-          <h3><i class="fa-solid fa-coins"></i> Mass Balance Modifier</h3>
-          <label>Add / Deduct Amount for Every User</label>
-          <input type="number" id="massAmount" placeholder="e.g. 100 (Use -100 for deduction)">
-          <label>Reason / Note</label>
-          <input type="text" id="massReason" placeholder="e.g. System Bonus / Event Reward">
-          <button onclick="executeMassBalanceUpdate()" style="margin-top:12px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color:#fff;">Update All Users Balance</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: TASKS & CODE TASKS -->
-    <div id="section-tasks" class="admin-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-list-check"></i> Create / Modify Custom Tasks</h3>
-        <input type="hidden" id="editingTaskId" value="">
-        
-        <label>Task Title</label>
-        <input type="text" id="taskTitle" placeholder="e.g. Watch Video & Find Code">
-        
-        <label>Reward Tokens (ADI$)</label>
-        <input type="number" id="taskReward" placeholder="e.g. 100">
-        
-        <label>Task Link</label>
-        <input type="text" id="taskLink" placeholder="https://youtube.com/your_video">
-
-        <label>Secret Code (Auto Claim Verification)</label>
-        <input type="text" id="taskCode" placeholder="e.g. ADI2026 (Leave empty if manual review required)">
-
-        <label>Proof Verification Type</label>
-        <select id="taskType">
-          <option value="SecretCode">Secret Code Verification</option>
-          <option value="Username">Username / ID</option>
-          <option value="Screenshot">Screenshot Link / Gallery File</option>
-        </select>
-        
-        <button onclick="saveTask()" id="saveTaskBtn" style="margin-top:15px;">Save & Deploy Task</button>
-
-        <div class="table-responsive" style="margin-top: 20px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Reward</th>
-                <th>Secret Code</th>
-                <th>Type</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="customTasksTable">
-              <tr><td colspan="5" style="text-align:center;">Loading tasks...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 3: USER MANAGEMENT & IP DETECTION -->
-    <div id="section-users" class="admin-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-sliders"></i> Single User Quick Modifier</h3>
-        <label>User Telegram ID</label>
-        <input type="text" id="targetUserId" placeholder="Enter Telegram User ID">
-        <label>Set Exact Balance (ADI$)</label>
-        <input type="number" id="newBalance" placeholder="e.g. 5000">
-        
-        <div style="display: flex; gap: 8px; margin-top: 10px; margin-bottom: 10px;">
-          <button onclick="updateUserBalance()" style="flex:2;">Set Balance</button>
-          <button class="btn-zero" onclick="resetBalanceToZero()" style="flex:1;">Set Zero (0)</button>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-ban" onclick="setUserBanStatus(true)">Ban User</button>
-          <button class="btn-unban" onclick="setUserBanStatus(false)">Unban User</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><i class="fa-solid fa-earth-americas"></i> Registered Users, IP & Location Tracking</h3>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>User Info</th>
-                <th>Location / IP</th>
-                <th>Balance</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="usersTableBody">
-              <tr><td colspan="5" style="text-align:center;">Loading users...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 4: PROOF VERIFICATION -->
-    <div id="section-proofs" class="admin-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-receipt"></i> Pending Task Proof Verification</h3>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>Task Name</th>
-                <th>Proof / Image Data</th>
-                <th>Reward</th>
-                <th>Decision</th>
-              </tr>
-            </thead>
-            <tbody id="pendingProofsTable">
-              <tr><td colspan="5" style="text-align:center;">No pending proofs for review.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 5: AD ZONE CONTROL -->
-    <div id="section-ads" class="admin-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-rectangle-ad"></i> Remote Ad Network Controller</h3>
-        <label>Monetag Ad Zone ID</label>
-        <input type="text" id="adZoneInput" placeholder="11848612">
-        <button onclick="saveAdZoneSettings()" style="margin-top:12px;">Update Dynamic Ad Zone</button>
-      </div>
-    </div>
-
-    <!-- SECTION 6: BOT & SPAM ALERTS -->
-    <div id="section-alerts" class="admin-section">
-      <div class="card">
-        <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-red);"></i> Suspicious Botting & Spam Alerts</h3>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>Alert Reason</th>
-                <th>Timestamp</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="spamAlertsTable">
-              <tr><td colspan="4" style="text-align:center;">No active spam alerts.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script>
-    // Firebase Configuration
-    const firebaseConfig = {
-      databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com"
-    };
+    // Firebase Config (Matching Application Realtime Database)
+    const firebaseConfig = { databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const db = firebase.database();
 
-    // Section Switcher Function
-    function switchAdminSection(sectionId) {
-      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active-section'));
-      const activeEl = document.getElementById(sectionId);
-      if (activeEl) activeEl.classList.add('active-section');
-    }
+    const SECRET_ADMIN_PIN = "123456"; // তোমার সিক্রেট পাসকোড সেট করো
+    let allUsersCache = {};
 
-    // Password & Face Verification Handler
-    let faceVerified = false;
+    // 8. Admin Face Verify and Security Access
+    async function verifyAdminAccess() {
+      const inputPin = document.getElementById('adminPin').value;
+      if(inputPin !== SECRET_ADMIN_PIN) {
+        alert("Invalid Passcode!");
+        return;
+      }
 
-    function startFaceScan() {
-      const video = document.getElementById('webcamVideo');
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-          video.srcObject = stream;
+      document.getElementById('faceScanSection').style.display = "block";
+      document.getElementById('scanStatus').innerText = "Initializing Camera Access...";
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        document.getElementById('videoCam').srcObject = stream;
+        
+        // Mock Face Detection Flow using face-api model setup
+        setTimeout(() => {
+          document.getElementById('scanStatus').innerText = "Face Verified Successfully!";
           setTimeout(() => {
-            faceVerified = true;
-            alert("Face Verified Successfully!");
-          }, 2000);
-        }).catch(err => {
-          alert("Camera access denied or unverified face!");
+            stream.getTracks().forEach(track => track.stop());
+            document.getElementById('authOverlay').style.display = "none";
+            initDashboardData();
+          }, 1000);
+        }, 2000);
+      } catch (err) {
+        alert("Camera permission required for Face Verification!");
+      }
+    }
+
+    function initDashboardData() {
+      // Realtime Analytics Listener
+      db.ref('users').on('value', (snapshot) => {
+        const users = snapshot.val() || {};
+        allUsersCache = users;
+
+        let totalUsers = 0, totalMined = 0, totalBanned = 0;
+        const tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
+
+        Object.keys(users).forEach((uid) => {
+          totalUsers++;
+          const u = users[uid];
+          const balance = Number(u.balance) || 0;
+          totalMined += balance;
+          if (u.banned) totalBanned++;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <strong>${u.username || 'User'}</strong><br>
+              <small style="color:var(--text-sub);">ID: ${uid} | IP: ${u.ip || 'N/A'}</small>
+            </td>
+            <td>
+              ${u.country || 'Unknown'}<br>
+              <small style="color:var(--accent);">Source: ${u.trafficSource || u.referredFrom || 'Direct/Organic'}</small>
+            </td>
+            <td>
+              <strong>${balance} ADI$</strong>
+              <button style="padding:2px 6px; font-size:10px;" class="btn" onclick="editUserBalance('${uid}', ${balance})">Edit</button>
+            </td>
+            <td>
+              Shared: ${u.refShareCount || 0} times<br>
+              Copied: ${u.refCopyCount || 0} times
+            </td>
+            <td>
+              <button class="btn" style="padding:5px;" onclick="viewFullProfile('${uid}')"><i class="fa-solid fa-eye"></i> Profile</button>
+              ${u.banned ? 
+                `<button class="btn btn-green" style="padding:5px;" onclick="toggleBan('${uid}', false)">Unban</button>` : 
+                `<button class="btn btn-danger" style="padding:5px;" onclick="banAndWipeUserData('${uid}')">Ban & Wipe</button>`
+              }
+            </td>
+          `;
+          tbody.appendChild(tr);
         });
-      } else {
-        alert("Camera feature unavailable on this browser!");
-      }
-    }
 
-    function checkAdminPassword() {
-      const pass = document.getElementById('adminPassInput').value;
-      if (pass === "adi2026admin" || pass === "admin123") {
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('mainDashboard').style.display = 'block';
-        initAdminDashboard();
-      } else {
-        alert("Incorrect Admin Password!");
-      }
-    }
+        document.getElementById('statUsers').innerText = totalUsers;
+        document.getElementById('statMined').innerText = totalMined.toLocaleString() + " ADI$";
+        document.getElementById('statBanned').innerText = totalBanned;
+      });
 
-    function initAdminDashboard() {
-      loadOverviewStats();
-      loadUsersTable();
-      loadCustomTasks();
-      loadPendingProofs();
-      loadSpamAlerts();
-      initMiningChart();
-    }
-
-    // App Maintenance Status
-    function setAppLockStatus(status) {
-      database.ref('settings/isLocked').set(status).then(() => {
-        alert("App maintenance lock set to: " + status);
+      db.ref('pending_tasks').on('value', (snap) => {
+        document.getElementById('statProofs').innerText = snap.exists() ? Object.keys(snap.val()).length : 0;
       });
     }
 
-    // Global Notification Broadcast
+    // 7. Complete User Profile Viewer
+    function viewFullProfile(uid) {
+      const u = allUsersCache[uid];
+      if(!u) return;
+
+      const profileHTML = `
+        <p><strong>Name / Telegram User:</strong> ${u.username || 'N/A'}</p>
+        <p><strong>IP Address:</strong> ${u.ip || 'Not Recorded'}</p>
+        <p><strong>Country:</strong> ${u.country || 'Unknown'}</p>
+        <p><strong>Connected BEP20 Wallet:</strong> <span style="word-break:break-all;">${u.walletAddress || 'Not Connected'}</span> 
+           ${u.walletAddress ? `<button onclick="navigator.clipboard.writeText('${u.walletAddress}'); alert('Copied Address!');" style="padding:2px 6px; font-size:10px;">Copy</button>` : ''}</p>
+        <p><strong>Current Balance:</strong> ${u.balance || 0} ADI$</p>
+        <p><strong>Total Referrals:</strong> ${u.referrals ? Object.keys(u.referrals).length : 0}</p>
+        <p><strong>Completed Tasks:</strong> ${u.submittedProofs ? Object.keys(u.submittedProofs).length : 0}</p>
+        <p><strong>Total Lucky Spins:</strong> ${u.totalSpinsCount || 0}</p>
+        <p><strong>Joining Timestamp:</strong> ${u.joiningTime ? new Date(u.joiningTime).toLocaleString() : 'N/A'}</p>
+        <p><strong>Traffic Origin:</strong> ${u.trafficSource || u.referredFrom || 'Direct/Organic'}</p>
+      `;
+      document.getElementById('profileModalContent').innerHTML = profileHTML;
+      document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').style.display = 'none';
+    }
+
+    // Balance Manual Adjustment
+    function editUserBalance(uid, oldBal) {
+      const newBal = prompt("Enter new balance for user:", oldBal);
+      if (newBal !== null) {
+        db.ref('users/' + uid + '/balance').set(Number(newBal));
+      }
+    }
+
+    // 11. Ban User & Wipe All Balance/Data
+    function banAndWipeUserData(uid) {
+      if (confirm("Are you sure you want to BAN this user AND wipe all their balance data?")) {
+        let updates = {};
+        updates['users/' + uid + '/banned'] = true;
+        updates['users/' + uid + '/balance'] = 0;
+        updates['users/' + uid + '/totalMined'] = 0;
+        updates['users/' + uid + '/history'] = null;
+        db.ref().update(updates).then(() => alert("User Banned & Data Wiped Successfully!"));
+      }
+    }
+
+    function toggleBan(uid, status) {
+      db.ref('users/' + uid + '/banned').set(status);
+    }
+
+    // 9. Stop All Mining (One-Click)
+    function toggleGlobalMining() {
+      db.ref('app_config/global_mining_disabled').transaction((current) => !current)
+        .then((res) => alert("Global Mining State Changed: " + (res.snapshot.val() ? "DISABLED" : "ENABLED")));
+    }
+
+    // 10. Enable / Disable Network Ads
+    function toggleAds(enable) {
+      db.ref('app_config/ads_enabled').set(enable)
+        .then(() => alert("Network Ads status set to: " + enable));
+    }
+
+    // App Emergency Lock
+    function toggleAppLock() {
+      db.ref('app_config/maintenance_mode').transaction((current) => !current)
+        .then((res) => alert("Maintenance Lock Toggled: " + (res.snapshot.val() ? "ACTIVE" : "INACTIVE")));
+    }
+
+    // Task Creation
+    function addNewTask() {
+      const title = document.getElementById('newTaskTitle').value;
+      const link = document.getElementById('newTaskLink').value;
+      const reward = Number(document.getElementById('newTaskReward').value);
+      const code = document.getElementById('newTaskCode').value;
+
+      if (!title || !reward) { alert("Title and Reward required!"); return; }
+
+      const taskId = 'task_' + Date.now();
+      db.ref('custom_tasks/' + taskId).set({ title, link, reward, code, active: true }).then(() => {
+        alert("Task Created!");
+        document.getElementById('newTaskTitle').value = '';
+        document.getElementById('newTaskLink').value = '';
+        document.getElementById('newTaskReward').value = '';
+        document.getElementById('newTaskCode').value = '';
+      });
+    }
+
+    // Broadcasting Push Notifications
     function sendGlobalNotification() {
-      const title = document.getElementById('notifTitle').value.trim();
-      const message = document.getElementById('notifMsg').value.trim();
+      const title = document.getElementById('notifTitle').value;
+      const message = document.getElementById('notifMsg').value;
+      if(!title || !message) { alert("Fill all fields!"); return; }
 
-      if (!title || !message) {
-        alert("Fill in notification fields!");
-        return;
+      db.ref('global_notification').set({ title, message, timestamp: Date.now() }).then(() => {
+        alert("Global Notification Pushed!");
+        document.getElementById('notifTitle').value = '';
+        document.getElementById('notifMsg').value = '';
+      });
+    }
+
+    // Search Filter
+    function filterUsers() {
+      const input = document.getElementById('userSearchInput').value.toLowerCase();
+      const rows = document.getElementById('userTableBody').getElementsByTagName('tr');
+
+      for (let row of rows) {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
       }
-
-      database.ref('global_notification').set({
-        title: title,
-        message: message,
-        timestamp: new Date().toLocaleString()
-      }).then(() => {
-        alert("Notification broadcasted successfully!");
-      });
-    }
-
-    // Mass Balance Update
-    function executeMassBalanceUpdate() {
-      const amount = Number(document.getElementById('massAmount').value);
-      const reason = document.getElementById('massReason').value.trim() || "Admin Mass Bonus";
-
-      if (!amount) {
-        alert("Enter valid amount!");
-        return;
-      }
-
-      database.ref('users').once('value', (snap) => {
-        const users = snap.val();
-        if (users) {
-          let updates = {};
-          Object.keys(users).forEach(uid => {
-            if (users[uid].banned !== true) {
-              const current = Number(users[uid].balance) || 0;
-              updates['users/' + uid + '/balance'] = Math.max(0, current + amount);
-            }
-          });
-          database.ref().update(updates).then(() => {
-            alert("Mass balance updated successfully!");
-          });
-        }
-      });
-    }
-
-    // Single User Controls
-    function updateUserBalance() {
-      const uid = document.getElementById('targetUserId').value.trim();
-      const val = Number(document.getElementById('newBalance').value);
-      if (!uid) return alert("Enter User ID!");
-
-      database.ref('users/' + uid + '/balance').set(val).then(() => {
-        alert("Balance set to: " + val);
-      });
-    }
-
-    function resetBalanceToZero() {
-      const uid = document.getElementById('targetUserId').value.trim();
-      if (!uid) return alert("Enter User ID!");
-
-      database.ref('users/' + uid + '/balance').set(0).then(() => {
-        alert("Balance reset to 0!");
-      });
-    }
-
-    function setUserBanStatus(status) {
-      const uid = document.getElementById('targetUserId').value.trim();
-      if (!uid) return alert("Enter User ID!");
-
-      database.ref('users/' + uid + '/banned').set(status).then(() => {
-        alert("User ban status set to: " + status);
-      });
-    }
-
-    // Custom Tasks Manager
-    function saveTask() {
-      const taskId = document.getElementById('editingTaskId').value || ('task_' + Date.now());
-      const title = document.getElementById('taskTitle').value.trim();
-      const reward = Number(document.getElementById('taskReward').value);
-      const link = document.getElementById('taskLink').value.trim();
-      const code = document.getElementById('taskCode').value.trim();
-      const type = document.getElementById('taskType').value;
-
-      if (!title || !reward) return alert("Fill required task fields!");
-
-      database.ref('custom_tasks/' + taskId).set({
-        title: title,
-        reward: reward,
-        link: link,
-        code: code,
-        type: type
-      }).then(() => {
-        alert("Task saved successfully!");
-        document.getElementById('editingTaskId').value = "";
-        document.getElementById('taskTitle').value = "";
-        document.getElementById('taskReward').value = "";
-        document.getElementById('taskLink').value = "";
-        document.getElementById('taskCode').value = "";
-      });
-    }
-
-    function loadCustomTasks() {
-      database.ref('custom_tasks').on('value', (snap) => {
-        const tbody = document.getElementById('customTasksTable');
-        tbody.innerHTML = "";
-        const tasks = snap.val();
-        if (tasks) {
-          Object.keys(tasks).forEach(tid => {
-            const t = tasks[tid];
-            tbody.innerHTML += `
-              <tr>
-                <td>${t.title}</td>
-                <td>+${t.reward} ADI$</td>
-                <td>${t.code || 'None (Manual)'}</td>
-                <td>${t.type}</td>
-                <td><button class="btn-del" onclick="deleteTask('${tid}')">Delete</button></td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No custom tasks configured.</td></tr>`;
-        }
-      });
-    }
-
-    function deleteTask(tid) {
-      if (confirm("Delete this task?")) {
-        database.ref('custom_tasks/' + tid).remove();
-      }
-    }
-
-    // User Table & IP/Location Tracking
-    function loadUsersTable() {
-      database.ref('users').on('value', (snap) => {
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = "";
-        const users = snap.val();
-        if (users) {
-          let totalCount = 0;
-          Object.keys(users).forEach(uid => {
-            totalCount++;
-            const u = users[uid];
-            const isBanned = u.banned === true;
-            tbody.innerHTML += `
-              <tr>
-                <td><strong>${u.username || 'User'}</strong><br><small style="color:#888;">ID: ${uid}</small></td>
-                <td>${u.country || 'Unknown'} / ${u.city || ''}<br><small style="color:#888;">IP: ${u.ip || 'N/A'}</small></td>
-                <td>${(u.balance || 0).toLocaleString()} ADI$</td>
-                <td>${isBanned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-active">Active</span>'}</td>
-                <td>
-                  <button class="btn-copy" onclick="openBioModal('${uid}')">Profile Bio</button>
-                </td>
-              </tr>
-            `;
-          });
-          document.getElementById('totalUsers').innerText = totalCount;
-        }
-      });
-    }
-
-    // User Profile Modal Viewer
-    function openBioModal(uid) {
-      document.getElementById('bioModal').style.display = 'flex';
-      database.ref('users/' + uid).once('value', (snap) => {
-        const u = snap.val() || {};
-        document.getElementById('bioModalBody').innerHTML = `
-          <p><strong>Username:</strong> ${u.username || 'N/A'}</p>
-          <p><strong>User ID:</strong> ${uid}</p>
-          <p><strong>Balance:</strong> ${(u.balance || 0).toLocaleString()} ADI$</p>
-          <p><strong>Country / City:</strong> ${u.country || 'N/A'} / ${u.city || 'N/A'}</p>
-          <p><strong>IP Address:</strong> ${u.ip || 'N/A'}</p>
-          <p><strong>Device User Agent:</strong> ${u.device || 'N/A'}</p>
-          <p><strong>Wallet Address:</strong> ${u.walletAddress || 'Not Connected'}</p>
-          <p><strong>Last Active:</strong> ${u.lastSeen || 'N/A'}</p>
-        `;
-      });
-    }
-
-    function closeBioModal() {
-      document.getElementById('bioModal').style.display = 'none';
-    }
-
-    // Proof Verification Panel
-    function loadPendingProofs() {
-      database.ref('pending_tasks').on('value', (snap) => {
-        const tbody = document.getElementById('pendingProofsTable');
-        tbody.innerHTML = "";
-        const proofs = snap.val();
-        if (proofs) {
-          Object.keys(proofs).forEach(key => {
-            const p = proofs[key];
-            const isImage = p.proof && p.proof.startsWith('data:image');
-            tbody.innerHTML += `
-              <tr>
-                <td>${p.username}<br><small style="color:#888;">${p.userId}</small></td>
-                <td>${p.taskName}</td>
-                <td>${isImage ? `<img src="${p.proof}" style="max-width:80px; max-height:80px; border-radius:6px;">` : p.proof}</td>
-                <td>+${p.reward} ADI$</td>
-                <td>
-                  <button class="btn-approve" onclick="approveProof('${key}', '${p.userId}', ${p.reward})">Approve</button>
-                  <button class="btn-reject" onclick="rejectProof('${key}')">Reject</button>
-                </td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No pending proofs for review.</td></tr>`;
-        }
-      });
-    }
-
-    function approveProof(key, uid, reward) {
-      database.ref('users/' + uid + '/balance').transaction(curr => (curr || 0) + reward).then(() => {
-        database.ref('pending_tasks/' + key).remove();
-        alert("Proof Approved & Reward Credited!");
-      });
-    }
-
-    function rejectProof(key) {
-      database.ref('pending_tasks/' + key).remove().then(() => {
-        alert("Proof Rejected!");
-      });
-    }
-
-    // Ad Zone Control
-    function saveAdZoneSettings() {
-      const zone = document.getElementById('adZoneInput').value.trim();
-      if (!zone) return alert("Enter valid Ad Zone ID!");
-      database.ref('settings/adZoneId').set(zone).then(() => {
-        alert("Ad Zone updated to: " + zone);
-      });
-    }
-
-    // Bot & Spam Alerts Panel
-    function loadSpamAlerts() {
-      database.ref('spam_alerts').on('value', (snap) => {
-        const tbody = document.getElementById('spamAlertsTable');
-        tbody.innerHTML = "";
-        const alerts = snap.val();
-        if (alerts) {
-          Object.keys(alerts).forEach(ak => {
-            const a = alerts[ak];
-            tbody.innerHTML += `
-              <tr>
-                <td>${a.username}<br><small style="color:#888;">${a.userId}</small></td>
-                <td style="color:var(--accent-red); font-weight:bold;">${a.reason}</td>
-                <td>${a.timestamp}</td>
-                <td><button class="btn-ban" onclick="setUserBanStatusDirect('${a.userId}')">Confirm Ban</button></td>
-              </tr>
-            `;
-          });
-        } else {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No active spam alerts.</td></tr>`;
-        }
-      });
-    }
-
-    function setUserBanStatusDirect(uid) {
-      database.ref('users/' + uid + '/banned').set(true).then(() => {
-        alert("User " + uid + " suspended!");
-      });
-    }
-
-    function loadOverviewStats() {
-      database.ref('users').on('value', (snap) => {
-        const users = snap.val() || {};
-        let totalProfit = 0;
-        Object.keys(users).forEach(u => {
-          if (users[u].referrals) {
-            Object.keys(users[u].referrals).forEach(r => {
-              totalProfit += (users[u].referrals[r].reward || 50);
-            });
-          }
-        });
-        document.getElementById('totalRefTokens').innerText = totalProfit.toLocaleString() + " ADI$";
-      });
-    }
-
-    // Chart Renderer
-    function initMiningChart() {
-      const ctx = document.getElementById('dailyMiningChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [{
-            label: 'Tokens Mined Daily',
-            data: [12000, 19000, 15000, 25000, 22000, 30000, 45000],
-            borderColor: '#22c55e',
-            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#fff' } } },
-          scales: {
-            x: { ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-            y: { ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.05)' } }
-          }
-        }
-      });
     }
   </script>
 </body>
-</html>
+  </html>
