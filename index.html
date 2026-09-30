@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ADI$ Airdrop & Mining App</title>
+
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Firebase SDK (Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- Web3 Modal & Ethers.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Ad Network SDK Integration -->
+  <script src='//libtl.com/sdk.js' data-zone='11848612' data-sdk='show_11848612'></script>
+
+  <style>
+    body .bottom-nav {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 100% !important;
+      max-width: 420px !important;
+      height: 65px !important;
+      background-color: #121212 !important;
+      border-top: 1px solid #282828 !important;
+      display: flex !important;
+      justify-content: space-around !important;
+      align-items: center !important;
+      z-index: 999999 !important;
+      box-sizing: border-box !important;
+    }
+
+    body .bottom-nav .nav-item {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #888888 !important;
+      font-size: 11px !important;
+      cursor: pointer !important;
+      flex: 1 !important;
+    }
+
+    body .bottom-nav .nav-item i {
+      font-size: 18px !important;
+      margin-bottom: 3px !important;
+    }
+
+    body .bottom-nav .nav-item.active {
+      color: #ffffff !important;
+      font-weight: bold !important;
+    }
+
+    :root {
+      --bg-color: #000000;
+      --card-bg: rgba(20, 20, 20, 0.85);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --text-main: #ffffff;
+      --text-sub: #a3a3a3;
+      --accent-silver: #e2e8f0;
+      --silver-glow: #cbd5e1;
+      --silver-gradient: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 10% 90%, rgba(200, 200, 200, 0.03) 0%, transparent 30%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: var(--text-main);
+      padding-bottom: 95px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+    }
+
+    .page { display: none; }
+    .page.active { 
+      display: block; 
+      animation: fadeIn 0.3s ease-in-out; 
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      background: var(--silver-gradient);
+      color: #000000;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .user-details h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-details p {
+      font-size: 11px;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .user-badge-label {
+      display: inline-block;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent-silver);
+      margin-left: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-main);
+      font-size: 16px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-silver {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+
+    .tag-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-silver);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .balance-val {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    .balance-val span {
+      font-size: 18px;
+      color: var(--accent-silver);
+      font-weight: 600;
+    }
+
+    .sub-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-top: 4px;
+      margin-bottom: 18px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+      outline: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-metallic {
+      background: var(--silver-gradient);
+      color: #000000;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      margin: 20px 0 12px 0;
+      letter-spacing: 1px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .grid-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px 6px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .grid-item i {
+      font-size: 18px;
+      color: var(--accent-silver);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .grid-item span {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .task-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .task-title {
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .task-reward {
+      font-size: 11px;
+      color: var(--accent-green);
+      font-weight: 800;
+    }
+
+    .task-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 11px;
+      margin: 8px 0;
+      outline: none;
+    }
+
+    .mining-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.8) 100%);
+      border: 3px solid rgba(255,255,255,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px auto;
+      position: relative;
+    }
+
+    .mining-active {
+      animation: pulse 2s infinite;
+      border-color: #4ade80;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    .wheel-box {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 15px auto;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid #ffffff;
+      z-index: 10;
+    }
+
+    #wheelCanvas {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 4px solid #cbd5e1;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+
+    .tapper-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px dashed var(--card-border);
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .tapper-btn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--silver-gradient);
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      margin: 10px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    .tapper-btn:active {
+      transform: scale(0.92);
+    }
+
+    #banOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Countdown Timer Display Styling */
+    .countdown-container {
+      background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(0,0,0,0.9));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.1);
+    }
+
+    .countdown-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .countdown-grid {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .time-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 10px;
+      min-width: 60px;
+    }
+
+    .time-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: #22c55e;
+    }
+
+    .time-unit {
+      font-size: 9px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    .global-stats-row {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-item span {
+      display: block;
+      font-size: 10px;
+      color: #888;
+    }
+
+    .stat-item strong {
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="lockScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0f19; z-index: 99999; color: #fff; text-align: center; padding-top: 150px; font-family: sans-serif;">
+      <h2 style="color: #ff4d4d; margin-bottom: 10px;">System Maintenance</h2>
+      <p style="color: #ccc; font-size: 16px;">The app is locked before the official launch. Please wait.</p>
+  </div>
+
+  <div id="banOverlay">
+    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); padding: 30px 20px; border-radius: 20px; max-width: 350px;">
+      <i class="fa-solid fa-ban" style="font-size: 50px; color: var(--accent-red); margin-bottom: 15px;"></i>
+      <h2 style="color: var(--accent-red); font-size: 20px; font-weight: 800; margin-bottom: 10px;">Account Suspended</h2>
+      <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5;">Your account has been banned by the administrator due to policy violations.</p>
+    </div>
+  </div>
+
+  <div class="app-container">
+    
+    <div class="top-bar">
+    <div class="profile-info">
+        <div class="avatar" id="userAvatar"><i class="fa-solid fa-user"></i></div>
+        <div class="user-details">
+            <h3 id="userName">User</h3>
+            <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner</p>
+        </div>
+    </div>
+    <div class="icon-btn" id="notifBellBtn" onclick="openNotificationModal()" style="position: relative;">
+        <i class="fa-regular fa-bell"></i>
+        <span id="notifRedBadge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background-color: #ff3b30; border-radius: 50%;"></span>
+    </div>
+</div>
+
+
+
+    <!-- 1. HOME PAGE -->
+    <div id="page-home" class="page active">
+      <div class="card card-silver">
+        <div class="card-header">
+          <span class="card-label">Total Balance</span>
+          <button class="tag-btn" onclick="openHistoryModal()">History <i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <div class="balance-val" id="totalBalance">0 <span>ADI$</span></div>
+        <div class="sub-value" id="usdValue">$0.00 USD</div>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 14px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Mining Status & Multiplier</div>
+          <div id="homeMiningTimer" style="font-size: 13px; font-weight: 800; color: #4ade80; margin-top: 2px;">Session Ready</div>
+          <div id="homeMultiplierText" style="font-size: 11px; color: #e2e8f0; margin-top: 2px;">Speed: 1.0x | Streak: 0 Days 🔥</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-metallic" onclick="showAlert('Exchange Portal Opening Soon!')"><i class="fa-solid fa-arrow-right-arrow-left"></i> Exchange</button>
+          <button class="btn btn-dark" onclick="triggerAdAndExecute('wallet', autoConnectTrustWallet)"><i class="fa-solid fa-wallet"></i> Wallet</button>
+        </div>
+      </div>
+
+      <!-- 20 NOVEMBER ULTA COUNTDOWN & GLOBAL STATS CARD -->
+      <div class="countdown-container">
+        <div class="countdown-title"><i class="fa-solid fa-clock"></i> Official Launch & Token Distribution</div>
+        <div class="countdown-grid">
+          <div class="time-box"><div class="time-val" id="cd-days">00</div><div class="time-unit">Days</div></div>
+          <div class="time-box"><div class="time-val" id="cd-hours">00</div><div class="time-unit">Hours</div></div>
+          <div class="time-box"><div class="time-val" id="cd-minutes">00</div><div class="time-unit">Mins</div></div>
+          <div class="time-box"><div class="time-val" id="cd-seconds">00</div><div class="time-unit">Secs</div></div>
+        </div>
+        <div class="global-stats-row">
+          <div class="stat-item">
+            <span>Global Tokens Mined</span>
+            <strong id="globalMinedDisplay">0 ADI$</strong>
+          </div>
+          <div class="stat-item">
+            <span>Total Miners</span>
+            <strong id="globalMinersDisplay">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-metallic" onclick="triggerAdAndExecute('invite', openReferralModal)" style="width: 100%; margin-bottom: 16px; padding: 14px; font-weight: bold; cursor: pointer;">
+        <i class="fa-solid fa-users"></i> Invite Friends & Stats (+50 ADI)
+      </button>
+
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-sub);">DAILY STREAK BONUS</div>
+          <div style="font-size: 13px; font-weight: 800; margin-top: 2px;" id="streakRewardText">+100 ADI$ Token</div>
+        </div>
+        <button class="btn btn-metallic" id="dailyClaimBtn" style="padding: 8px 16px; flex: initial; font-size: 11px;" onclick="triggerAdAndExecute('daily', claimDailyReward)">Claim</button>
+      </div>
+
+      <div class="section-title">Quick Actions</div>
+      <div class="grid-4">
+        <div class="grid-item" onclick="switchTab('page-mine', document.querySelectorAll('.nav-item')[1])">
+          <i class="fa-solid fa-pickaxe"></i>
+          <span>Mining</span>
+        </div>
+        <div class="grid-item" onclick="confirmBoost()">
+          <i class="fa-solid fa-rocket"></i>
+          <span>Boost</span>
+        </div>
+        <div class="grid-item" onclick="switchTab('page-tasks', document.querySelectorAll('.nav-item')[3])">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Tasks</span>
+        </div>
+        <div class="grid-item" onclick="switchTab('page-markets', document.querySelectorAll('.nav-item')[2])">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Markets</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Leaderboard & Badges</span>
+        </div>
+        <div id="leaderboard-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+          <div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px 0;">Loading leaderboard...</div>
+        </div>
+      </div>
+                                                                                   </div>
+    <!-- 2. MINE PAGE -->
+    <div id="page-mine" class="page">
+      <div class="card card-silver" style="text-align: center; padding: 35px 20px;">
+        <div class="mining-circle" id="miningCircle" style="width: 90px; height: 90px; margin: 0 auto 15px auto; border-radius: 50%; border: 2px solid var(--accent-green);">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKceGcvpGJWaetc5tdIYsuemMTZcOzV4d_cf4Qz1fZ2R7OOiUGP5iNZW0vFk7YEhiz9_Lg9sHRH3RTQQMuW9lCQtC2F5GntyC2vrXtP18T3MazRgTVE6NjjB0KRTvM5XBxq1aLFTVuq8J8dbDKP72Aqw98fKNeFV-qDzR7KeuGMkSF5o2CC_hLzZyY0GYl/s1009/1000049532.jpg" alt="ADI" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+        </div>
+        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Mining Protocol</h2>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;" id="miningTimer">Tap below to initialize mining session</p>
+        <div style="font-size:11px; color:#cbd5e1; margin-bottom:15px;" id="mineRateDisplay">Current Rate: 100 ADI / 4 Hours</div>
+        <button class="btn btn-metallic" id="mineBtn" style="width: 100%; padding: 16px; font-size: 13px;" onclick="triggerAdAndExecute('mine', startMining)">Start Mining</button>
+     </div>
+
+      <div class="card card-silver" style="margin-top: 15px; padding: 20px; text-align: left;">
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-main);">History</h3>
+        <div id="mineHistoryList" style="font-size: 12px; color: var(--text-sub);">
+          <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">No mining history yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. MARKETS PAGE -->
+    <div id="page-markets" class="page">
+      <div class="card">
+        <div class="section-title" style="margin-top: 0;">Live Market Metrics</div>
+
+        <div class="market-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1e1e1e;">
+          <div class="coin-info" style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-icon" style="font-weight: bold;">ADI$</div>
+            <div style="display: flex; align-items: center;">
+              <strong style="font-size: 14px;">ADI$ </strong>
+              <span class="badge-listing" style="background: #ff9800; color: #000; font-size: 8px; font-weight: bold; padding: 2px 4px; border-radius: 3px; margin-left: 5px; text-transform: uppercase;">Listing Soon</span>
+            </div>
+          </div>
+          <div><strong id="market-adi-price" style="font-size: 14px;">$0.000100</strong></div>
+        </div>
+
+        <div class="market-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1e1e1e;">
+          <div class="coin-info" style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-icon"><i class="fa-brands fa-bitcoin"></i></div>
+            <div><strong style="font-size: 14px;">Bitcoin</strong></div>
+          </div>
+          <div><strong id="market-btc-price" style="font-size: 14px;">Loading...</strong></div>
+        </div>
+
+        <div class="market-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1e1e1e;">
+          <div class="coin-info" style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-icon"><i class="fa-brands fa-ethereum"></i></div>
+            <div><strong style="font-size: 14px;">Ethereum</strong></div>
+          </div>
+          <div><strong id="market-eth-price" style="font-size: 14px;">Loading...</strong></div>
+        </div>
+
+        <div class="market-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1e1e1e;">
+          <div class="coin-info" style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-icon"><i class="fa-solid fa-coins"></i></div>
+            <div><strong style="font-size: 14px;">BNB</strong></div>
+          </div>
+          <div><strong id="market-bnb-price" style="font-size: 14px;">Loading...</strong></div>
+        </div>
+
+        <div class="market-item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+          <div class="coin-info" style="display: flex; align-items: center; gap: 8px;">
+            <div class="coin-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div><strong style="font-size: 14px;">USDT (BEP20)</strong></div>
+          </div>
+          <div><strong id="market-usdt-price" style="font-size: 14px;">Loading...</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. TASKS & GAMIFICATION PAGE -->
+    <div id="page-tasks" class="page">
+      <div class="card card-silver" style="text-align: center;">
+        <div class="section-title" style="margin-top:0;">Daily Spin Wheel</div>
+        <div style="font-size: 11px; color: var(--text-sub);">Spin to win 2, 5, 19, or 50 ADI$ tokens!</div>
+        
+        <div class="wheel-box">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="200" height="200"></canvas>
+        </div>
+
+        <div style="font-size: 11px; margin-bottom: 10px; color: #cbd5e1;" id="spinLimitText">Spins Left Today: 2/2</div>
+        <button class="btn btn-metallic" id="spinBtn" style="width: 100%; padding: 12px;" onclick="triggerAdAndExecute('spin', spinWheel)">Spin Wheel Now</button>
+      </div>
+
+      <div class="card">
+        <div class="section-title" style="margin-top:0;">Mini Tapper Challenge</div>
+        <div class="tapper-box">
+          <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
+          <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScoreDisplay">Score: 0</div>
+          <div style="font-size: 12px; color: #4ade80; margin-bottom: 8px;" id="tapperTimerDisplay">Time Left: 15s</div>
+          <button class="tapper-btn" id="tapperTapBtn" onclick="registerTap()" disabled><i class="fa-solid fa-hand-pointer"></i></button>
+          <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="triggerAdAndExecute('game', startTapperGame)">Start Challenge</button>
+        </div>
+      </div>
+
+      <!-- TASKS MANAGEMENT -->
+      <div class="section-title">Tasks Management</div>
+
+      <div id="dynamicTasksContainer"></div>
+
+      <div class="section-title" style="margin-top: 20px;">Task History</div>
+      <div id="taskHistoryContainer"></div>
+    </div>
+
+    <!-- 5. PROFILE PAGE -->
+    <div id="page-profile" class="page">
+      <div class="card card-silver">
+        <div class="section-title" style="margin-top: 0;">Account Verification</div>
+        <div style="font-size: 13px; line-height: 2;">
+          <p><strong>Username:</strong> <span id="profUser" style="color: var(--text-sub);">Loading...</span></p>
+          <p><strong>Telegram ID:</strong> <span id="profId" style="color: var(--text-sub);">...</span></p>
+          <p><strong>Current Balance:</strong> <span id="profBalance" style="color: var(--accent-silver); font-weight: 800;">0 ADI$</span></p>
+          <p><strong>Wallet Address:</strong> <span id="connectedWalletAddr" style="color: var(--accent-green); font-size: 11px; word-break: break-all;">Not Connected</span></p>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; margin-top: 12px; border: 1px solid var(--card-border);">
+          <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Live Mining Timer</div>
+          <div id="profMiningTimer" style="font-size: 14px; font-weight: 800; color: #4ade80; margin-top: 2px;">Session Ready</div>
+          <div id="profMinedTokens" style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">Total Mined: 0 ADI$</div>
+        </div>
+
+        <button class="btn btn-metallic" id="walletConnBtn" style="width: 100%; margin-top: 20px;" onclick="triggerAdAndExecute('wallet', autoConnectTrustWallet)">
+          <i class="fa-solid fa-wallet"></i> Connect Trust Wallet
+        </button>
+      </div>
+
+      <div class="card" style="margin-top: 16px;">
+        <div class="section-title" style="margin-top: 0;">Information Center</div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn btn-dark" style="flex:1;" onclick="openWhitepaperModal()">
+            <i class="fa-solid fa-file-lines"></i> White Paper
+          </button>
+          <button class="btn btn-dark" style="flex:1;" onclick="openAboutModal()">
+            <i class="fa-solid fa-circle-info"></i> About Us
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px; background-color: #121212; border: 1px solid #2a2a2a; border-radius: 16px; padding: 20px;">
+        <div class="section-title" style="margin-top: 0; font-size: 13px; letter-spacing: 1px; color: #888888; text-transform: uppercase;">Activity History</div>
+        <div id="history-list-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+          <div style="text-align: center; color: #777; font-size: 13px; padding: 10px 0;">Loading history...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NOTIFICATION HISTORY MODAL (1-30 Days Messages) -->
+  <div id="notificationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
+    <div style="background:#141414; width:90%; max-width:400px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.2); max-height:80vh; overflow-y:auto; color:#e2e8f0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <h3 style="color:#fff; margin:0; font-size:16px;"><i class="fa-regular fa-bell"></i> Notifications (1 - 30 Days)</h3>
+        <span onclick="closeNotificationModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
+      </div>
+      <div id="notificationHistoryList" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="text-align:center; color:#888; font-size:12px; padding:15px;">Loading notifications...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHITE PAPER MODAL -->
+  <div id="whitepaperModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
+    <div style="background:#141414; width:90%; max-width:400px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.2); max-height:80vh; overflow-y:auto; color:#e2e8f0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <h3 style="color:#fff; margin:0; font-size:16px;"><i class="fa-solid fa-file-lines"></i> ADI Token White Paper</h3>
+        <span onclick="closeWhitepaperModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
+      </div>
+      <div style="font-size:12px; line-height:1.6;">
+        <h4 style="color:#fff; margin-bottom:6px;">1. Project Overview</h4>
+        <p style="color:#a3a3a3; margin-bottom:12px;">ADI Mining Network is a decentralized Web3 social engagement ecosystem designed to deliver high-yield cloud token distribution seamlessly through Telegram infrastructure.</p>
+        <h4 style="color:#fff; margin-bottom:6px;">2. Tokenomics & Distribution</h4>
+        <p style="color:#a3a3a3; margin-bottom:12px;">Total Token Supply: 1,000,000,000 ADI$<br>Community Cloud Mining: 60%<br>Ecosystem Rewards & Tasks: 20%<br>Liquidity & Exchange Listing: 20%</p>
+        <h4 style="color:#fff; margin-bottom:6px;">3. Roadmap & Listing</h4>
+        <p style="color:#a3a3a3;">Phase 1: Telegram WebApp Cloud Mining Launch & User Growth.<br>Phase 2: Task Verification, Anti-bot Protocol & Wallet Integration.<br>Phase 3: DEX/CEX Listing & ADI Token Swap Portal Open.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT MODAL -->
+  <div id="aboutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
+    <div style="background:#141414; width:90%; max-width:400px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.2); color:#e2e8f0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <h3 style="color:#fff; margin:0; font-size:16px;"><i class="fa-solid fa-circle-info"></i> About ADI Network</h3>
+        <span onclick="closeAboutModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
+      </div>
+      <div style="font-size:12px; line-height:1.6; text-align:center;">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKceGcvpGJWaetc5tdIYsuemMTZcOzV4d_cf4Qz1fZ2R7OOiUGP5iNZW0vFk7YEhiz9_Lg9sHRH3RTQQMuW9lCQtC2F5GntyC2vrXtP18T3MazRgTVE6NjjB0KRTvM5XBxq1aLFTVuq8J8dbDKP72Aqw98fKNeFV-qDzR7KeuGMkSF5o2CC_hLzZyY0GYl/s1009/1000049532.jpg" style="width:70px; height:70px; border-radius:50%; margin-bottom:10px; border:2px solid var(--accent-green);">
+        <h4 style="color:#fff; font-size:15px; margin-bottom:4px;">ADI Mining Protocol v2.5</h4>
+        <p style="color:#a3a3a3; margin-bottom:10px;">Official Community Mini App powered by Telegram WebApp Web3 SDK.</p>
+        <p style="color:#22c55e; font-size:11px; font-weight:bold;">Verified & Secured Cloud Architecture</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL WINDOW -->
+  <div id="historyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#141414; width:90%; max-width:400px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.2); box-shadow:0 10px 25px rgba(0,0,0,0.8);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <h3 style="color:#fff; margin:0; font-size:18px;">Transaction History</h3>
+        <span onclick="closeHistoryModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
+      </div>
+      <div id="historyList" style="max-height:300px; overflow-y:auto; padding-right:5px;"></div>
+    </div>
+  </div>
+
+  <!-- REFERRAL MODAL WINDOW -->
+  <div id="referralModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:#141414; width:90%; max-width:420px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.1); box-sizing:border-box;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px;">
+        <h3 style="color:#fff; margin:0; font-size:16px;"><i class="fa-solid fa-users" style="color:var(--accent-silver);"></i> Invite Friends & Stats</h3>
+        <span onclick="closeReferralModal()" style="color:#aaa; font-size:24px; cursor:pointer; font-weight:bold;">&times;</span>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <div style="flex:1; background:#1f1f1f; padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-size:10px; color:var(--text-sub); font-weight:700;">TOTAL REFERRED</div>
+          <div id="refCount" style="font-size:16px; font-weight:800; color:#fff; margin-top:4px;">0</div>
+        </div>
+        <div style="flex:1; background:#1f1f1f; padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-size:10px; color:var(--text-sub); font-weight:700;">TOTAL EARNED</div>
+          <div id="refEarnings" style="font-size:16px; font-weight:800; color:var(--accent-green); margin-top:4px;">0 ADI$</div>
+        </div>
+      </div>
+
+      <button class="btn btn-metallic" onclick="shareReferralLink()" style="width:100%; margin-bottom:12px; padding:12px; font-weight:bold; cursor:pointer;">
+        <i class="fa-solid fa-share-nodes"></i> Share Referral Link
+      </button>
+
+      <div style="background: #1a1a1a; padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 15px;">
+        <label style="font-size: 11px; color: #888; display: block; margin-bottom: 6px; text-align: left;">Your Referral Link:</label>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="text" id="refLinkInput" readonly style="width: 100%; background: #111; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; font-size: 11px; outline: none;" value="Generating link...">
+          <button onclick="copyReferralLink()" style="background: var(--accent-green, #00e676); color: #000; font-weight: bold; border: none; padding: 10px 14px; border-radius: 8px; font-size: 11px; cursor: pointer; white-space: nowrap;">Copy</button>
+        </div>
+      </div>
+
+      <div style="font-size:11px; font-weight:700; color:var(--text-sub); margin-bottom:8px; text-transform:uppercase;">Referral History (Active / Status)</div>
+      <div id="referralList" style="max-height:160px; overflow-y:auto; padding-right:5px;">
+        <p style="color:#888; text-align:center; font-size:12px;">Loading referrals...</p>
+      </div>
+
+    </div>
+  </div>
+  
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('page-home', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
+    <div class="nav-item" onclick="switchTab('page-mine', this)"><i class="fa-solid fa-pickaxe"></i><span>Mine</span></div>
+    <div class="nav-item" onclick="switchTab('page-markets', this)"><i class="fa-solid fa-chart-line"></i><span>Markets</span></div>
+    <div class="nav-item" onclick="switchTab('page-tasks', this)"><i class="fa-solid fa-list-check"></i><span>Tasks</span></div>
+    <div class="nav-item" onclick="switchTab('page-profile', this)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
+    </div><script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Global User Variables
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    let userId = "guest_user";
+    let userName = "Airdrop User";
+    let userBalance = 0;
+    let totalMinedAmount = 0;
+    let lastClaimDate = "";
+    let lastMineDate = "";
+    let miningEndTime = 0;
+    let miningInterval = null;
+    let walletAddress = "";
+    
+    // Streaks, Wheel & Game Variables
+    let streakCount = 0;
+    let multiplier = 1.0;
+    let spinsLeft = 2;
+    let lastSpinDate = "";
+    let tapperScore = 0;
+    let tapperTimeLeft = 15;
+    let tapperInterval = null;
+    let pushNotificationSent = false;
+
+    const todayDate = new Date().toISOString().slice(0, 10);
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userId = tg.initDataUnsafe.user.id.toString();
+        userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "User";
+      }
+    }
+function initInAppAds() {
+    // Ad system disabled
+}
+
+function triggerAdAndExecute(formatType, callback) {
+    if (typeof callback === 'function') {
+        callback();
+    }
+}
+    
+    
+    // ==========================================
+    // 20 NOVEMBER COUNTDOWN & GLOBAL TOKEN COUNTER
+    // ==========================================
+    function startCountdownTimer() {
+      const targetDate = new Date('November 20, 2026 00:00:00').getTime();
+
+      setInterval(() => {
+        const now = new Date().getTime();
+        const difference = targetDate - now;
+
+        if (difference <= 0) {
+          document.getElementById('cd-days').innerText = "00";
+          document.getElementById('cd-hours').innerText = "00";
+          document.getElementById('cd-minutes').innerText = "00";
+          document.getElementById('cd-seconds').innerText = "00";
+          return;
+        }
+
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        if (document.getElementById('cd-days')) {
+          document.getElementById('cd-days').innerText = days < 10 ? '0' + days : days;
+          document.getElementById('cd-hours').innerText = hours < 10 ? '0' + hours : hours;
+          document.getElementById('cd-minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+          document.getElementById('cd-seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+      }, 1000);
+    }
+
+    function listenGlobalStats() {
+    database.ref('users').on('value', (snapshot) => {
+        let globalTotalMined = 0;
+        let activeMiners = 0;
+
+        if (snapshot.exists()) {
+            const users = snapshot.val();
+            activeMiners = Object.keys(users).length;
+
+            Object.values(users).forEach(u => {
+                // u.totalMined er bodole u.balance va u.totalMined duitai check kora hocche
+                const userToken = u.balance !== undefined ? u.balance : (u.totalMined || 0);
+                globalTotalMined += Number(userToken) || 0;
+            });
+        }
+
+        const globalEl = document.getElementById('globalMinedDisplay');
+        if (globalEl) globalEl.innerText = globalTotalMined.toLocaleString() + " ADI$";
+
+        const minersEl = document.getElementById('globalMinersDisplay');
+        if (minersEl) minersEl.innerText = activeMiners.toLocaleString();
+    });
+}
+
+
+    // ==========================================
+// NOTIFICATION SYSTEM (UPDATED FOR GLOBAL_NOTIFICATION)
+// ==========================================
+
+function openNotificationModal() {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+
+    // দেখা মাত্রই দেখার টাইম সেভ হবে এবং লাল ডট বন্ধ হবে
+    localStorage.setItem('lastNotifSeenTime', Date.now());
+    const notifBadge = document.getElementById('notifRedBadge');
+    if (notifBadge) {
+        notifBadge.style.display = 'none';
+    }
+
+    loadNotificationHistory();
+}
+
+function closeNotificationModal() {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function listenForNewNotifications() {
+    if (typeof database === 'undefined' || !database.ref) return;
+
+    let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime')) || 0;
+
+    // global_notification নোড কল করা হচ্ছে
+    database.ref('global_notification').on('value', (snapshot) => {
+        let hasUnseen = false;
+
+        if (snapshot.exists()) {
+            const item = snapshot.val();
+            // যদি এটি সরাসরি অবজেক্ট হয়
+            if (item.title || item.message) {
+                if (!item.timestamp || item.timestamp > lastReadTime) {
+                    hasUnseen = true;
+                }
+            } else {
+                // যদি ভেতরে অনেকগুলো চাইল্ড থাকে
+                Object.keys(item).forEach(key => {
+                    const child = item[key];
+                    if (child.timestamp && child.timestamp > lastReadTime) {
+                        hasUnseen = true;
+                    }
+                });
+            }
+        }
+
+        const notifBadge = document.getElementById('notifRedBadge');
+        if (notifBadge) {
+            notifBadge.style.display = hasUnseen ? 'block' : 'none';
+        }
+    });
+}
+
+function loadNotificationHistory() {
+    const container = document.getElementById('notificationHistoryList');
+    if (!container) return;
+
+    container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">Loading notifications...</p>';
+
+    if (typeof database !== 'undefined' && database.ref) {
+        database.ref('global_notification').once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+                return;
+            }
+
+            const data = snapshot.val();
+            let html = '';
+            const notifList = [];
+
+            // data সরাসরি অবজেক্ট নাকি লিস্ট তা হ্যান্ডেল করা
+            if (data.title || data.message) {
+                notifList.push(data);
+            } else {
+                Object.keys(data).forEach(key => {
+                    notifList.push(data[key]);
+                });
+            }
+
+            notifList.forEach(item => {
+                const title = item.title || 'Notification';
+                const message = item.message || '';
+                
+                // Timestamp কনভার্সন
+                let timeStr = '';
+                if (item.timestamp) {
+                    timeStr = new Date(Number(item.timestamp)).toLocaleString();
+                }
+
+                html += `
+                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin-bottom: 8px; text-align: left;">
+                        <div style="font-weight: bold; font-size: 14px; color: #ffffff; margin-bottom: 4px;">${title}</div>
+                        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${message}</div>
+                        ${timeStr ? `<div style="font-size: 10px; color: #888;">${timeStr}</div>` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }).catch((err) => {
+            console.error(err);
+            container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+        });
+    } else {
+        container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+    }
+}
+
+// Global Listener Call
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', listenForNewNotifications);
+} else {
+    listenForNewNotifications();
+              }
+    
+    // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
+    function processStreakCheck(userData) {
+      const lastDateStr = userData.lastMineDate || "";
+      streakCount = userData.streakCount || 0;
+
+      if (lastDateStr) {
+        const lastDate = new Date(lastDateStr);
+        const currentDate = new Date(todayDate);
+        const diffTime = Math.abs(currentDate - lastDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          // Maintained Streak
+        } else if (diffDays > 1) {
+          // Missed day -> Reset Streak
+          streakCount = 0;
+        }
+      }
+
+      // Calculate Multiplier according to Streaks (3, 7, 30 days)
+      if (streakCount >= 30) {
+        multiplier = 2.0;
+      } else if (streakCount >= 7) {
+        multiplier = 1.5;
+      } else if (streakCount >= 3) {
+        multiplier = 1.25;
+      } else {
+        multiplier = 1.0;
+      }
+
+      const streakEl = document.getElementById('homeMultiplierText');
+      if (streakEl) {
+        streakEl.innerText = `Speed: ${multiplier}x | Streak: ${streakCount} Days 🔥`;
+      }
+      const rateEl = document.getElementById('mineRateDisplay');
+      if (rateEl) {
+        rateEl.innerText = `Current Rate: ${Math.round(100 * multiplier)} ADI / 4 Hours`;
+      }
+    }
+
+    function claimDailyReward() {
+      if (lastClaimDate === todayDate) {
+        showAlert("You have already claimed today's reward!");
+        return;
+      }
+
+      streakCount += 1;
+      processStreakCheck({ lastMineDate: todayDate, streakCount: streakCount });
+
+      const baseReward = 100;
+      const totalReward = Math.round(baseReward * multiplier);
+      userBalance += totalReward;
+
+      const historyId = 'hist_' + Date.now();
+      let updates = {};
+      updates['users/' + userId + '/balance'] = userBalance;
+      updates['users/' + userId + '/lastClaimDate'] = todayDate;
+      updates['users/' + userId + '/streakCount'] = streakCount;
+      updates['users/' + userId + '/history/' + historyId] = {
+        title: "Daily Streak Reward",
+        amount: "+" + totalReward + " ADI",
+        date: new Date().toLocaleString(),
+        type: "Streak Reward",
+        timestamp: Date.now()
+      };
+
+      database.ref().update(updates).then(() => {
+        showAlert(`Congratulations! Claimed ${totalReward} ADI$ (${streakCount} Day Streak Bonus!)`);
+      });
+    }
+
+    // FEATURE 2: LUCKY SPIN WHEEL
+    // FEATURE 3: LUCKY SPIN WHEEL
+const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
+let isSpinning = false;
+
+function drawWheel() {
+    const canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const numSegments = wheelRewards.length;
+    const anglePerSegment = (2 * Math.PI) / numSegments;
+
+    ctx.clearRect(0, 0, 200, 200);
+
+    for (let i = 0; i < numSegments; i++) {
+        const angle = i * anglePerSegment;
+        ctx.beginPath();
+        ctx.fillStyle = (i % 2 === 0) ? '#121212' : '#0a0a0a';
+        ctx.moveTo(100, 100);
+        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
+        ctx.lineTo(100, 100);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(100, 100);
+        ctx.rotate(angle + anglePerSegment / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = (i % 2 === 0) ? '#ffffff' : '#aaaaaa';
+        ctx.font = 'bold 11px Plus Jakarta Sans';
+        ctx.fillText(wheelRewards[i] + ' ADI', 85, 4);
+        ctx.restore();
+    }
+}
+
+// ENGLISH POPUP MODAL
+function showCustomModal(wonAmount) {
+    const oldModal = document.getElementById('winModal');
+    if (oldModal) oldModal.remove();
+
+    const modalHtml = `
+        <div id="winModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:99999;">
+            <div style="background:#1e1e1e; color:#fff; padding:25px; border-radius:15px; text-align:center; max-width:320px; width:85%; border:1px solid #333; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+                <h2 style="color:#4CAF50; margin-top:0; margin-bottom:10px;">Congratulations! 🎉</h2>
+                <p style="font-size:16px; margin-bottom:20px; color:#ddd;">You have successfully won <strong style="color:#fff;">${wonAmount} ADI$</strong> tokens!</p>
+                <button id="claimModalBtn" style="background:#fff; color:#000; border:none; padding:12px 25px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; width:100%;">Claim Reward</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    document.getElementById('claimModalBtn').onclick = function() {
+        document.getElementById('winModal').remove();
+    };
+}
+
+function spinWheel() {
+    if (isSpinning) return;
+
+    if (lastSpinDate === todayDate && spinsLeft <= 0) {
+        if (typeof showAlert === 'function') {
+            showAlert("Daily spin limit reached! Come back tomorrow.");
+        } else {
+            alert("Daily spin limit reached! Come back tomorrow.");
+        }
+        return;
+    }
+
+    isSpinning = true;
+    const btn = document.getElementById('spinBtn');
+    if (btn) btn.disabled = true;
+
+    const randomIndex = Math.floor(Math.random() * wheelRewards.length);
+    const selectedReward = wheelRewards[randomIndex];
+  // Top Pointer Center Angle Alignment
+    const numSegments = wheelRewards.length;
+    const segmentDegrees = 360 / numSegments;
+    const targetDegree = (360 * 5) + (270 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
+
+    const canvas = document.getElementById('wheelCanvas');
+    if (canvas) {
+        canvas.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)';
+        canvas.style.transform = `rotate(${targetDegree}deg)`;
+    }
+
+    setTimeout(() => {
+        userBalance += selectedReward;
+        spinsLeft = Math.max(0, spinsLeft - 1);
+        lastSpinDate = todayDate;
+
+        const histId = 'hist_' + Date.now();
+        let updates = {};
+        updates['users/' + userId + '/balance'] = userBalance;
+        updates['users/' + userId + '/spinsLeft'] = spinsLeft;
+        updates['users/' + userId + '/lastSpinDate'] = lastSpinDate;
+        updates['users/' + userId + '/history/' + histId] = {
+            title: "Lucky Spin Reward",
+            amount: "+" + selectedReward + " ADI$",
+            date: new Date().toLocaleString(),
+            type: "Spin Win",
+            timestamp: Date.now()
+        };
+
+        const finishSpin = () => {
+            showCustomModal(selectedReward);
+            if (canvas) {
+                canvas.style.transition = 'none';
+                canvas.style.transform = 'rotate(0deg)';
+                drawWheel();
+            }
+            isSpinning = false;
+            if (btn && spinsLeft > 0) btn.disabled = false;
+            updateSpinUI();
+        };
+
+        if (typeof database !== 'undefined' && database.ref) {
+            database.ref().update(updates).then(finishSpin).catch((err) => {
+                console.error(err);
+                finishSpin();
+            });
+        } else {
+            finishSpin();
+        }
+    }, 4000);
+}
+
+function updateSpinUI() {
+    const txt = document.getElementById('spinLimitText');
+    if (txt) {
+        txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
+    }
+}
+
+// Page Load-e Wheel Draw kora
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', drawWheel);
+} else {
+    drawWheel();
+}
+
+    
+                             
+        // FEATURE 4: MINI TAPPER GAME CHALLENGE
+    function startTapperGame() {
+      tapperScore = 0;
+      tapperTimeLeft = 15;
+      document.getElementById('tapperScoreDisplay').innerText = "Score: 0";
+      document.getElementById('tapperTimerDisplay').innerText = "Time Left: 15s";
+
+      document.getElementById('tapperTapBtn').disabled = false;
+      document.getElementById('startTapperBtn').disabled = true;
+
+      tapperInterval = setInterval(() => {
+        tapperTimeLeft--;
+        document.getElementById('tapperTimerDisplay').innerText = `Time Left: ${tapperTimeLeft}s`;
+
+        if (tapperTimeLeft <= 0) {
+          clearInterval(tapperInterval);
+          document.getElementById('tapperTapBtn').disabled = true;
+          document.getElementById('startTapperBtn').disabled = false;
+
+          const earnedTokens = Math.min(50, Math.floor(tapperScore / 2));
+          if (earnedTokens > 0) {
+            userBalance += earnedTokens;
+            const histId = 'hist_' + Date.now();
+            let updates = {};
+            updates['users/' + userId + '/balance'] = userBalance;
+            updates['users/' + userId + '/history/' + histId] = {
+              title: "Mini Tapper Game",
+              amount: "+" + earnedTokens + " ADI$",
+              date: new Date().toLocaleString(),
+              type: "Mini Game",
+              timestamp: Date.now()
+            };
+            database.ref().update(updates).then(() => {
+              showAlert(`🎮 Time's up! Score: ${tapperScore}. Earned +${earnedTokens} ADI$!`);
+            });
+          } else {
+            showAlert(`Time's up! Tap faster next time.`);
+          }
+        }
+      }, 1000);
+    }
+
+    function registerTap() {
+      if (tapperTimeLeft > 0) {
+        tapperScore++;
+        document.getElementById('tapperScoreDisplay').innerText = `Score: ${tapperScore}`;
+      }
+    }
+
+    // Start Mining Function (4 Hours Duration)
+    function startMining() {
+      const now = Date.now();
+      if (typeof miningEndTime !== 'undefined' && miningEndTime > now) {
+        showAlert("Mining session is already running!");
+        return;
+      }
+
+      const yieldAmount = Math.round(100 * multiplier);
+      userBalance = (typeof userBalance !== 'undefined' ? userBalance : 0) + yieldAmount;
+      totalMinedAmount += yieldAmount;
+      miningEndTime = now + (4 * 60 * 60 * 1000);
+      pushNotificationSent = false;
+      
+      const historyId = 'hist_' + now;
+      let updates = {};
+
+      if (typeof userId !== 'undefined') {
+        updates['users/' + userId + '/balance'] = userBalance;
+        updates['users/' + userId + '/totalMined'] = totalMinedAmount;
+        updates['users/' + userId + '/lastMineDate'] = typeof todayDate !== 'undefined' ? todayDate : '';
+        updates['users/' + userId + '/miningEndTime'] = miningEndTime;
+        updates['users/' + userId + '/pushNotificationSent'] = false;
+        updates['users/' + userId + '/history/' + historyId] = {
+          title: "Block Mining",
+          amount: "+" + yieldAmount + " ADI$",
+          date: new Date().toLocaleString(),
+          type: "Mining Reward",
+          timestamp: now
+        };
+      }
+
+      if (typeof database !== 'undefined' && database.ref) {
+        database.ref().update(updates).then(() => {
+          showAlert(`Mined +${yieldAmount} ADI$ Tokens!`);
+          checkMiningState();
+        }).catch((error) => {
+          showAlert("Error: " + error.message);
+        });
+      }
+    }
+
+    function triggerPushNotification() {
+      if (pushNotificationSent) return;
+      pushNotificationSent = true;
+      database.ref('users/' + userId + '/pushNotificationSent').set(true);
+
+      const notifyMessage = "Your 4-hour mining cycle has completed! Come back now to claim your tokens.";
+      database.ref('pending_notifications/' + userId + '_' + Date.now()).set({
+        userId: userId,
+        message: notifyMessage,
+        timestamp: Date.now(),
+        status: "pending"
+      });
+
+      if (tg && tg.showPopup) {
+        tg.showPopup({
+          title: "Mining Finished!",
+          message: notifyMessage,
+          buttons: [{ type: "ok" }]
+        });
+      }
+    }
+    function checkMiningState() {
+      if (typeof miningInterval !== 'undefined') {
+        clearInterval(miningInterval);
+      }
+
+      const now = Date.now();
+      const mineBtn = document.getElementById('mineBtn');
+      const miningCircle = document.getElementById('miningCircle');
+      const miningTimer = document.getElementById('miningTimer');
+      const homeTimer = document.getElementById('homeMiningTimer');
+      const profTimer = document.getElementById('profMiningTimer');
+      const homeTokens = document.getElementById('homeMinedTokens');
+      const profTokens = document.getElementById('profMinedTokens');
+
+      const activeEndTime = typeof miningEndTime !== 'undefined' ? miningEndTime : 0;
+
+      if (homeTokens) homeTokens.innerText = `Total Mined: ${totalMinedAmount.toLocaleString()} ADI$`;
+      if (profTokens) profTokens.innerText = `Total Mined: ${totalMinedAmount.toLocaleString()} ADI$`;
+
+      if (activeEndTime > now) {
+        if (miningCircle) miningCircle.classList.add('mining-active');
+        if (mineBtn) {
+          mineBtn.disabled = true;
+          mineBtn.style.opacity = "0.4";
+        }
+
+        miningInterval = setInterval(() => {
+          const currentTime = Date.now();
+          const remaining = activeEndTime - currentTime;
+
+          if (remaining <= 0) {
+            clearInterval(miningInterval);
+            if (miningCircle) miningCircle.classList.remove('mining-active');
+            const doneMsg = "Session complete. Ready to mine again!";
+            if (miningTimer) miningTimer.innerText = doneMsg;
+            if (homeTimer) homeTimer.innerText = "Session Completed!";
+            if (profTimer) profTimer.innerText = "Session Completed!";
+            if (mineBtn) {
+              mineBtn.innerText = "⛏ Start Mining";
+              mineBtn.disabled = false;
+              mineBtn.style.opacity = "1";
+            }
+            triggerPushNotification();
+          } else {
+            const h = Math.floor(remaining / (1000 * 60 * 60));
+            const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((remaining % (1000 * 60)) / 1000);
+            
+            const timerText = `${h}h ${m}m ${s}s`;
+            if (miningTimer) miningTimer.innerText = `Time Left: ${timerText}`;
+            if (homeTimer) homeTimer.innerText = `Mining Active: ${timerText}`;
+            if (profTimer) profTimer.innerText = `Mining Active: ${timerText}`;
+            if (mineBtn) mineBtn.innerText = `Mining Active (${timerText})`;
+          }
+        }, 1000);
+      } else {
+        if (miningCircle) miningCircle.classList.remove('mining-active');
+        if (homeTimer) homeTimer.innerText = "Session Ready";
+        if (profTimer) profTimer.innerText = "Session Ready";
+        if (mineBtn) {
+          mineBtn.innerText = "⛏ Start Mining";
+          mineBtn.disabled = false;
+          mineBtn.style.opacity = "1";
+        }
+      }
+    }
+
+    function confirmBoost() {
+      if (confirm("Are you sure you want to spend 10 ADI$ to boost mining?")) {
+        processBoostDeduction();
+      }
+    }
+
+    function processBoostDeduction() {
+      if (!userId) {
+        alert("User ID not found!");
+        return;
+      }
+
+      const userRef = database.ref('users/' + userId);
+      
+      userRef.once('value', (snapshot) => {
+        const userData = snapshot.val();
+        const currentBalance = userData && userData.balance ? Number(userData.balance) : 0;
+        
+        if (currentBalance < 10) {
+          alert("You don't have enough tokens! At least 10 ADI$ is required to boost.");
+          return;
+        }
+
+        const newBalance = currentBalance - 10;
+        const histId = 'hist_' + Date.now();
+        
+        let updates = {};
+        updates[`users/${userId}/balance`] = newBalance;
+        updates[`users/${userId}/history/${histId}`] = {
+          title: "Mining Boost Fee",
+          amount: "-10 ADI$",
+          date: new Date().toLocaleString(),
+          type: "Boost",
+          timestamp: Date.now()
+        };
+
+        database.ref().update(updates).then(() => {
+          alert("Mining boosted successfully! 10 ADI$ has been deducted from your account.");
+        }).catch((error) => {
+          alert("Error occurred: " + error.message);
+        });
+      });
+    }
+
+    async function autoConnectTrustWallet() {
+      if (walletAddress) {
+        showAlert("Wallet already connected: " + walletAddress);
+        return;
+      }
+      if (window.ethereum) {
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const address = await signer.getAddress();
+          walletAddress = address;
+          database.ref('users/' + userId + '/walletAddress').set(address).then(() => {
+            showAlert("Trust Wallet connected: " + address);
+            updateUI();
+          });
+        } catch (error) {
+          showAlert("Wallet Connection Cancelled or Failed!");
+        }
+      } else {
+        const currentUrl = encodeURIComponent(window.location.href);
+        const trustDeepLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${currentUrl}`;
+        if (tg && tg.openLink) {
+          tg.openLink(trustDeepLink);
+        } else {
+          window.location.href = trustDeepLink;
+        }
+      }
+    }
+
+    function openReferralModal() {
+      document.getElementById('referralModal').style.display = 'flex';
+      const botUsername = "ADIAridropbot";
+      const appShortName = "app"; 
+      const refLink = `https://t.me/${botUsername}/${appShortName}?startapp=${userId}`;
+      const refInput = document.getElementById('refLinkInput');
+      if (refInput) refInput.value = refLink;
+      loadReferralData();
+    }
+
+    function closeReferralModal() {
+      document.getElementById('referralModal').style.display = 'none';
+    }
+
+    function shareReferralLink() {
+      const botUsername = "ADIAridropbot";
+      const appShortName = "app";
+      const refLink = `https://t.me/${botUsername}/${appShortName}?startapp=${userId}`;
+      const shareText = "Join ADI Airdrop and earn 50 ADI bonus!";
+      
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`;
+        window.Telegram.WebApp.openTelegramLink(shareUrl);
+      } else {
+        navigator.clipboard.writeText(refLink).then(() => {
+          showAlert("Referral link copied to clipboard!\n" + refLink);
+        }).catch(() => {
+          prompt("Copy your referral link:", refLink);
+        });
+      }
+      }
+      function copyReferralLink() {
+      const refInput = document.getElementById('refLinkInput');
+      if (refInput && refInput.value) {
+        navigator.clipboard.writeText(refInput.value).then(() => {
+          showAlert("Referral link copied to clipboard!");
+        }).catch(() => {
+          refInput.select();
+          document.execCommand('copy');
+          showAlert("Referral link copied!");
+        });
+      }
+    }
+  
+    function loadReferralData() {
+      const refListEl = document.getElementById('referralList');
+      const refCountEl = document.getElementById('refCount');
+      const refEarnEl = document.getElementById('refEarnings');
+
+      database.ref('users/' + userId + '/referrals').on('value', (snapshot) => {
+        const refs = snapshot.val();
+        refListEl.innerHTML = "";
+
+        if (refs) {
+          const keys = Object.keys(refs);
+          refCountEl.innerText = keys.length;
+
+          database.ref('users').once('value', (usersSnap) => {
+            const allUsers = usersSnap.val() || {};
+            let totalEarned = 0;
+            refListEl.innerHTML = "";
+
+            keys.reverse().forEach((refUid) => {
+              const item = refs[refUid];
+              const reward = item.reward || 50;
+              totalEarned += reward;
+
+              const refUserData = allUsers[refUid] || {};
+              const isBanned = refUserData.banned === true;
+              const statusBadge = isBanned ? 
+                `<span style="color:#ef4444; font-size:10px; font-weight:bold; background:rgba(239,68,68,0.15); padding:2px 6px; border-radius:4px;">Banned</span>` : 
+                `<span style="color:#22c55e; font-size:10px; font-weight:bold; background:rgba(34,197,94,0.15); padding:2px 6px; border-radius:4px;">Active</span>`;
+
+              refListEl.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:10px; background:#1b1b1b; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
+                  <div>
+                    <div style="font-weight:bold; color:#fff; font-size:13px;">@${item.username || 'User'} ${statusBadge}</div>
+                    <div style="font-size:10px; color:#888;">${item.timestamp || ''}</div>
+                  </div>
+                  <div style="color:var(--accent-green); font-weight:bold; font-size:12px;">+${reward} ADI$</div>
+                </div>
+              `;
+            });
+
+            refEarnEl.innerText = totalEarned.toLocaleString() + " ADI$";
+          });
+        } else {
+          refCountEl.innerText = "0";
+          refEarnEl.innerText = "0 ADI$";
+          refListEl.innerHTML = "<p style='color:#888; text-align:center; font-size:12px;'>No referrals yet. Share your link!</p>";
+        }
+      });
+    }
+
+    function checkReferralBonus() {
+      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+        const referrerId = tg.initDataUnsafe.start_param;
+
+        if (referrerId && referrerId !== userId) {
+          database.ref('users/' + userId + '/referredBy').once('value').then((snapshot) => {
+            if (!snapshot.exists()) {
+              const bonusAmount = 50;
+
+              database.ref('users/' + userId + '/referredBy').set(referrerId);
+
+              database.ref('users/' + referrerId + '/balance').transaction((currentBalance) => {
+                return (currentBalance || 0) + bonusAmount;
+              });
+
+              database.ref('users/' + referrerId + '/referrals/' + userId).set({
+                username: userName,
+                reward: bonusAmount,
+                timestamp: new Date().toLocaleString()
+              });
+
+              const histId = 'hist_' + Date.now();
+              database.ref('users/' + referrerId + '/history/' + histId).set({
+                title: "Referral Bonus",
+                amount: "+" + bonusAmount + " ADI$",
+                date: new Date().toLocaleString(),
+                type: "Referral Reward",
+                timestamp: Date.now()
+              });
+            }
+          });
+        }
+      }
+    }
+
+        
+      // User Sync & Initialization Listener
+    const userRef = database.ref('users/' + userId);
+    userRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        if (data.banned === true) {
+          document.getElementById('banOverlay').style.display = 'flex';
+          return;
+        } else {
+          document.getElementById('banOverlay').style.display = 'none';
+        }
+
+        userBalance = Number(data.balance) || 0;
+        totalMinedAmount = Number(data.totalMined) || 0;
+        lastClaimDate = data.lastClaimDate || "";
+        lastMineDate = data.lastMineDate || "";
+        miningEndTime = data.miningEndTime || 0;
+        walletAddress = data.walletAddress || "";
+        spinsLeft = data.spinsLeft !== undefined ? data.spinsLeft : 2;
+        lastSpinDate = data.lastSpinDate || "";
+        pushNotificationSent = data.pushNotificationSent || false;
+
+        processStreakCheck(data);
+      } else {
+        userRef.set({ 
+          username: userName, 
+          balance: 0, 
+          totalMined: 0,
+          lastClaimDate: "", 
+          lastMineDate: "", 
+          miningEndTime: 0, 
+          walletAddress: "",
+          spinsLeft: 2,
+          lastSpinDate: "",
+          streakCount: 0,
+          banned: false
+        });
+        userBalance = 0;
+        totalMinedAmount = 0;
+      }
+      updateUI();
+      checkMiningState();
+      checkReferralBonus();
+      checkSubmittedProofs();
+      updateSpinUI();
+      loadUserHistory(userId);
+    });
+
+    function updateUI() {
+      if (document.getElementById('userName')) document.getElementById('userName').innerText = userName;
+      if (document.getElementById('userAvatar')) document.getElementById('userAvatar').innerText = userName[0].toUpperCase();
+      if (document.getElementById('profUser')) document.getElementById('profUser').innerText = userName;
+      if (document.getElementById('profId')) document.getElementById('profId').innerText = userId;
+
+      document.getElementById('totalBalance').innerHTML = userBalance.toLocaleString() + ' <span>ADI$</span>';
+      document.getElementById('usdValue').innerText = '≈ $' + (userBalance * 0.0001).toFixed(2) + ' USD';
+      document.getElementById('profBalance').innerText = userBalance.toLocaleString() + ' ADI$';
+
+      if (walletAddress) {
+        document.getElementById('connectedWalletAddr').innerText = walletAddress;
+        document.getElementById('walletConnBtn').innerHTML = '<i class="fa-solid fa-check-circle"></i> Wallet Connected';
+        document.getElementById('walletConnBtn').disabled = true;
+      }
+
+      const claimBtn = document.getElementById('dailyClaimBtn');
+      if (claimBtn) {
+        if (lastClaimDate === todayDate) {
+          claimBtn.innerText = "Claimed";
+          claimBtn.disabled = true;
+          claimBtn.style.opacity = "0.4";
+        } else {
+          claimBtn.innerText = "Claim";
+          claimBtn.disabled = false;
+          claimBtn.style.opacity = "1";
+        }
+      }
+    }
+
+    function switchTab(pageId, navElement) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+
+      if (navElement) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        navElement.classList.add('active');
+      }
+    }
+
+    function loadUserHistory(userId) {
+      const profileContainer = document.getElementById('history-list-container');
+      const mineContainer = document.getElementById('mineHistoryList');
+      const modalContainer = document.getElementById('historyList');
+
+      if (!profileContainer && !mineContainer && !modalContainer) return;
+
+      const historyRef = database.ref('users/' + userId + '/history').limitToLast(30);
+
+      historyRef.on('value', (snapshot) => {
+        if (profileContainer) profileContainer.innerHTML = '';
+        if (mineContainer) mineContainer.innerHTML = '';
+        if (modalContainer) modalContainer.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          const emptyHTML = '<div style="text-align: center; color: #777; font-size: 12px; padding: 10px 0;">No activity history recorded yet.</div>';
+          if (profileContainer) profileContainer.innerHTML = emptyHTML;
+          if (mineContainer) mineContainer.innerHTML = emptyHTML;
+          if (modalContainer) modalContainer.innerHTML = emptyHTML;
+          return;
+        }
+
+        let historyArray = [];
+        snapshot.forEach((childSnapshot) => {
+          historyArray.push(childSnapshot.val());
+        });
+
+        historyArray.reverse();
+
+        let compiledHTML = '';
+        historyArray.forEach((item) => {
+          const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : (item.date || '');
+          const displayAmount = item.amount !== undefined && item.amount !== null ? String(item.amount) : '0';
+          
+          let amountClass = 'amount-plus';
+          let amountColor = '#00e676';
+
+          if (item.status === 'rejected' || displayAmount.includes('-') || Number(item.amount) < 0) {
+            amountClass = 'amount-minus';
+            amountColor = '#ff4d4d';
+          } else if (item.amount == 0) {
+            amountClass = 'amount-neutral';
+            amountColor = '#aaa';
+          }
+
+          compiledHTML += `
+            <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <div class="history-info">
+                <span class="history-title" style="display: block; font-size: 12px; font-weight: bold; color: #fff;">${item.title || 'Activity'}</span>
+                <span class="history-date" style="font-size: 10px; color: #888;">${dateStr} (${item.type || 'Transaction'})</span>
+              </div>
+              <div class="history-amount ${amountClass}" style="font-size: 12px; font-weight: 800; color: ${amountColor};">
+                ${displayAmount}
+              </div>
+            </div>
+          `;
+        });
+
+        if (profileContainer) profileContainer.innerHTML = compiledHTML;
+        if (mineContainer) mineContainer.innerHTML = compiledHTML;
+        if (modalContainer) modalContainer.innerHTML = compiledHTML;
+      });
+    }
+
+    function openHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openWhitepaperModal() {
+      document.getElementById('whitepaperModal').style.display = 'flex';
+    }
+    function closeWhitepaperModal() {
+      document.getElementById('whitepaperModal').style.display = 'none';
+    }
+
+    function openAboutModal() {
+      document.getElementById('aboutModal').style.display = 'flex';
+    }
+    function closeAboutModal() {
+      document.getElementById('aboutModal').style.display = 'none';
+    }
+
+    // TASK PROOF & AUTO APPROVAL WITH SECRET CODE
+    function submitProofOnce(proofKey, taskName, reward, inputId) {
+      const inputEl = document.getElementById(inputId);
+      const proofValue = inputEl ? inputEl.value.trim() : "";
+
+      if (!proofValue) {
+        showAlert("Please enter Secret Code, Username, or Link proof!");
+        return;
+      }
+
+      const taskKey = proofKey.replace('proof_', '');
+      
+      database.ref('custom_tasks/' + taskKey).once('value').then((taskSnap) => {
+        const taskData = taskSnap.val();
+        
+        if (taskData && taskData.code && taskData.code.trim() !== "") {
+          if (proofValue.toLowerCase() !== taskData.code.trim().toLowerCase()) {
+            showAlert("Invalid Secret Code! Task verification failed.");
+            return;
+          }
+
+          userBalance += reward;
+          const histId = 'hist_' + Date.now();
+
+          let updates = {};
+          updates['users/' + userId + '/balance'] = userBalance;
+          updates['users/' + userId + '/submittedProofs/' + proofKey] = {
+            proof: proofValue,
+            status: 'completed',
+            timestamp: Date.now()
+          };
+          updates['users/' + userId + '/history/' + histId] = {
+            title: "Task: " + taskName,
+            amount: "+" + reward + " ADI$",
+            date: new Date().toLocaleString(),
+            type: "Task Reward",
+            timestamp: Date.now()
+          };
+
+          database.ref().update(updates).then(() => {
+            showAlert("Secret Code Correct! Task completed and +" + reward + " ADI$ added to your balance!");
+            markProofAsSubmitted(proofKey, inputId, "Completed");
+          });
+
+        } else {
+          const proofRef = database.ref('users/' + userId + '/submittedProofs/' + proofKey);
+          proofRef.once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+              showAlert("You have already submitted proof for this task!");
+              return;
+            }
+
+            let updates = {};
+            updates['users/' + userId + '/submittedProofs/' + proofKey] = {
+              proof: proofValue,
+              status: 'pending',
+              timestamp: Date.now()
+            };
+            updates['pending_tasks/' + userId + '_' + proofKey] = {
+              userId: userId,
+              username: userName,
+              taskName: taskName,
+              reward: reward,
+              proof: proofValue,
+              status: 'pending',
+              timestamp: new Date().toLocaleString()
+            };
+
+            database.ref().update(updates).then(() => {
+              showAlert("Proof submitted successfully! Status: Pending Approval");
+              markProofAsSubmitted(proofKey, inputId, "Pending Approval");
+            });
+          });
+        }
+      });
+    }
+
+    function checkSubmittedProofs() {
+      database.ref('users/' + userId + '/submittedProofs').on('value', (snapshot) => {
+        const proofs = snapshot.val();
+        if (proofs) {
+          Object.keys(proofs).forEach(pKey => {
+            const val = proofs[pKey];
+            let statusText = "Completed";
+            if (typeof val === 'object' && val.status === 'pending') {
+              statusText = "Pending Approval";
+            }
+            markProofAsSubmitted(pKey, pKey.replace('proof_', 'proof-'), statusText);
+          });
+        }
+      });
+    }
+
+    function markProofAsSubmitted(proofKey, inputId, labelText = "Completed") {
+      const btnId = 'btn-' + inputId;
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+
+      if (btn) {
+        btn.innerText = labelText;
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+      }
+      if (input) {
+        input.disabled = true;
+        input.placeholder = "Task Status: " + labelText;
+      }
+    }
+
+    // Dynamic Task Rendering & Event Binding
+    database.ref('custom_tasks').on('value', (snapshot) => {
+      const container = document.getElementById('dynamicTasksContainer');
+      if (!container) return;
+      container.innerHTML = "";
+      const tasks = snapshot.val();
+      if (tasks) {
+        Object.keys(tasks).forEach(key => {
+          const t = tasks[key];
+          const inputId = `proof-${key}`;
+          const btnId = `btn-proof-${key}`;
+          const proofKey = `proof_${key}`;
+
+          container.innerHTML += `
+            <div class="task-card">
+              <div class="task-header">
+                <span class="task-title"><i class="fa-solid fa-play-circle"></i> ${t.title}</span>
+                <span class="task-reward">+${t.reward} ADI$</span>
+              </div>
+              <a href="${t.link}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">Open Task Link</a>
+              <input type="text" id="${inputId}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Paste Screenshot Link' : 'Enter Username')}">
+              <button id="${btnId}" class="btn btn-metallic" style="width: 100%; padding: 8px; font-size: 11px;" onclick="submitProofOnce('${proofKey}', '${t.title.replace(/'/g, "\\'")}', ${t.reward}, '${inputId}')">Submit Proof</button>
+            </div>
+          `;
+        });
+        checkSubmittedProofs();
+      } else {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px 0;">No active tasks available.</div>';
+      }
+    });
+
+    // Initialize timers and listeners
+    startCountdownTimer();
+    listenGlobalStats();
+  </script>
+</body>
+</html>
