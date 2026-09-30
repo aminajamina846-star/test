@@ -801,55 +801,96 @@
       loadLiveMiningStats(users);
       loadReferralLeaderboard(users);
     });
-  // 7. Full Comprehensive User Profile Bio Inspector Modal
-    function openBioModal(uid) {
-      document.getElementById('bioModal').style.display = 'flex';
-      const body = document.getElementById('bioModalBody');
-      body.innerHTML = "Loading complete user bio inspection...";
+  // World Timezone to Country Mapper Function
+function getCountryFromTimezone(tz) {
+    if (!tz) return null;
+    
+    // Bangladesh & Asia
+    if (tz.includes("Dhaka")) return "Bangladesh 🇧🇩";
+    if (tz.includes("Kolkata")) return "India 🇮🇳";
+    if (tz.includes("Karachi")) return "Pakistan 🇵🇰";
+    if (tz.includes("Kathmandu")) return "Nepal 🇳🇵";
+    if (tz.includes("Colombo")) return "Sri Lanka 🇱🇰";
+    if (tz.includes("Kabul")) return "Afghanistan 🇦🇫";
+    if (tz.includes("Bangkok") || tz.includes("Jakarta")) return "Thailand / Indonesia 🇹🇭🇮🇩";
+    if (tz.includes("Singapore") || tz.includes("Kuala_Lumpur")) return "Singapore / Malaysia 🇸🇬🇲🇾";
+    if (tz.includes("Riyadh") || tz.includes("Dubai") || tz.includes("Qatar") || tz.includes("Kuwait")) return "Middle East (Saudi/UAE) 🇸🇦🇦🇪";
+    if (tz.includes("Tokyo") || tz.includes("Seoul")) return "Japan / South Korea 🇯🇵🇰🇷";
+    if (tz.includes("Shanghai") || tz.includes("Hong_Kong")) return "China / HK 🇨🇳🇭🇰";
 
-      db.ref('users').once('value', (snap) => {
+    // Europe
+    if (tz.includes("London")) return "United Kingdom 🇬🇧";
+    if (tz.includes("Berlin") || tz.includes("Paris") || tz.includes("Rome") || tz.includes("Madrid")) return "Europe (DE/FR/IT/ES) 🇪🇺";
+    if (tz.includes("Moscow")) return "Russia 🇷🇺";
+
+    // Americas
+    if (tz.includes("New_York") || tz.includes("Chicago") || tz.includes("Los_Angeles")) return "United States 🇺🇸";
+    if (tz.includes("Toronto") || tz.includes("Vancouver")) return "Canada 🇨🇦";
+    if (tz.includes("Sao_Paulo") || tz.includes("Buenos_Aires")) return "South America 🇧🇷🇦🇷";
+
+    // Africa & Oceania
+    if (tz.includes("Cairo") || tz.includes("Johannesburg") || tz.includes("Lagos")) return "Africa (EG/ZA/NG) 🌍";
+    if (tz.includes("Sydney") || tz.includes("Auckland")) return "Australia / NZ 🇦🇺🇳🇿";
+    
+    // Auto format for any other unknown timezone (e.g., "Asia/Riyadh" -> "Riyadh")
+    return tz.split('/')[1] ? tz.split('/')[1].replace(/_/g, ' ') : tz;
+}
+
+// 7. Full Comprehensive User Profile Bio Inspector Modal
+function userBioModal(uid) {
+    document.getElementById('bioModal').style.display = 'flex';
+    const body = document.getElementById('bioModalBody');
+    body.innerHTML = "Loading complete user bio inspection...";
+
+    db.ref('users/' + uid).once('value', (snap) => {
         const allUsers = snap.val();
-        const u = allUsers[uid];
-        if(!u) { body.innerHTML = "User record not found."; return; }
+        const u = allUsers;
+        if (!u) { body.innerHTML = "User record not found."; return; }
 
         let sameIpAccounts = [];
         Object.keys(allUsers).forEach(otherUid => {
-          if(otherUid !== uid && u.ip && allUsers[otherUid].ip === u.ip) {
-            sameIpAccounts.push(allUsers[otherUid].username || otherUid);
-          }
+            if (otherUid !== uid && u.ip && allUsers[otherUid].ip === u.ip) {
+                sameIpAccounts.push(allUsers[otherUid].username || otherUid);
+            }
         });
 
         const now = Date.now();
         const isMining = u.miningEndTime && u.miningEndTime > now;
 
-        body.innerHTML = `
-          <div style="font-size:13px; line-height:1.9;">
-            <p><strong><i class="fa-solid fa-user"></i> Name / Username:</strong> @${u.username || u.name || 'N/A'}</p>
-            <p><strong><i class="fa-solid fa-id-badge"></i> Telegram ID:</strong> <code>${uid}</code></p>
-            <p><strong><i class="fa-solid fa-network-wired"></i> IP Address:</strong> <code>${u.ip || 'Unknown'}</code></p>
-            <p><strong><i class="fa-solid fa-earth-americas"></i> Country / Location:</strong> ${u.country || u.location || '🇧🇩 Bangladesh'}</p>
-            <p><strong><i class="fa-solid fa-share-nodes"></i> Traffic Source (Where from):</strong> <b style="color:var(--accent-blue);">${u.source || u.trafficSource || 'Direct Link / Organic'}</b></p>
-            <p><strong><i class="fa-solid fa-wallet"></i> BEP20 / Trust Wallet:</strong> 
-               <code style="color:var(--accent-green); word-break:break-all;">${u.walletAddress || u.wallet || 'Not Connected'}</code>
-               ${(u.walletAddress || u.wallet) ? `<button class="btn-copy" onclick="copyText('${u.walletAddress || u.wallet}')">Copy</button>` : ''}
-            </p>
-            <p><strong><i class="fa-solid fa-coins"></i> Total Balance:</strong> <b style="color:var(--accent-green);">${(u.balance || 0).toLocaleString()} ADI$</b></p>
-            <p><strong><i class="fa-solid fa-stopwatch"></i> Live Mining Status:</strong> ${isMining ? '<b style="color:var(--accent-green);">Mining Active 🟢</b>' : '<b style="color:var(--accent-red);">Inactive 🔴</b>'}</p>
-            <p><strong><i class="fa-solid fa-calendar-check"></i> Joining Time:</strong> ${u.joiningTime || u.joinedDate || 'N/A'}</p>
-            <p><strong><i class="fa-solid fa-user-plus"></i> Total Referrals:</strong> ${u.referrals ? Object.keys(u.referrals).length : 0} Users</p>
-            <p><strong><i class="fa-solid fa-link"></i> Ref Link Share/Copy Count:</strong> ${u.refCopyCount || 0} Times</p>
-            <p><strong><i class="fa-solid fa-check-double"></i> Total Tasks Completed:</strong> ${u.completedTasksCount || 0}</p>
-            <p><strong><i class="fa-solid fa-dharmachakra"></i> Total Lucky Spins:</strong> ${u.luckySpinsCount || 0}</p>
-            <p><strong><i class="fa-solid fa-clone"></i> Same IP Multi-Accounts (${sameIpAccounts.length}):</strong> ${sameIpAccounts.length > 0 ? sameIpAccounts.join(', ') : 'None (Unique)'}</p>
+        // Dynamic Country Auto-Detection
+        const detectedCountry = (u.country && u.country !== "Bangladesh") 
+            ? u.country 
+            : (getCountryFromTimezone(u.timezone) || u.location || "Unknown");
 
-            <div style="margin-top:15px; display:flex; gap:10px;">
-              <button class="btn-zero" onclick="resetBalanceToZero('${uid}')" style="padding:8px 12px; font-size:11px;">Reset Balance to 0</button>
-              <button class="btn-copy" onclick="viewUserHistory('${uid}')" style="padding:8px 12px; font-size:11px;">View Full History</button>
+        body.innerHTML = `
+            <div style="font-size:13px; line-height:1.9;">
+                <p><strong><i class="fa-solid fa-user"></i> Name / Username:</strong> @${u.username || u.name || 'N/A'}</p>
+                <p><strong><i class="fa-solid fa-id-badge"></i> Telegram ID:</strong> <code>${uid}</code></p>
+                <p><strong><i class="fa-solid fa-network-wired"></i> IP Address:</strong> <code>${u.ip || 'Unknown'}</code></p>
+                <p><strong><i class="fa-solid fa-earth-americas"></i> Country / Location:</strong> ${detectedCountry}</p>
+                <p><strong><i class="fa-solid fa-share-nodes"></i> Traffic Source (Where from):</strong> <b>${u.source || 'Direct Link / Organic'}</b></p>
+                <p><strong><i class="fa-solid fa-wallet"></i> BEP20 / Trust Wallet:</strong> 
+                    <code style="color:var(--accent-green); word-break:break-all;">${u.walletAddress || u.wallet || 'Not Connected'}</code> 
+                    ${(u.walletAddress || u.wallet) ? `<button class="btn-copy" onclick="copyText('${u.walletAddress || u.wallet}')">Copy</button>` : ''}
+                </p>
+                <p><strong><i class="fa-solid fa-coins"></i> Total Balance:</strong> <b style="color:var(--accent-green);">${u.balance || 0} ADI$</b></p>
+                <p><strong><i class="fa-solid fa-stopwatch"></i> Live Mining Status:</strong> <b style="color:${isMining ? 'var(--accent-green)' : 'red'};">${isMining ? 'Active 🟢' : 'Inactive 🔴'}</b></p>
+                <p><strong><i class="fa-solid fa-calendar-check"></i> Joining Time:</strong> ${u.joinedDate || 'N/A'}</p>
+                <p><strong><i class="fa-solid fa-user-plus"></i> Total Referrals:</strong> ${u.referrals ? Object.keys(u.referrals).length : 0} Users</p>
+                <p><strong><i class="fa-solid fa-link"></i> Ref Link Share/Copy Count:</strong> ${u.refCopyCount || 0} Times</p>
+                <p><strong><i class="fa-solid fa-check-double"></i> Total Tasks Completed:</strong> ${u.completedTasksCount || 0}</p>
+                <p><strong><i class="fa-solid fa-dharmachakra"></i> Total Lucky Spins:</strong> ${u.luckySpinsCount || 0}</p>
+                <p><strong><i class="fa-solid fa-clone"></i> Same IP Multi-Accounts (${sameIpAccounts.length}):</strong> ${sameIpAccounts.length > 0 ? sameIpAccounts.join(', ') : 'None (Unique)'}</p>
+
+                <div style="margin-top:15px; display:flex; gap:10px;">
+                    <button class="btn-warn" onclick="resetBalanceToZero('${uid}')" style="padding:8px 12px; font-size:11px;">Reset Balance to 0</button>
+                    <button class="btn-copy" onclick="viewUserHistory('${uid}')" style="padding:8px 12px; font-size:11px;">View Full History</button>
+                </div>
             </div>
-          </div>
         `;
-      });
-    }
+    });
+}
+
 
     function closeBioModal() {
       document.getElementById('bioModal').style.display = 'none';
