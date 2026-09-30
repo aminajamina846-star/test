@@ -1648,47 +1648,49 @@ if (document.readyState === 'loading') {
         showAlert(`Congratulations! Claimed ${totalReward} ADI$ (${streakCount} Day Streak Bonus!)`);
       });
     }
-
-        // FEATURE 2: LUCKY SPIN WHEEL
-    // Exact colors matching image
+document.addEventListener("DOMContentLoaded", function() {
+    // আপনার হুইল এবং ট্যাপার কোডগুলো ঠিক এই ব্র্যাকেটের ভেতরে রাখবেন
+    
+    // 1. Lucky Spin Wheel Code
     const wheelCanvas = document.getElementById('wheelCanvas');
-    const segments = ['19 ADI', '50 ADI', '2 ADI', '5 ADI', '19 ADI', '50 ADI', '2 ADI', '5 ADI'];
-    const colors = ['#0e7490', '#0284c7', '#059669', '#2e2b70', '#0e7490', '#0284c7', '#059669', '#2e2b70'];
-
-    function drawWheel() {
-        if (!wheelCanvas) return;
+    if (wheelCanvas) {
         const ctx = wheelCanvas.getContext('2d');
-        const numSegments = segments.length;
-        const anglePerSegment = (2 * Math.PI) / numSegments;
-        const center = 110;
+        const segments = ['19 ADI', '50 ADI', '2 ADI', '5 ADI', '19 ADI', '50 ADI', '2 ADI', '5 ADI'];
+        const colors = ['#0e7490', '#0284c7', '#059669', '#2e2b70', '#0e7490', '#0284c7', '#059669', '#2e2b70'];
 
-        ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+        function drawWheel() {
+            const numSegments = segments.length;
+            const anglePerSegment = (2 * Math.PI) / numSegments;
+            const center = 110;
 
-        for (let i = 0; i < numSegments; i++) {
-            const startAngle = i * anglePerSegment - Math.PI / 2;
-            const endAngle = startAngle + anglePerSegment;
+            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
 
-            ctx.beginPath();
-            ctx.moveTo(center, center);
-            ctx.arc(center, center, center, startAngle, endAngle);
-            ctx.fillStyle = colors[i];
-            ctx.fill();
-            ctx.strokeStyle = '#0f172a';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            for (let i = 0; i < numSegments; i++) {
+                const startAngle = i * anglePerSegment - Math.PI / 2;
+                const endAngle = startAngle + anglePerSegment;
 
-            // Text Drawing
-            ctx.save();
-            ctx.translate(center, center);
-            ctx.rotate(startAngle + anglePerSegment / 2);
-            ctx.textAlign = "right";
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 11px Inter, sans-serif";
-            ctx.fillText(segments[i], center - 12, 4);
-            ctx.restore();
+                ctx.beginPath();
+                ctx.moveTo(center, center);
+                ctx.arc(center, center, center, startAngle, endAngle);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(center, center);
+                ctx.rotate(startAngle + anglePerSegment / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px Inter, sans-serif";
+                ctx.fillText(segments[i], center - 12, 4);
+                ctx.restore();
+            }
         }
+        drawWheel();
     }
-    drawWheel();
+});
 
 
 // Spin Logic
