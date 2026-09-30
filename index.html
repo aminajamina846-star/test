@@ -1131,58 +1131,50 @@ body {
       </div>
     </div>
 
-     <!-- 4. TASKS & GAMIFICATION PAGE -->
+<!-- 4. TASKS & GAMIFICATION PAGE -->
 <div id="page-tasks" class="page">
-<!-- TOP USER HEADER -->
-<div class="user-header">
-    <div class="user-profile">
-        <div class="avatar">A</div>
-        <div class="user-info">
-            <span class="user-name">Airdrop User</span>
-            <span class="user-status"><i class="fa-solid fa-shield-halved"></i> Verified Miner</span>
+    
+    <!-- DAILY SPIN WHEEL CARD -->
+    <div class="card spin-card" style="text-align: center;">
+        <div class="section-title" style="margin-top: 0;">Daily Spin Wheel</div>
+        <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 15px;">Spin to Win 2, 5, 19, or 50 ADI$ tokens!</div>
+
+        <!-- Wheel Outer Wrapper -->
+        <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <div class="wheel-disc-border">
+                <div class="wheel-disc" id="wheel">
+                    <div class="slice-text t1">5 ADI</div>
+                    <div class="slice-text t2">19 ADI</div>
+                    <div class="slice-text t3">50 ADI</div>
+                    <div class="slice-text t4">2 ADI</div>
+                    <div class="slice-text t5">5 ADI</div>
+                    <div class="slice-text t6">19 ADI</div>
+                    <div class="slice-text t7">50 ADI</div>
+                    <div class="slice-text t8">2 ADI</div>
+
+                    <div class="wheel-center-badge">
+                        <div class="badge-inner">A</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <button class="notif-btn"><i class="fa-regular fa-bell"></i></button>
-</div>
 
-<!-- DAILY SPIN WHEEL CARD -->
-<div class="game-card">
-    <div class="game-title">DAILY SPIN WHEEL</div>
-    <div class="game-subtitle">Spin to win 2, 5, 19, or 50 ADI$ tokens!</div>
-
-    <div class="wheel-container">
-        <!-- Glowing Neon Triangle Pointer -->
-        <div class="neon-pointer"></div>
-        
-        <!-- Canvas Spin Wheel -->
-        <div class="wheel-border">
-            <canvas id="wheelCanvas" width="230" height="230"></canvas>
-            <div class="wheel-center-badge">A</div>
-        </div>
-    </div>
-
-    <div class="spins-left" id="spinsLeftText">Spins Left Today: 2/2</div>
-    <button class="glow-btn" id="spinBtn" onclick="spinWheelNow()">Spin Wheel Now</button>
-</div>
-
-<!-- MINI TAPPER CHALLENGE CARD -->
-<div class="game-card">
-    <div class="game-title" style="text-align: left; margin-bottom: 12px;">MINI TAPPER CHALLENGE</div>
-
-    <div class="tapper-inner-box">
-        <p class="tapper-desc">Tap rapidly within 15 seconds to earn bonus ADI$!</p>
-        <div class="score-display">Score: <span id="tapperScore">0</span></div>
-        <div class="time-display">Time Left: <span id="tapperTime">0s</span></div>
-
-        <div class="tap-circle" onclick="handleTap()">
-            <i class="fa-solid fa-hand-pointer"></i>
-        </div>
+        <div style="font-size: 11px; margin-top: 12px; margin-bottom: 10px; color: #8a99ad;" id="spinLimitText">Spins Left Today: 2/2</div>
+        <button class="btn-spin-neon" id="spinBtn" onclick="triggerMineAndExecute('spin')">Spin Wheel Now</button>
     </div>
 
-    <button class="glow-btn btn-secondary-glow" id="startChallengeBtn" onclick="startChallenge()">Start Challenge</button>
-</div>
-
-
+    <!-- MINI TAPPER CHALLENGE -->
+    <div class="card">
+        <div class="section-title" style="margin-top: 0;">Mini Tapper Challenge</div>
+        <div class="tapper-box">
+            <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
+            <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScoreDisplay">Score: 0</div>
+            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;" id="tapperTimerDisplay">Time Left: 0s</div>
+            <button class="tapper-btn" id="tapperTapBtn" disabled><i class="fa-solid fa-hand-pointer"></i></button>
+            <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="triggerMineAndExecute('tapper')">Start Challenge</button>
+        </div>
+    </div>
 
     <!-- TASKS MANAGEMENT (WITH SECRET & GENERAL TABS) -->
     <div class="section-title">Tasks Management</div>
@@ -1657,42 +1649,47 @@ if (document.readyState === 'loading') {
       });
     }
 
-    // FEATURE 2: LUCKY SPIN WHEEL
-// Dynamic Canvas Wheel Drawing (Exactly matching image colors & segments)
-const canvas = document.getElementById('wheelCanvas');
-const ctx = canvas.getContext('2d');
-const segments = ['5 ADI', '19 ADI', '50 ADI', '2 ADI', '5 ADI', '19 ADI', '50 ADI', '2 ADI'];
-const colors = ['#1e1b4b', '#0284c7', '#0d9488', '#0284c7', '#1e1b4b', '#0284c7', '#0d9488', '#0284c7'];
+        // FEATURE 2: LUCKY SPIN WHEEL
+    // Exact colors matching image
+    const wheelCanvas = document.getElementById('wheelCanvas');
+    const segments = ['19 ADI', '50 ADI', '2 ADI', '5 ADI', '19 ADI', '50 ADI', '2 ADI', '5 ADI'];
+    const colors = ['#0e7490', '#0284c7', '#059669', '#2e2b70', '#0e7490', '#0284c7', '#059669', '#2e2b70'];
 
-function drawWheel() {
-    const numSegments = segments.length;
-    const anglePerSegment = (2 * Math.PI) / numSegments;
+    function drawWheel() {
+        if (!wheelCanvas) return;
+        const ctx = wheelCanvas.getContext('2d');
+        const numSegments = segments.length;
+        const anglePerSegment = (2 * Math.PI) / numSegments;
+        const center = 110;
 
-    for (let i = 0; i < numSegments; i++) {
-        const startAngle = i * anglePerSegment - Math.PI / 2;
-        const endAngle = startAngle + anglePerSegment;
+        ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
 
-        ctx.beginPath();
-        ctx.moveTo(115, 115);
-        ctx.arc(115, 115, 115, startAngle, endAngle);
-        ctx.fillStyle = colors[i];
-        ctx.fill();
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        for (let i = 0; i < numSegments; i++) {
+            const startAngle = i * anglePerSegment - Math.PI / 2;
+            const endAngle = startAngle + anglePerSegment;
 
-        // Text Drawing
-        ctx.save();
-        ctx.translate(115, 115);
-        ctx.rotate(startAngle + anglePerSegment / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px Inter";
-        ctx.fillText(segments[i], 100, 4);
-        ctx.restore();
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, center, startAngle, endAngle);
+            ctx.fillStyle = colors[i];
+            ctx.fill();
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Text Drawing
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(startAngle + anglePerSegment / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 11px Inter, sans-serif";
+            ctx.fillText(segments[i], center - 12, 4);
+            ctx.restore();
+        }
     }
-}
-drawWheel();
+    drawWheel();
+
 
 // Spin Logic
 let spinsLeft = 2;
