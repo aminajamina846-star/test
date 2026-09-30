@@ -908,72 +908,70 @@
       </div>
     </div>
 
- <!-- 4. TASKS & GAMIFICATION PAGE -->
+     <!-- 4. TASKS & GAMIFICATION PAGE -->
 <div id="page-tasks" class="page">
     
     <!-- DAILY SPIN WHEEL CARD -->
-    <div class="spin-card">
-        <h3 class="spin-title">DAILY SPIN WHEEL</h3>
-        <p class="spin-subtitle">Spin to win 2, 5, 19, or 50 ADI$ tokens!</p>
+    <div class="card spin-card" style="text-align: center;">
+        <div class="section-title" style="margin-top: 0;">Daily Spin Wheel</div>
+        <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 15px;">Spin to Win 2, 5, 19, or 50 ADI$ tokens!</div>
 
         <!-- Wheel Outer Wrapper -->
         <div class="wheel-wrapper">
-            <!-- Top Neon Indicator Arrow -->
             <div class="wheel-pointer"></div>
+            <div class="wheel-disc-border">
+                <div class="wheel-disc" id="wheel">
+                    <div class="slice-text t1">5 ADI</div>
+                    <div class="slice-text t2">19 ADI</div>
+                    <div class="slice-text t3">50 ADI</div>
+                    <div class="slice-text t4">2 ADI</div>
+                    <div class="slice-text t5">5 ADI</div>
+                    <div class="slice-text t6">19 ADI</div>
+                    <div class="slice-text t7">50 ADI</div>
+                    <div class="slice-text t8">2 ADI</div>
 
-            <!-- Rotating Wheel Container -->
-            <div class="wheel-container">
-                <div class="wheel" id="wheel">
-                    <div class="slice" style="--i:1; --color:#2563eb;"><span>5 ADI</span></div>
-                    <div class="slice" style="--i:2; --color:#0891b2;"><span>19 ADI</span></div>
-                    <div class="slice" style="--i:3; --color:#0284c7;"><span>50 ADI</span></div>
-                    <div class="slice" style="--i:4; --color:#0d9488;"><span>2 ADI</span></div>
-                    <div class="slice" style="--i:5; --color:#4f46e5;"><span>5 ADI</span></div>
-                    <div class="slice" style="--i:6; --color:#1d4ed8;"><span>19 ADI</span></div>
-                    <div class="slice" style="--i:7; --color:#0369a1;"><span>50 ADI</span></div>
-                    <div class="slice" style="--i:8; --color:#14b8a6;"><span>2 ADI</span></div>
-                </div>
-                <!-- Center ADI Badge -->
-                <div class="wheel-center">
-                    <div class="center-badge">A</div>
+                    <div class="wheel-center-badge">
+                        <div class="badge-inner">A</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <p class="spins-left">Spins Left Today: <span id="spinsLeftText">2/2</span></p>
-        <button class="btn-spin-neon" id="spinBtn" onclick="triggerSpin()">Spin Wheel Now</button>
+        <div style="font-size: 11px; margin-top: 12px; margin-bottom: 10px; color: #8a99ad;" id="spinLimitText">Spins Left Today: 2/2</div>
+        <button class="btn-spin-neon" id="spinBtn" onclick="triggerMineAndExecute('spin')">Spin Wheel Now</button>
     </div>
 
-    <!-- MINI TAPPER CHALLENGE CARD -->
-    <div class="card" style="margin-top: 15px;">
-        <div class="section-title">Mini Tapper Challenge</div>
+    <!-- MINI TAPPER CHALLENGE -->
+    <div class="card">
+        <div class="section-title" style="margin-top: 0;">Mini Tapper Challenge</div>
         <div class="tapper-box">
             <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
             <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScoreDisplay">Score: 0</div>
             <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;" id="tapperTimerDisplay">Time Left: 0s</div>
-            <button class="tapper-btn" id="tapperTapBtn" disabled><i class="fa-solid fa-hand-pointer"></i> Tap!</button>
-            <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="triggerStartTapper()">Start Challenge</button>
+            <button class="tapper-btn" id="tapperTapBtn" disabled><i class="fa-solid fa-hand-pointer"></i></button>
+            <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="triggerMineAndExecute('tapper')">Start Challenge</button>
         </div>
     </div>
 
-    <!-- TASKS MANAGEMENT SECTION WITH TABS -->
-    <div class="section-title" style="margin-top: 20px;">Tasks Management</div>
+    <!-- TASKS MANAGEMENT (WITH SECRET & GENERAL TABS) -->
+    <div class="section-title">Tasks Management</div>
 
-    <div class="task-tabs">
-        <button class="btn-tab active" id="tabNonSecret" onclick="switchTaskTab('non-secret')">
+    <!-- Secret Code o Non-Secret Code Switch Tabs -->
+    <div class="task-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <button class="btn-tab active" id="tabNonSecret" onclick="switchTaskTab('non-secret')" style="flex:1; padding:9px; font-size:11px; border-radius:8px; cursor:pointer;">
             <i class="fa-solid fa-list-check"></i> General Tasks
         </button>
-        <button class="btn-tab" id="tabSecret" onclick="switchTaskTab('secret')">
+        <button class="btn-tab" id="tabSecret" onclick="switchTaskTab('secret')" style="flex:1; padding:9px; font-size:11px; border-radius:8px; cursor:pointer;">
             <i class="fa-solid fa-key"></i> Secret Code Tasks
         </button>
     </div>
 
-    <!-- Dynamic Active Tasks List -->
-    <div id="dynamicTasksContainer">Loading tasks...</div>
+    <!-- Active Task Display Container -->
+    <div id="dynamicTasksContainer"></div>
 
-    <!-- TASK HISTORY SECTION -->
-    <div class="section-title" style="margin-top: 25px;">Task History</div>
-    <div id="taskHistoryContainer">Loading history...</div>
+    <!-- TASK HISTORY -->
+    <div class="section-title" style="margin-top: 20px;">Task History</div>
+    <div id="taskHistoryContainer"></div>
 </div>
 
 
