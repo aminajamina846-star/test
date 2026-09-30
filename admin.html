@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADI Mining - Executive Modular Control Panel</title>
+  <title>ADI Mining - Executive Control Center</title>
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
       --bg-dark: #07090e;
       --card-bg: rgba(18, 22, 31, 0.85);
-      --card-border: rgba(255, 255, 255, 0.12);
+      --sidebar-bg: #0d1117;
+      --card-border: rgba(255, 255, 255, 0.1);
       --silver-gradient: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #cbd5e1 100%);
-      --silver-glow: 0 0 15px rgba(226, 232, 240, 0.2);
+      --silver-glow: 0 0 15px rgba(226, 232, 240, 0.15);
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --accent-green: #22c55e;
@@ -34,128 +35,128 @@
       background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #07090e 70%);
       color: var(--text-main);
       font-family: 'Plus Jakarta Sans', sans-serif;
-      padding: 20px;
       min-height: 100vh;
-    }
-
-    /* Modular Folder Section Box */
-    .folder-module {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      padding: 20px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      margin-bottom: 24px;
-    }
-
-    .folder-header {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #e2e8f0;
-      border-bottom: 1px solid var(--card-border);
-      padding-bottom: 12px;
-      margin-bottom: 16px;
     }
 
-    .header {
+    /* Layout Structure */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--card-border);
+      padding: 20px 15px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--card-border);
-      margin-bottom: 24px;
+      flex-direction: column;
+      gap: 8px;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
     }
 
-    h1 {
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
       background: var(--silver-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-size: 22px;
-      font-weight: 800;
+      padding: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      text-align: left;
     }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-left: 3px solid #cbd5e1;
+    }
+
+    .main-wrapper {
+      margin-left: 260px;
+      flex: 1;
+      padding: 30px;
+      width: calc(100% - 260px);
+    }
+
+    /* Cards & Grids */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      margin-bottom: 20px;
+    }
+
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(30, 41, 59, 0.4);
       border: 1px solid var(--card-border);
-      padding: 16px;
-      border-radius: 14px;
-      text-align: center;
+      padding: 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
-    .stat-card h4 { font-size: 12px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px; }
-    .stat-card h2 { font-size: 20px; font-weight: 800; }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+    .stat-icon {
+      width: 45px; height: 45px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #cbd5e1;
     }
 
-    label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 5px;
-    }
+    .stat-info h4 { font-size: 12px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+    .stat-info p { font-size: 20px; font-weight: 800; color: #fff; }
 
+    /* Form Inputs & Buttons */
+    label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-top: 10px; margin-bottom: 6px; display: block; }
     input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
+      width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 13px; outline: none;
     }
+    input:focus, select:focus, textarea:focus { border-color: #cbd5e1; }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background: var(--silver-gradient);
-      color: #0f172a;
-      font-weight: 800;
-      font-size: 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
+    button.btn-primary {
+      background: var(--silver-gradient); color: #0f172a; font-weight: 800; font-size: 12px;
+      border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s;
     }
+    button.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    .btn-lock { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); color: #fff; }
-    .btn-unlock { background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%); color: #0f172a; }
-    .btn-ban { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: #fff; }
-    .btn-unban { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); color: #fff; }
+    .btn-ban { background: #ef4444 !important; color: #fff !important; }
+    .btn-unban { background: #22c55e !important; color: #fff !important; }
+    .btn-zero { background: #f97316 !important; color: #fff !important; }
 
-    .table-responsive {
-      overflow-x: auto;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
-    }
+    /* Table Styling */
+    .table-responsive { overflow-x: auto; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: rgba(30, 41, 59, 0.8); color: var(--text-sub); padding: 12px; text-align: left; }
+    td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
-    th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; padding: 12px; border-bottom: 1px solid var(--card-border); }
-    td { padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #e2e8f0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .badge-active { background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 3px 8px; border-radius: 12px; font-size: 10px; }
-    .badge-banned { background: rgba(239, 68, 68, 0.15); color: #fca5a5; padding: 3px 8px; border-radius: 12px; font-size: 10px; }
-
-    /* Modal Styling */
+    /* Modal Overlay */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
@@ -163,229 +164,436 @@
     }
     .modal-content {
       background: #0f172a; border: 1px solid var(--card-border);
-      border-radius: 16px; padding: 20px; width: 90%; max-width: 480px; color: #fff;
+      border-radius: 16px; padding: 24px; width: 90%; max-width: 500px;
+      max-height: 85vh; overflow-y: auto; color: #fff;
     }
   </style>
 </head>
 <body>
 
-  <!-- FACE VERIFICATION LOGIN OVERLAY (No Password Needed) -->
-  <div id="loginOverlay" style="position: fixed; top:0; left:0; width:100%; height:100%; background:#07090e; z-index:99999; display:flex; justify-content:center; align-items:center;">
-    <div class="folder-module" style="text-align:center; max-width:380px; width:90%;">
-      <i class="fa-solid fa-user-shield" style="font-size: 45px; color: var(--accent-blue); margin-bottom: 12px;"></i>
-      <h2 style="font-size: 18px; margin-bottom: 6px;">Executive Control Portal</h2>
-      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 18px;">Face ID Scanner - No Password Required</p>
-      
-      <div id="webcamContainer" style="width: 100%; height: 180px; background: #0f172a; border-radius: 10px; border: 1px dashed var(--card-border); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-        <span id="scanStatusText" style="font-size:12px; color:var(--text-sub);"><i class="fa-solid fa-camera"></i> Camera Standby</span>
-      </div>
-
-      <button onclick="startFaceScan()" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color:#fff;">Verify Face & Grant Access</button>
-    </div>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="brand-title"><i class="fa-solid fa-cube"></i> ADI CONTROL</div>
+    <button class="nav-btn active" onclick="switchTab('dashboardTab', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('usersTab', this)"><i class="fa-solid fa-users"></i> User Management</button>
+    <button class="nav-btn" onclick="switchTab('miningTab', this)"><i class="fa-solid fa-pickaxe"></i> Mining & Rewards</button>
+    <button class="nav-btn" onclick="switchTab('tasksTab', this)"><i class="fa-solid fa-list-check"></i> Tasks & Proofs</button>
+    <button class="nav-btn" onclick="switchTab('securityTab', this)"><i class="fa-solid fa-shield-halved"></i> Security & Anti-Bot</button>
+    <button class="nav-btn" onclick="switchTab('monetizationTab', this)"><i class="fa-solid fa-rectangle-ad"></i> Ads & Settings</button>
   </div>
 
-  <!-- MAIN ADMIN DASHBOARD MODULES -->
-  <div id="mainDashboard" style="display: none;">
-    
-    <!-- Top Header -->
-    <div class="header">
-      <h1><i class="fa-solid fa-folder-tree"></i> ADI MINING - 1 BY 1 SYSTEM MODULES</h1>
-      <span style="font-size: 12px; color: var(--accent-green);" id="appLockIndicator"><i class="fa-solid fa-circle"></i> System Online</span>
-    </div>
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
 
-    <!-- MODULE 1: REAL LIVE DASHBOARD STATS -->
-    <div class="stats-container">
-      <div class="stat-card">
-        <h4>Real Registered Users</h4>
-        <h2 id="totalUsers" style="color: #fff;">0</h2>
-      </div>
-      <div class="stat-card">
-        <h4>Active Live Miners</h4>
-        <h2 id="activeMinersCount" style="color: var(--accent-blue);">0</h2>
-      </div>
-      <div class="stat-card">
-        <h4>Total Mined Tokens</h4>
-        <h2 id="totalMinedSummary" style="color: var(--accent-green);">0 ADI</h2>
-      </div>
-      <div class="stat-card">
-        <h4>Referral Tokens Pool</h4>
-        <h2 id="totalRefTokens" style="color: #fbbf24;">0 ADI$</h2>
+    <!-- Password Lock -->
+    <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #07090e; z-index: 99999; display: flex; justify-content: center; align-items: center;">
+      <div class="card" style="text-align: center; max-width: 360px; width: 90%;">
+        <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: #cbd5e1; margin-bottom: 15px;"></i>
+        <h2 style="font-size: 18px; margin-bottom: 8px;">Executive Portal</h2>
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 15px;">অ্যাডমিন পাসওয়ার্ড দিন</p>
+        <input type="password" id="adminPassInput" placeholder="Enter Password" style="margin-bottom: 15px; text-align: center;">
+        <button class="btn-primary" style="width: 100%;" onclick="checkAdminPassword()">Unlock Portal</button>
       </div>
     </div>
 
-    <!-- MODULE 2: APP SYSTEM LOCK & UNLOCK FOLDER -->
-    <div class="folder-module">
-      <div class="folder-header"><i class="fa-solid fa-lock"></i> Folder 1: App Maintenance & Lock System</div>
-      <p style="font-size:12px; color:var(--text-sub);">Global Maintenance Lock Control:</p>
-      <div style="display:flex; gap:10px; margin-top:10px;">
-        <button class="btn-lock" onclick="setAppLockStatus(true)"><i class="fa-solid fa-lock"></i> Lock App</button>
-        <button class="btn-unlock" onclick="setAppLockStatus(false)"><i class="fa-solid fa-lock-open"></i> Unlock App</button>
-      </div>
-    </div>
+    <!-- Main Content Portal -->
+    <div id="mainDashboard" style="display: none;">
 
-    <div class="grid-2">
-      <!-- MODULE 3: USER QUICK MANAGEMENT FOLDER -->
-      <div class="folder-module">
-        <div class="folder-header"><i class="fa-solid fa-user-gear"></i> Folder 2: Single User Control</div>
-        <label>Telegram User ID</label>
-        <input type="text" id="targetUserId" placeholder="Target Telegram ID">
-        <label>Set Exact Balance (ADI$)</label>
-        <input type="number" id="newBalance" placeholder="5000">
-        <button onclick="updateUserBalance()">Update Balance</button>
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <button class="btn-ban" onclick="setUserBanStatus(true)">Ban User</button>
-          <button class="btn-unban" onclick="setUserBanStatus(false)">Unban User</button>
+      <!-- Top Quick Stats -->
+      <div class="grid-4">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-info">
+            <h4>Total Users</h4>
+            <p id="totalUsers">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-bolt" style="color: var(--accent-blue);"></i></div>
+          <div class="stat-info">
+            <h4>Active Miners</h4>
+            <p id="activeMinersCount">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-coins" style="color: var(--accent-green);"></i></div>
+          <div class="stat-info">
+            <h4>Total ADI Mined</h4>
+            <p id="totalMinedSummary">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-gift"></i></div>
+          <div class="stat-info">
+            <h4>Total Ref Profit</h4>
+            <p id="totalRefTokens">0</p>
+          </div>
         </div>
       </div>
 
-      <!-- MODULE 4: GLOBAL BROADCAST & MASS BALANCE FOLDER -->
-      <div class="folder-module">
-        <div class="folder-header"><i class="fa-solid fa-bullhorn"></i> Folder 3: Global Broadcast & Mass Operations</div>
-        <label>Notification Title</label>
-        <input type="text" id="notifTitle" placeholder="Announcement Title">
-        <label>Message Content</label>
-        <textarea id="notifMsg" rows="2" placeholder="Message for all users..."></textarea>
-        <button onclick="sendGlobalNotification()">Send Broadcast</button>
+      <!-- TAB 1: DASHBOARD OVERVIEW -->
+      <div id="dashboardTab" class="tab-content active">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-bullhorn"></i> Global Broadcast Notification</h3>
+            <label>Title</label>
+            <input type="text" id="notifTitle" placeholder="Notification Title">
+            <label>Message Content</label>
+            <textarea id="notifMsg" rows="3" placeholder="Write message for all users..."></textarea>
+            <button class="btn-primary" style="margin-top: 12px;" onclick="sendGlobalNotification()">Broadcast Announcement</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-sliders"></i> Quick User Control</h3>
+            <label>Telegram User ID</label>
+            <input type="text" id="targetUserId" placeholder="Target User ID">
+            <label>Exact Balance (ADI$)</label>
+            <input type="number" id="newBalance" placeholder="5000">
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button class="btn-primary" style="flex:1;" onclick="updateUserBalance()">Set Balance</button>
+              <button class="btn-primary btn-zero" onclick="resetBalanceToZero()">Reset 0</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button class="btn-primary btn-ban" style="flex:1;" onclick="setUserBanStatus(true)">Ban</button>
+              <button class="btn-primary btn-unban" style="flex:1;" onclick="setUserBanStatus(false)">Unban</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-share-nodes"></i> Auto Social Media Poster</h3>
+          <label>Post Content</label>
+          <textarea id="socialPostText" rows="2" placeholder="Write social media content..."></textarea>
+          <button class="btn-primary" style="margin-top: 10px;" onclick="publishSocialPost()">Publish to FB, Telegram & Twitter</button>
+        </div>
       </div>
-    </div>
 
-    <!-- MODULE 5: SECURITY & FAKE DETECTION FOLDER -->
-    <div class="folder-module">
-      <div class="folder-header"><i class="fa-solid fa-shield-cat"></i> Folder 4: IP Match & Multi-Account Detection</div>
-      <div id="ipMatchTable" class="table-responsive">Loading security check...</div>
-    </div>
+      <!-- TAB 2: USERS DIRECTORY -->
+      <div id="usersTab" class="tab-content">
+        <div class="card">
+          <h3><i class="fa-solid fa-coins"></i> Mass Balance Modifier (All Users)</h3>
+          <div style="display: flex; gap: 10px; align-items: flex-end;">
+            <div style="flex:1;">
+              <label>Amount (Use - for deduction)</label>
+              <input type="number" id="massAmount" placeholder="e.g. 100">
+            </div>
+            <div style="flex:2;">
+              <label>Reason / Note</label>
+              <input type="text" id="massReason" placeholder="System Bonus">
+            </div>
+            <button class="btn-primary" style="background: #8b5cf6; color:#fff;" onclick="executeMassBalanceUpdate()">Update All</button>
+          </div>
+        </div>
 
-    <!-- MODULE 6: TASKS & AD CODE INJECTOR FOLDER -->
-    <div class="grid-2">
-      <div class="folder-module">
-        <div class="folder-header"><i class="fa-solid fa-list-check"></i> Folder 5: Task Management</div>
-        <input type="hidden" id="editingTaskId" value="">
-        <label>Task Title</label>
-        <input type="text" id="taskTitle" placeholder="Task Name">
-        <label>Reward Tokens (ADI$)</label>
-        <input type="number" id="taskReward" placeholder="100">
-        <label>Link</label>
-        <input type="text" id="taskLink" placeholder="https://...">
-        <label>Secret Code</label>
-        <input type="text" id="taskCode" placeholder="Code (Optional)">
-        <button onclick="saveTask()" id="saveTaskBtn">Publish Task</button>
+        <div class="card">
+          <h3><i class="fa-solid fa-address-book"></i> Registered Users Directory (Sorted by Points)</h3>
+          <div id="usersTable" class="table-responsive">Loading users...</div>
+        </div>
       </div>
 
-      <div class="folder-module">
-        <div class="folder-header"><i class="fa-solid fa-code"></i> Folder 6: Remote Ad & Dynamic Code Injector</div>
-        <label>Ad Key Location</label>
-        <select id="featureKeySelect">
-          <option value="show_up">show_up (Top Banner)</option>
-          <option value="join">join (Bottom Banner)</option>
-        </select>
-        <label>HTML / Script Code</label>
-        <textarea id="featureCode" rows="4" placeholder="Paste script..."></textarea>
-        <button onclick="publishFeatureCode()">Push Code Live</button>
+      <!-- TAB 3: MINING & REWARDS -->
+      <div id="miningTab" class="tab-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-power-off"></i> Global Mining Controls</h3>
+            <p style="font-size:12px; color:var(--text-sub); margin-bottom: 15px;">এক ক্লিকে সমস্ত ইউজারের চলমান মাইনিং স্টপ করুন:</p>
+            <button class="btn-primary btn-ban" style="width:100%;" onclick="stopGlobalMining()"><i class="fa-solid fa-power-off"></i> Stop Global Mining Countdown</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-lock"></i> Maintenance Mode Switch</h3>
+            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px;">অ্যাপের মেইনটেনেন্স লক অন/অফ করুন:</p>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-primary btn-ban" style="flex:1;" onclick="setAppLockStatus(true)">Lock App</button>
+              <button class="btn-primary btn-unban" style="flex:1;" onclick="setAppLockStatus(false)">Unlock App</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-trophy"></i> Referral Leaderboard (50 ADI/Ref)</h3>
+          <div id="refLeaderboardTable" class="table-responsive">Loading leaderboard...</div>
+        </div>
       </div>
-    </div>
 
-    <!-- MODULE 7: REGISTERED USERS DIRECTORY FOLDER -->
-    <div class="folder-module">
-      <div class="folder-header"><i class="fa-solid fa-users"></i> Folder 7: Registered Real Users Directory</div>
-      <div id="usersTable" class="table-responsive">Loading real users list...</div>
-    </div>
+      <!-- TAB 4: TASKS MANAGEMENT -->
+      <div id="tasksTab" class="tab-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-list-check"></i> Create / Modify Task</h3>
+            <input type="hidden" id="editingTaskId" value="">
+            <label>Task Title</label>
+            <input type="text" id="taskTitle" placeholder="e.g. Watch Video & Find Code">
+            <label>Reward Tokens (ADI$)</label>
+            <input type="number" id="taskReward" placeholder="100">
+            <label>Task Link</label>
+            <input type="text" id="taskLink" placeholder="https://youtube.com/...">
+            <label>Secret Code (Optional)</label>
+            <input type="text" id="taskCode" placeholder="Code">
+            <label>Verification Type</label>
+            <select id="taskType">
+              <option value="SecretCode">Secret Code</option>
+              <option value="Username">Username / ID</option>
+              <option value="Screenshot">Screenshot Link</option>
+            </select>
+            <button class="btn-primary" id="saveTaskBtn" style="margin-top: 15px; width: 100%;" onclick="saveTask()">Publish Task</button>
+          </div>
 
+          <div class="card">
+            <h3><i class="fa-solid fa-file-invoice"></i> Pending Task Proof Verification</h3>
+            <div id="proofsTable" class="table-responsive">Loading proofs...</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-tasks"></i> Active Tasks Directory</h3>
+          <div id="activeTasksList" class="table-responsive">Loading...</div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SECURITY & ANTI-BOT -->
+      <div id="securityTab" class="tab-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-user-shield"></i> Biometric & PIN Security</h3>
+            <label>Webcam Face ID Scan</label>
+            <select id="faceIdStatus" onchange="toggleFaceIdSystem(this.value)">
+              <option value="enabled">Enabled</option>
+              <option value="disabled">Disabled</option>
+            </select>
+            <label>Backup PIN Code</label>
+            <input type="password" id="backupPinCode" placeholder="Enter PIN">
+            <button class="btn-primary" style="margin-top:10px; width:100%;" onclick="saveBackupPin()">Save Backup PIN</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-file-code"></i> Dynamic Custom Feature Injector</h3>
+            <label>Feature Key</label>
+            <input type="text" id="customFeatureKey" placeholder="custom_button">
+            <label>HTML / JS Code</label>
+            <textarea id="customFeatureCode" rows="3" placeholder="Inject code..."></textarea>
+            <button class="btn-primary" style="margin-top:10px; width:100%;" onclick="injectCustomDynamicFeature()">Inject Feature</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-user-secret"></i> IP Match & Fake Multi-Account Detection</h3>
+          <div id="ipMatchTable" class="table-responsive">Loading IP report...</div>
+        </div>
+      </div>
+
+      <!-- TAB 6: MONETIZATION & ADS -->
+      <div id="monetizationTab" class="tab-content">
+        <div class="card">
+          <h3><i class="fa-solid fa-code"></i> Live Remote Ad Injector</h3>
+          <label>Ad Position / Key Name</label>
+          <select id="featureKeySelect">
+            <option value="show_up">show_up (Top Banner)</option>
+            <option value="join">join (Bottom Banner)</option>
+          </select>
+          <label>Ad Script / HTML</label>
+          <textarea id="featureCode" rows="4" placeholder="Paste Adsterra or custom script..."></textarea>
+          <button class="btn-primary" style="margin-top: 10px;" onclick="publishFeatureCode()">Push Ad Code Live</button>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-puzzle-piece"></i> Active Injected Ads</h3>
+          <div id="remoteAdsList" class="table-responsive">Loading...</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- BIO & HISTORY MODAL -->
+  <!-- Bio Profile Modal -->
   <div id="bioModal" class="modal-overlay">
     <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-        <h3 style="font-size:14px;"><i class="fa-solid fa-address-card"></i> User Full Profile</h3>
-        <span onclick="closeBioModal()" style="cursor:pointer; font-size:18px;">&times;</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:16px;"><i class="fa-solid fa-id-card"></i> Complete User Profile</h3>
+        <span onclick="closeBioModal()" style="cursor:pointer; font-size:20px;">&times;</span>
       </div>
-      <div id="bioModalBody" style="margin-top:12px; font-size:12px;">Loading...</div>
+      <div id="bioModalBody">Loading...</div>
     </div>
   </div>
 
   <script>
-    // Firebase Setup
+    const ADMIN_SECRET_PASS = "admin1234";
+
+    function checkAdminPassword() {
+      const inputPass = document.getElementById('adminPassInput').value.trim();
+      if (inputPass === ADMIN_SECRET_PASS) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('mainDashboard').style.display = 'block';
+      } else { alert("ভুল পাসওয়ার্ড!"); }
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
     const firebaseConfig = { databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Password-less Face ID Verification Login Simulation
-    function startFaceScan() {
-      const statusText = document.getElementById('scanStatusText');
-      statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning Face ID...';
-      
-      setTimeout(() => {
-        statusText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> Face Match 100%';
-        setTimeout(() => {
-          document.getElementById('loginOverlay').style.display = 'none';
-          document.getElementById('mainDashboard').style.display = 'block';
-        }, 800);
-      }, 1500);
+    function copyText(text) {
+      if(!text || text === 'Not Connected') { alert("No wallet!"); return; }
+      navigator.clipboard.writeText(text).then(() => alert("Copied: " + text));
     }
 
-    // App Lock Control
-    function setAppLockStatus(isLocked) {
-      db.ref('settings/isLocked').set(isLocked).then(() => {
-        alert(`App status updated: ${isLocked ? 'LOCKED' : 'UNLOCKED'}`);
+    // 1. Broadcast System
+    function sendGlobalNotification() {
+      const title = document.getElementById('notifTitle').value.trim();
+      const message = document.getElementById('notifMsg').value.trim();
+      if(!title || !message) { alert("Fill all details!"); return; }
+      db.ref('global_notification').set({ title, message, timestamp: Date.now() }).then(() => {
+        alert("Broadcast Sent!");
+        document.getElementById('notifTitle').value = "";
+        document.getElementById('notifMsg').value = "";
       });
     }
 
-    db.ref('settings/isLocked').on('value', (snap) => {
-      const isLocked = snap.val();
-      const indicator = document.getElementById('appLockIndicator');
-      if (indicator) {
-        indicator.innerHTML = isLocked 
-          ? '<i class="fa-solid fa-circle" style="color:var(--accent-red);"></i> System Locked' 
-          : '<i class="fa-solid fa-circle" style="color:var(--accent-green);"></i> System Online';
+  // 2. Mass Balance Update
+    function executeMassBalanceUpdate() {
+      const amount = parseFloat(document.getElementById('massAmount').value);
+      const reason = document.getElementById('massReason').value.trim() || "Event Bonus";
+      if(isNaN(amount) || amount === 0) { alert("Enter valid Amount!"); return; }
+      if(!confirm(`Add/Deduct ${amount} ADI$ for ALL users?`)) return;
+
+      db.ref('users').once('value', (snap) => {
+        const users = snap.val();
+        if(!users) return;
+        let updates = {};
+        Object.keys(users).forEach(uid => {
+          const currentBal = Number(users[uid].balance) || 0;
+          updates[`users/${uid}/balance`] = Math.max(0, currentBal + amount);
+        });
+        db.ref().update(updates).then(() => alert("Mass Balance Updated!"));
+      });
+    }
+
+    // 3. User Controls
+    function updateUserBalance() {
+      const userId = document.getElementById('targetUserId').value.trim();
+      const balance = parseFloat(document.getElementById('newBalance').value);
+      if(!userId || isNaN(balance)) { alert("Enter ID & Balance!"); return; }
+      db.ref('users/' + userId + '/balance').set(balance).then(() => alert("Balance Updated!"));
+    }
+
+    function resetBalanceToZero(targetUid = null) {
+      const userId = targetUid || document.getElementById('targetUserId').value.trim();
+      if(!userId) { alert("Enter User ID!"); return; }
+      if(confirm("Reset balance to ZERO (0)?")) {
+        db.ref('users/' + userId + '/balance').set(0).then(() => {
+          alert("Balance Reset to 0!");
+          if(targetUid) closeBioModal();
+        });
       }
+    }
+
+    function setUserBanStatus(isBanned) {
+      const userId = document.getElementById('targetUserId').value.trim();
+      if(!userId) { alert("Enter User ID!"); return; }
+      db.ref().update({ [`users/${userId}/banned`]: isBanned, [`users/${userId}/isBanned`]: isBanned })
+        .then(() => alert(`User Ban Status: ${isBanned}`));
+    }
+
+    // 4. Remote Ad Injector
+    function publishFeatureCode() {
+      const key = document.getElementById('featureKeySelect').value;
+      const code = document.getElementById('featureCode').value.trim();
+      if(!code) { alert("Ad script required!"); return; }
+      db.ref('injected_features/' + key).set(code).then(() => {
+        alert("Ad Script Published!");
+        document.getElementById('featureCode').value = "";
+      });
+    }
+
+    db.ref('injected_features').on('value', (snap) => {
+      const ads = snap.val();
+      const container = document.getElementById('remoteAdsList');
+      if(!ads) { container.innerHTML = "<p style='font-size:12px; color:var(--text-sub);'>No active ads.</p>"; return; }
+      let html = "<table><tr><th>Key</th><th>Script Preview</th><th>Action</th></tr>";
+      Object.keys(ads).forEach(k => {
+        const scriptPreview = ads[k].replace(/</g, "&lt;").replace(/>/g, "&gt;").substring(0, 60) + "...";
+        html += `<tr><td><b>${k}</b></td><td><code>${scriptPreview}</code></td><td><button class="btn-primary btn-ban" onclick="db.ref('injected_features/${k}').remove();">Delete</button></td></tr>`;
+      });
+      html += "</table>";
+      container.innerHTML = html;
     });
 
-    // Real Users Directory & Dashboard Stats Engine
+    // 5. Tasks Logic
+    function saveTask() {
+      const taskId = document.getElementById('editingTaskId').value || ('task_' + Date.now());
+      const title = document.getElementById('taskTitle').value.trim();
+      const reward = parseFloat(document.getElementById('taskReward').value);
+      const link = document.getElementById('taskLink').value.trim();
+      const code = document.getElementById('taskCode').value.trim();
+      const type = document.getElementById('taskType').value;
+
+      if (!title || isNaN(reward) || !link) { alert("Fill all details!"); return; }
+      db.ref('custom_tasks/' + taskId).set({ title, reward, link, code, type }).then(() => {
+        alert("Task Saved!");
+        document.getElementById('editingTaskId').value = "";
+        document.getElementById('taskTitle').value = "";
+        document.getElementById('taskReward').value = "";
+        document.getElementById('taskLink').value = "";
+        document.getElementById('taskCode').value = "";
+      });
+    }
+
+    db.ref('custom_tasks').on('value', (snap) => {
+      const tasks = snap.val();
+      const container = document.getElementById('activeTasksList');
+      if(!tasks) { container.innerHTML = "<p style='font-size:12px; color:var(--text-sub);'>No active tasks.</p>"; return; }
+      let html = "<table><tr><th>Title</th><th>Reward</th><th>Code</th><th>Type</th><th>Actions</th></tr>";
+      Object.keys(tasks).forEach(id => {
+        const t = tasks[id];
+        html += `<tr><td><b>${t.title}</b></td><td>+${t.reward} ADI$</td><td><code>${t.code || 'None'}</code></td><td>${t.type}</td>
+        <td><button class="btn-primary btn-ban" onclick="db.ref('custom_tasks/${id}').remove();">Delete</button></td></tr>`;
+      });
+      html += "</table>";
+      container.innerHTML = html;
+    });
+
+    // 6. Realtime Users Table & Statistics
     db.ref('users').on('value', (snap) => {
       const users = snap.val();
       const container = document.getElementById('usersTable');
-      if (!users) { 
-        container.innerHTML = "<p style='padding:12px; font-size:12px; color:var(--text-sub);'>No registered real users.</p>"; 
-        return; 
-      }
+      if(!users) { container.innerHTML = "<p style='font-size:12px; color:var(--text-sub);'>No users registered.</p>"; return; }
 
-      const uKeys = Object.keys(users);
-      document.getElementById('totalUsers').innerText = uKeys.length;
+      const userKeys = Object.keys(users);
+      document.getElementById('totalUsers').innerText = userKeys.length;
 
-      let totalMined = 0;
-      let activeMiners = 0;
-      let totalRefTokens = 0;
+      let totalMined = 0, activeMiners = 0, totalRefTokens = 0;
       const now = Date.now();
 
-      // Sort Users by Token Balance
-      uKeys.sort((a, b) => (Number(users[b].balance) || 0) - (Number(users[a].balance) || 0));
+      userKeys.sort((a, b) => (Number(users[b].balance) || 0) - (Number(users[a].balance) || 0));
 
-      let html = "<table><tr><th>#</th><th>User / ID</th><th>Balance</th><th>Country</th><th>Status</th><th>IP Address</th><th>Action</th></tr>";
-
+      let html = "<table><tr><th>Rank</th><th>User Profile</th><th>Balance</th><th>Status</th><th>IP</th><th>Wallet</th><th>Action</th></tr>";
       let rank = 1;
-      uKeys.forEach(uid => {
+
+      userKeys.forEach(uid => {
         const u = users[uid];
-        const isBanned = (u.banned === true || u.isBanned === true);
-        const banStatus = isBanned ? `<span class="badge-banned">BANNED</span>` : `<span class="badge-active">ACTIVE</span>`;
-        const bal = Number(u.balance) || 0;
-        
-        totalMined += bal;
+        totalMined += Number(u.balance) || 0;
         if (u.miningEndTime && u.miningEndTime > now) activeMiners++;
-        if (u.referrals) totalRefTokens += Object.keys(u.referrals).length * 50;
+        if(u.referrals) totalRefTokens += Object.keys(u.referrals).length * 50;
+
+        const isBanned = (u.banned === true || u.isBanned === true);
+        const wallet = u.walletAddress || u.wallet || 'Not Connected';
 
         html += `<tr>
           <td><b>#${rank++}</b></td>
-          <td><b style="color:var(--accent-green); cursor:pointer;" onclick="openBioModal('${uid}')">@${u.username || u.name || uid}</b></td>
-          <td><b>${bal.toLocaleString()} ADI$</b></td>
-          <td><small>${u.country || u.location || '🇧🇩 Bangladesh'}</small></td>
-          <td>${banStatus}</td>
+          <td><b style="cursor:pointer; color:var(--accent-blue);" onclick="openBioModal('${uid}')">${u.username || uid}</b></td>
+          <td><b>${(u.balance || 0).toLocaleString()} ADI$</b></td>
+          <td>${isBanned ? '<span style="color:#ef4444;">BANNED</span>' : '<span style="color:#22c55e;">ACTIVE</span>'}</td>
           <td><small>${u.ip || 'N/A'}</small></td>
-          <td>
-            <button style="padding:4px 8px; font-size:10px; width:auto;" onclick="document.getElementById('targetUserId').value='${uid}'">Select</button>
-          </td>
+          <td><small>${wallet.substring(0, 10)}...</small> <button class="btn-primary" style="padding:2px 6px; font-size:9px;" onclick="copyText('${wallet}')">Copy</button></td>
+          <td><button class="btn-primary btn-zero" style="padding:4px 8px; font-size:10px;" onclick="resetBalanceToZero('${uid}')">Set 0</button></td>
         </tr>`;
       });
-
       html += "</table>";
       container.innerHTML = html;
 
@@ -394,100 +602,105 @@
       document.getElementById('totalRefTokens').innerText = totalRefTokens.toLocaleString() + " ADI$";
 
       loadIpMatchDetection(users);
+      loadReferralLeaderboard(users);
     });
 
-    // IP Security Match Engine
+    // 7. Security & IP Multi-account Detection
     function loadIpMatchDetection(users) {
       const ipGroup = {};
       Object.keys(users).forEach(uid => {
-        const ip = users[uid].ip || 'N/A';
+        const ip = users[uid].ip || 'Unknown';
         if (!ipGroup[ip]) ipGroup[ip] = [];
-        ipGroup[ip].push(users[uid].username || uid);
+        ipGroup[ip].push({ uid, username: users[uid].username || uid });
       });
 
       const container = document.getElementById('ipMatchTable');
-      let html = "<table><tr><th>IP Address</th><th>Accounts Count</th><th>Accounts List</th></tr>";
-      let dupesFound = false;
+      let html = "<table><tr><th>IP Address</th><th>Accounts</th><th>Flagged Users</th><th>Action</th></tr>";
+      let foundDupes = false;
 
       Object.keys(ipGroup).forEach(ip => {
-        if (ipGroup[ip].length > 1 && ip !== 'N/A') {
-          dupesFound = true;
-          html += `<tr style="background:rgba(239,68,68,0.1);">
-            <td><b style="color:var(--accent-red);">${ip}</b></td>
-            <td><span class="badge-banned">${ipGroup[ip].length} Accounts</span></td>
-            <td><small>${ipGroup[ip].join(', ')}</small></td>
-          </tr>`;
+        if (ipGroup[ip].length > 1 && ip !== 'Unknown') {
+          foundDupes = true;
+          const userList = ipGroup[ip].map(u => `@${u.username}`).join(', ');
+          html += `<tr><td><b style="color:var(--accent-red);">${ip}</b></td><td>${ipGroup[ip].length} Accounts</td><td><small>${userList}</small></td>
+          <td><button class="btn-primary btn-ban" onclick="banIpGroup('${ip}')">Ban All</button></td></tr>`;
         }
       });
 
-      if (!dupesFound) {
-        container.innerHTML = "<p style='padding:12px; font-size:12px; color:var(--text-sub);'>No multi-account IP duplicates detected.</p>";
-      } else {
-        html += "</table>";
-        container.innerHTML = html;
-      }
+      container.innerHTML = foundDupes ? html + "</table>" : "<p style='font-size:12px; color:var(--text-sub);'>No duplicate IP detected.</p>";
     }
 
-    // Modal Control Logic
+    function banIpGroup(ip) {
+      if (!confirm(`BAN all accounts on IP: ${ip}?`)) return;
+      db.ref('users').once('value', snap => {
+        const users = snap.val();
+        let updates = {};
+        Object.keys(users).forEach(uid => {
+          if (users[uid].ip === ip) {
+            updates[`users/${uid}/banned`] = true;
+            updates[`users/${uid}/isBanned`] = true;
+          }
+        });
+        db.ref().update(updates).then(() => alert(`Banned all users on IP ${ip}`));
+      });
+    }
+
+    // 8. Referral Leaderboard
+    function loadReferralLeaderboard(users) {
+      const container = document.getElementById('refLeaderboardTable');
+      const list = [];
+      Object.keys(users).forEach(uid => {
+        const refCount = users[uid].referrals ? Object.keys(users[uid].referrals).length : 0;
+        list.push({ username: users[uid].username || uid, refCount, totalBonus: refCount * 50 });
+      });
+      list.sort((a, b) => b.refCount - a.refCount);
+
+      let html = "<table><tr><th>Rank</th><th>User</th><th>Referrals</th><th>Bonus Earned</th></tr>";
+      let rank = 1;
+      list.slice(0, 10).forEach(item => {
+        html += `<tr><td><b>#${rank++}</b></td><td><b>@${item.username}</b></td><td>${item.refCount} Users</td><td><b>${item.totalBonus} ADI$</b></td></tr>`;
+      });
+      container.innerHTML = html + "</table>";
+    }
+
+    // Modal Profile View
     function openBioModal(uid) {
       document.getElementById('bioModal').style.display = 'flex';
+      const body = document.getElementById('bioModalBody');
       db.ref('users/' + uid).once('value', (snap) => {
         const u = snap.val();
-        if (!u) return;
-        document.getElementById('bioModalBody').innerHTML = `
+        if(!u) return;
+        body.innerHTML = `
           <p><strong>Username:</strong> @${u.username || 'N/A'}</p>
           <p><strong>Telegram ID:</strong> <code>${uid}</code></p>
-          <p><strong>Balance:</strong> ${u.balance || 0} ADI$</p>
-          <p><strong>IP Address:</strong> ${u.ip || 'Unknown'}</p>
-          <p><strong>Wallet:</strong> <code>${u.walletAddress || u.wallet || 'Not Connected'}</code></p>
+          <p><strong>Balance:</strong> <b style="color:var(--accent-green);">${u.balance || 0} ADI$</b></p>
+          <p><strong>IP:</strong> ${u.ip || 'Unknown'}</p>
+          <p><strong>Wallet:</strong> <code style="word-break:break-all;">${u.walletAddress || u.wallet || 'Not Connected'}</code></p>
+          <button class="btn-primary btn-zero" style="margin-top:15px;" onclick="resetBalanceToZero('${uid}')">Reset Balance to 0</button>
         `;
       });
     }
 
-    function closeBioModal() {
-      document.getElementById('bioModal').style.display = 'none';
+    function closeBioModal() { document.getElementById('bioModal').style.display = 'none'; }
+    function setAppLockStatus(isLocked) { db.ref('settings/isLocked').set(isLocked).then(() => alert(`App ${isLocked ? 'LOCKED' : 'UNLOCKED'}`)); }
+    function stopGlobalMining() {
+      if (!confirm("Stop mining countdown globally?")) return;
+      db.ref('users').once('value', snap => {
+        const users = snap.val();
+        let updates = {};
+        Object.keys(users).forEach(uid => { updates[`users/${uid}/miningEndTime`] = 0; });
+        db.ref().update(updates).then(() => alert("Global mining stopped!"));
+      });
     }
-
-    // Single User Balance Update
-    function updateUserBalance() {
-      const uid = document.getElementById('targetUserId').value.trim();
-      const bal = parseFloat(document.getElementById('newBalance').value);
-      if (!uid || isNaN(bal)) { alert("Provide valid User ID and Balance!"); return; }
-      db.ref('users/' + uid + '/balance').set(bal).then(() => alert("User balance updated!"));
+    function toggleFaceIdSystem(s) { db.ref('settings/security/faceIdEnabled').set(s === 'enabled'); }
+    function saveBackupPin() { db.ref('settings/security/backupPin').set(document.getElementById('backupPinCode').value.trim()); alert("PIN saved!"); }
+    function injectCustomDynamicFeature() {
+      db.ref('injected_features/custom_' + document.getElementById('customFeatureKey').value.trim())
+        .set(document.getElementById('customFeatureCode').value.trim()).then(() => alert("Feature Injected!"));
     }
-
-    function setUserBanStatus(isBanned) {
-      const uid = document.getElementById('targetUserId').value.trim();
-      if (!uid) { alert("Enter Target User ID!"); return; }
-      db.ref('users/' + uid + '/banned').set(isBanned).then(() => alert(`User ban status updated to: ${isBanned}`));
-    }
-
-    // Broadcast Engine
-    function sendGlobalNotification() {
-      const title = document.getElementById('notifTitle').value.trim();
-      const message = document.getElementById('notifMsg').value.trim();
-      if (!title || !message) { alert("Fill all fields!"); return; }
-      db.ref('global_notification').set({ title, message, timestamp: Date.now() }).then(() => alert("Broadcast Sent!"));
-    }
-
-    // Tasks Publisher
-    function saveTask() {
-      const taskId = document.getElementById('editingTaskId').value || ('task_' + Date.now());
-      const title = document.getElementById('taskTitle').value.trim();
-      const reward = parseFloat(document.getElementById('taskReward').value);
-      const link = document.getElementById('taskLink').value.trim();
-      const code = document.getElementById('taskCode').value.trim();
-
-      if (!title || isNaN(reward) || !link) { alert("Fill task fields!"); return; }
-      db.ref('custom_tasks/' + taskId).set({ title, reward, link, code }).then(() => alert("Task Published!"));
-    }
-
-   // Ad Injector Engine
-    function publishFeatureCode() {
-      const key = document.getElementById('featureKeySelect').value;
-      const code = document.getElementById('featureCode').value.trim();
-      if (!code) return;
-      db.ref('injected_features/' + key).set(code).then(() => alert("Ad code deployed live!"));
+    function publishSocialPost() {
+      db.ref('social_posts').push({ message: document.getElementById('socialPostText').value.trim(), timestamp: Date.now() })
+        .then(() => alert("Post queued for social media!"));
     }
   </script>
 </body>
