@@ -2237,37 +2237,93 @@ if (document.readyState === 'loading') {
         input.placeholder = "Task Status: " + labelText;
       }
     }
+let currentTaskTab = 'non-secret';
 
-    database.ref('custom_tasks').on('value', (snapshot) => {
-      const container = document.getElementById('dynamicTasksContainer');
-      if (!container) return;
-      container.innerHTML = "";
-      const tasks = snapshot.val();
-      if (tasks) {
-        Object.keys(tasks).forEach(key => {
-          const t = tasks[key];
-          container.innerHTML += `
-            <div class="task-card">
-              <div class="task-header">
-                <span class="task-title"><i class="fa-solid fa-play-circle"></i> ${t.title}</span>
-                <span class="task-reward">+${t.reward} ADI$</span>
-              </div>
-              <a href="${t.link}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">Open Task Link</a>
-              <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Paste Screenshot Link' : 'Enter Username')}">
-              <button class="btn btn-metallic" id="btn-proof-${key}" style="width:100%; padding:8px;" onclick="submitProofOnce('proof_${key}', '${t.title}', ${t.reward}, 'proof-${key}')">Submit & Complete Task</button>
-            </div>
-          `;
-          database.ref('users/' + userId + '/submittedProofs/proof_' + key).once('value').then((sn) => {
-            if (sn.exists()) {
-              const val = sn.val();
-              let statusText = "Completed";
-              if (typeof val === 'object' && val.status === 'pending') statusText = "Pending Approval";
-              markProofAsSubmitted('proof_' + key, 'proof-' + key, statusText);
-            }
-          });
-        });
-      }
+function switchTaskTab(tab) {
+    currentTaskTab = tab;
+    const tabNonSecret = document.getElementById('tabNonSecret');
+    const tabSecret = document.getElementById('tabSecret');
+    if (tabNonSecret) tabNonSecret.classList.toggle('active', tab === 'non-secret');
+    if (tabSecret) tabSecret.classList.toggle('active', tab === 'secret');
+    renderTasks();
+}
+
+database.ref('custom_tasks').on('value', (snapshot) => {
+    window.cachedCustomTasks = snapshot.val() || {};
+    renderTasks();
+});
+
+function renderTasks() {
+    const container = document.getElementById('dynamicTasksContainer');
+    if (!container) return;
+
+    const tasks = window.cachedCustomTasks || {};
+    if (Object.keys(tasks).length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:15px; color:#888; font-size:12px;">No tasks available.</div>`;
+        return;
+    }
+
+    let html = '';
+    let count = 0;
+
+    Object.keys(tasks).forEach(key => {
+        const t = tasks[key];
+        
+        // Check if task requires a secret code
+        const hasSecretCode = Boolean(
+            (t.code && String(t.code).trim() !== '') || 
+            (t.secretCode && String(t.secretCode).trim() !== '') || 
+            t.isSecret === true || 
+            t.type === 'secret' ||
+            t.requiresCode === true
+        );
+
+        // Tab Filter Logic
+        if (currentTaskTab === 'non-secret' && hasSecretCode) return;
+        if (currentTaskTab === 'secret' && !hasSecretCode) return;
+
+        count++;
+
+        if (hasSecretCode) {
+            // Secret Code Task UI
+            html += `
+                <div class="task-card">
+                    <div class="task-header">
+                        <span class="task-title"><i class="fa-solid fa-play-circle"></i> ${t.title || 'Watch & Find Code'}</span>
+                        <span class="task-reward">+${t.reward || 0} ADI$</span>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <a href="${t.link || '#'}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration:none; display:inline-block; margin-bottom:8px;">Open Task Link</a>
+                        <input type="text" id="proof-${key}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : 'Enter Proof'}" style="width:100%; padding:8px; border-radius:6px; border:1px solid #333; background:#0d111a; color:#fff; font-size:11px; margin-bottom:8px; box-sizing:border-box;">
+                        <button class="btn btn-metallic" id="btn-proof-${key}" style="width:100%; padding:8px;" onclick="submitProof('${key}', '${t.title}', '${t.reward}')">Submit & Complete Task</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            // General Task UI (No Code Input Box)
+            html += `
+                <div class="task-card">
+                    <div class="task-header">
+                        <span class="task-title"><i class="fa-solid fa-circle-check"></i> ${t.title || 'General Task'}</span>
+                        <span class="task-reward">+${t.reward || 0} ADI$</span>
+                    </div>
+                    <div style="margin-top:10px; display:flex; gap:8px;">
+                        <a href="${t.link || '#'}" target="_blank" class="btn btn-dark" style="flex:1; padding:8px; font-size:10px; text-decoration:none; text-align:center;">Open Task Link</a>
+                        <button class="btn btn-metallic" id="btn-proof-${key}" style="flex:1; padding:8px;" onclick="submitProof('${key}', '${t.title}', '${t.reward}')">Claim Reward</button>
+                    </div>
+                </div>
+            `;
+        }
     });
+
+    if (count === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:15px; color:#888; font-size:12px;">No ${currentTaskTab === 'secret' ? 'Secret Code' : 'General'} tasks available.</div>`;
+    } else {
+        container.innerHTML = html;
+        checkSubmittedProofs();
+    }
+}
+
 
     // ১. ব্রাউজার/ডিভাইসের টাইমজোন থেকে কান্ট্রি বের করার সহজ ফাংশন
 function getUserCountryOnly() {
