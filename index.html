@@ -387,102 +387,160 @@
     }
 
     
-/* Custom Cyberpunk / Neon Spin Card Styling */
+/* Card Container */
 .spin-card {
-  background: #111419;
-  border: 1px solid rgba(0, 242, 254, 0.2);
-  border-radius: 20px;
-  padding: 24px 20px;
-  text-align: center;
-  color: #ffffff;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  max-width: 360px;
-  margin: 15px auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 242, 254, 0.08);
+    background: #12151c;
+    border: 1px solid #232936;
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+    color: #ffffff;
+    max-width: 380px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-family: 'Inter', sans-serif;
 }
 
-.spin-header h2 {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  margin: 0 0 6px 0;
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+.spin-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #94a3b8;
+    margin-bottom: 6px;
 }
 
-.spin-header p {
-  font-size: 12px;
-  color: #9ca3af;
-  margin: 0 0 18px 0;
+.spin-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 25px;
 }
 
-/* Wheel Container & Glowing Pointer */
+/* Wheel Layout */
+.wheel-wrapper {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 0 auto 15px auto;
+}
+
+/* Top Triangle Indicator */
+.wheel-pointer {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 22px solid #00f0ff;
+    z-index: 10;
+    filter: drop-shadow(0 0 8px #00f0ff);
+}
+
 .wheel-container {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 0, 0, 0.8);
+    border: 6px solid #1e293b;
+    overflow: hidden;
 }
 
-.pointer-container {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    transition: transform 4s cubic-bezier(0.15, 0.9, 0.15, 1);
+    overflow: hidden;
 }
 
-.neon-pointer {
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 22px solid #ffffff;
-  filter: drop-shadow(0 0 6px #00f2fe) drop-shadow(0 0 12px #00f2fe);
+/* Wheel Slices */
+.slice {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: var(--color);
+    transform-origin: 100% 100%;
+    transform: rotate(calc(45deg * var(--i))) skewY(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Counter Text */
-.spins-counter {
-  font-size: 13px;
-  color: #a0aec0;
-  margin: 18px 0 14px 0;
-  font-weight: 500;
+.slice span {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    transform: skewY(45deg) rotate(22.5deg);
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
-/* Cyberpunk Cyan Glowing Button */
-#spinBtn {
-  width: 100%;
-  padding: 14px 0;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #ffffff;
-  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(0, 198, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease-in-out;
+/* Center Logo Badge */
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 65px;
+    height: 65px;
+    background: #0f172a;
+    border: 3px solid #00f0ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    z-index: 5;
 }
 
-#spinBtn:hover {
-  box-shadow: 0 0 25px rgba(0, 198, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px);
+.center-badge {
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffffff;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-#spinBtn:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+.spins-left {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 18px;
 }
 
-#spinBtn:disabled {
-  background: #1f242d;
-  border: 1px solid #2d3748;
-  color: #525f7f;
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
+/* Neon Blue Button */
+.btn-spin-neon {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(90deg, #0284c7, #06b6d4, #0284c7);
+    border: 2px solid #38bdf8;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
 }
+
+.btn-spin-neon:active {
+    transform: scale(0.98);
+}
+
+.btn-spin-neon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 
     .tapper-box {
       background: rgba(0, 0, 0, 0.6);
