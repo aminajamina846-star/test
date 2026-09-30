@@ -2045,38 +2045,49 @@ if (document.readyState === 'loading') {
       }
     });
 
-    async function logUserDeviceInfo() {
-      try {
-        const ipRes = await fetch('https://ipapi.co/json/');
-        const geoData = await ipRes.json();
-        const userIp = geoData.ip || "Unknown";
-        const country = geoData.country_name || "Unknown";
-        const city = geoData.city || "Unknown";
+    // ১. ব্রাউজার/ডিভাইসের টাইমজোন থেকে কান্ট্রি বের করার সহজ ফাংশন
+function getUserCountryOnly() {
+    try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+        
+        if (tz.includes("Dhaka")) return "Bangladesh 🇧🇩";
+        if (tz.includes("Kolkata")) return "India 🇮🇳";
+        if (tz.includes("Karachi")) return "Pakistan 🇵🇰";
+        if (tz.includes("Kathmandu")) return "Nepal 🇳🇵";
+        if (tz.includes("Colombo")) return "Sri Lanka 🇱🇰";
+        if (tz.includes("Kabul")) return "Afghanistan 🇦🇫";
+        if (tz.includes("Bangkok") || tz.includes("Jakarta")) return "Thailand / Indonesia 🇹🇭🇮🇩";
+        if (tz.includes("Singapore") || tz.includes("Kuala_Lumpur")) return "Singapore / Malaysia 🇸🇬🇲🇾";
+        if (tz.includes("Riyadh") || tz.includes("Dubai") || tz.includes("Qatar") || tz.includes("Kuwait")) return "Middle East (Saudi/UAE) 🇸🇦🇦🇪";
+        if (tz.includes("Tokyo") || tz.includes("Seoul")) return "Japan / South Korea 🇯🇵🇰🇷";
+        if (tz.includes("London")) return "United Kingdom 🇬🇧";
+        if (tz.includes("Berlin") || tz.includes("Paris") || tz.includes("Rome") || tz.includes("Madrid")) return "Europe 🇪🇺";
+        if (tz.includes("Moscow")) return "Russia 🇷🇺";
+        if (tz.includes("New_York") || tz.includes("Chicago") || tz.includes("Los_Angeles")) return "United States 🇺🇸";
+        if (tz.includes("Toronto") || tz.includes("Vancouver")) return "Canada 🇨🇦";
+
+        return tz.split('/')[1] ? tz.split('/')[1].replace(/_/g, ' ') : "Unknown";
+    } catch (e) {
+        return "Unknown";
+    }
+}
+
+// ২. ডিভাইস ইনফো সেভ করার মেইন ফাংশন
+function logUserDeviceInfo() {
+    try {
+        const userCountry = getUserCountryOnly();
         const userAgent = navigator.userAgent;
 
-        database.ref('users').orderByChild('ip').equalTo(userIp).once('value').then((snap) => {
-          if (snap.exists() && Object.keys(snap.val()).length > 2) {
-            database.ref('users/' + userId).update({
-              banned: true,
-              banReason: "Botting/Duplicate Multi-account IP detected"
-            });
-            showAlert("Duplicate account detected on this IP. Account suspended!");
-            return;
-          }
-
-          database.ref('users/' + userId).update({
-            ip: userIp,
-            country: country,
-            city: city,
+        database.ref('users/' + userId).update({
+            country: userCountry,
             device: userAgent,
             lastSeen: new Date().toLocaleString()
-          });
         });
-
-      } catch (e) {
-        console.log("Geolocation fallback strategy activated...");
-      }
+    } catch (e) {
+        console.log("Device info log failed...", e);
     }
+}
+
 
     function loadLeaderboard() {
       const container = document.getElementById('leaderboard-container');
