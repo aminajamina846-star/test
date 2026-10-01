@@ -386,13 +386,6 @@
       100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
     }
 
-    .wheel-box {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 15px auto;
-    }
-
     .wheel-pointer {
       position: absolute;
       top: -10px;
@@ -402,16 +395,32 @@
       height: 0;
       border-left: 12px solid transparent;
       border-right: 12px solid transparent;
-      border-top: 20px solid #ffffff;
+      border-top: 20px solid #00f0ff;
       z-index: 10;
+      filter: drop-shadow(0 0 8px #00f0ff);
     }
 
-    #wheelCanvas {
-      width: 200px;
-      height: 200px;
+    .wheel-container {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-      border: 4px solid #cbd5e1;
-      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+      position: relative;
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 0, 0, 0.8);
+      border: 5px solid #1e293b;
+      overflow: hidden;
+    }
+
+    .btn-tab {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-tab.active {
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      color: #fff;
+      border-color: #38bdf8;
+      font-weight: 700;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
     }
 
     .tapper-box {
@@ -456,7 +465,6 @@
       padding: 20px;
     }
 
-    /* Countdown Timer Display Styling */
     .countdown-container {
       background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(0,0,0,0.9));
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -546,20 +554,18 @@
   <div class="app-container">
     
     <div class="top-bar">
-    <div class="profile-info">
-        <div class="avatar" id="userAvatar"><i class="fa-solid fa-user"></i></div>
-        <div class="user-details">
-            <h3 id="userName">User</h3>
-            <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner</p>
-        </div>
+      <div class="profile-info">
+          <div class="avatar" id="userAvatar"><i class="fa-solid fa-user"></i></div>
+          <div class="user-details">
+              <h3 id="userName">User</h3>
+              <p id="userLevel"><i class="fa-solid fa-shield-halved" style="color: var(--accent-silver);"></i> Verified Miner</p>
+          </div>
+      </div>
+      <div class="icon-btn" id="notifBellBtn" onclick="openNotificationModal()" style="position: relative;">
+          <i class="fa-regular fa-bell"></i>
+          <span id="notifRedBadge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background-color: #ff3b30; border-radius: 50%;"></span>
+      </div>
     </div>
-    <div class="icon-btn" id="notifBellBtn" onclick="openNotificationModal()" style="position: relative;">
-        <i class="fa-regular fa-bell"></i>
-        <span id="notifRedBadge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background-color: #ff3b30; border-radius: 50%;"></span>
-    </div>
-</div>
-
-
 
     <!-- 1. HOME PAGE -->
     <div id="page-home" class="page active">
@@ -644,7 +650,8 @@
           <div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px 0;">Loading leaderboard...</div>
         </div>
       </div>
-                                                                                   </div>
+    </div>
+
     <!-- 2. MINE PAGE -->
     <div id="page-mine" class="page">
       <div class="card card-silver" style="text-align: center; padding: 35px 20px;">
@@ -717,37 +724,55 @@
 
     <!-- 4. TASKS & GAMIFICATION PAGE -->
     <div id="page-tasks" class="page">
-      <div class="card card-silver" style="text-align: center;">
-        <div class="section-title" style="margin-top:0;">Daily Spin Wheel</div>
-        <div style="font-size: 11px; color: var(--text-sub);">Spin to win 2, 5, 19, or 50 ADI$ tokens!</div>
         
-        <div class="wheel-box">
-          <div class="wheel-pointer"></div>
-          <canvas id="wheelCanvas" width="200" height="200"></canvas>
+        <!-- DAILY SPIN WHEEL CARD -->
+        <div class="card spin-card" style="text-align: center;">
+            <div class="section-title" style="margin-top: 0;">Daily Spin Wheel</div>
+            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 15px;">Spin to Win 2, 5, 19, or 50 ADI$ tokens!</div>
+
+            <!-- Wheel Outer Wrapper -->
+            <div class="wheel-wrapper" style="position: relative; width: 220px; height: 220px; margin: 0 auto;">
+                <div class="wheel-pointer"></div>
+                <div class="wheel-container">
+                    <canvas id="wheelCanvas" width="220" height="220"></canvas>
+                </div>
+            </div>
+
+            <div style="font-size: 11px; margin-top: 12px; margin-bottom: 10px; color: #8a99ad;" id="spinsLeftText">Spins Left Today: 2/2</div>
+            <button class="btn btn-metallic" id="spinBtn" onclick="spinWheelNow()" style="width: 100%;">Spin Wheel Now</button>
         </div>
 
-        <div style="font-size: 11px; margin-bottom: 10px; color: #cbd5e1;" id="spinLimitText">Spins Left Today: 2/2</div>
-        <button class="btn btn-metallic" id="spinBtn" style="width: 100%; padding: 12px;" onclick="triggerAdAndExecute('spin', spinWheel)">Spin Wheel Now</button>
-      </div>
-
-      <div class="card">
-        <div class="section-title" style="margin-top:0;">Mini Tapper Challenge</div>
-        <div class="tapper-box">
-          <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
-          <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScoreDisplay">Score: 0</div>
-          <div style="font-size: 12px; color: #4ade80; margin-bottom: 8px;" id="tapperTimerDisplay">Time Left: 15s</div>
-          <button class="tapper-btn" id="tapperTapBtn" onclick="registerTap()" disabled><i class="fa-solid fa-hand-pointer"></i></button>
-          <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="triggerAdAndExecute('game', startTapperGame)">Start Challenge</button>
+        <!-- MINI TAPPER CHALLENGE -->
+        <div class="card">
+            <div class="section-title" style="margin-top: 0;">Mini Tapper Challenge</div>
+            <div class="tapper-box">
+                <div style="font-size: 11px; color: var(--text-sub);">Tap rapidly within 15 seconds to earn bonus ADI$!</div>
+                <div style="font-size: 18px; font-weight: 800; margin: 8px 0;" id="tapperScore">Score: 0</div>
+                <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;" id="tapperTime">Time Left: 0s</div>
+                <button class="tapper-btn" id="tapperTapBtn" onclick="handleTap()"><i class="fa-solid fa-hand-pointer"></i></button>
+                <button class="btn btn-metallic" id="startTapperBtn" style="width: 100%; margin-top: 10px;" onclick="startChallenge()">Start Challenge</button>
+            </div>
         </div>
-      </div>
 
-      <!-- TASKS MANAGEMENT -->
-      <div class="section-title">Tasks Management</div>
+        <!-- TASKS MANAGEMENT (WITH SECRET & GENERAL TABS) -->
+        <div class="section-title">Tasks Management</div>
 
-      <div id="dynamicTasksContainer"></div>
+        <!-- Secret Code o Non-Secret Code Switch Tabs -->
+        <div class="task-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button class="btn-tab active" id="tabNonSecret" onclick="switchTaskTab('non-secret')" style="flex:1; padding:9px; font-size:11px; border-radius:8px; cursor:pointer;">
+                <i class="fa-solid fa-list-check"></i> General Tasks
+            </button>
+            <button class="btn-tab" id="tabSecret" onclick="switchTaskTab('secret')" style="flex:1; padding:9px; font-size:11px; border-radius:8px; cursor:pointer;">
+                <i class="fa-solid fa-key"></i> Secret Code Tasks
+            </button>
+        </div>
 
-      <div class="section-title" style="margin-top: 20px;">Task History</div>
-      <div id="taskHistoryContainer"></div>
+        <!-- Active Task Display Container -->
+        <div id="dynamicTasksContainer"></div>
+
+        <!-- TASK HISTORY -->
+        <div class="section-title" style="margin-top: 20px;">Task History</div>
+        <div id="taskHistoryContainer"></div>
     </div>
 
     <!-- 5. PROFILE PAGE -->
@@ -794,7 +819,7 @@
 
   </div>
 
-  <!-- NOTIFICATION HISTORY MODAL (1-30 Days Messages) -->
+  <!-- NOTIFICATION HISTORY MODAL -->
   <div id="notificationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
     <div style="background:#141414; width:90%; max-width:400px; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.2); max-height:80vh; overflow-y:auto; color:#e2e8f0;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
@@ -890,7 +915,6 @@
 
     </div>
   </div>
-  
   <!-- FIXED BOTTOM NAVIGATION BAR -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('page-home', this)"><i class="fa-solid fa-house"></i><span>Home</span></div>
@@ -898,7 +922,8 @@
     <div class="nav-item" onclick="switchTab('page-markets', this)"><i class="fa-solid fa-chart-line"></i><span>Markets</span></div>
     <div class="nav-item" onclick="switchTab('page-tasks', this)"><i class="fa-solid fa-list-check"></i><span>Tasks</span></div>
     <div class="nav-item" onclick="switchTab('page-profile', this)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
-    </div><script>
+  </div>
+  <script>
     // Firebase Configuration
     const firebaseConfig = {
       databaseURL: "https://adi-mining-bot-6e8f1-default-rtdb.firebaseio.com"
@@ -928,6 +953,10 @@
     let tapperInterval = null;
     let pushNotificationSent = false;
 
+    const segments = ['19 ADI', '50 ADI', '2 ADI', '5 ADI', '19 ADI', '50 ADI', '2 ADI', '5 ADI'];
+    const colors = ['#0e7490', '#0284c7', '#059669', '#2e2b70', '#0e7490', '#0284c7', '#059669', '#2e2b70'];
+    let currentRotation = 0;
+
     const todayDate = new Date().toISOString().slice(0, 10);
 
     if (tg) {
@@ -938,20 +967,35 @@
         userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "User";
       }
     }
-function initInAppAds() {
-    // Ad system disabled
-}
 
-function triggerAdAndExecute(formatType, callback) {
-    if (typeof callback === 'function') {
-        callback();
+    function showAlert(msg) {
+      if (tg && tg.showAlert) {
+        tg.showAlert(msg);
+      } else {
+        alert(msg);
+      }
     }
-}
+
+    function initInAppAds() {}
+
+    function triggerAdAndExecute(formatType, callback) {
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }
+
+    function switchTab(pageId, navElement) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      const activePage = document.getElementById(pageId);
+      if (activePage) activePage.classList.add('active');
+
+      if (navElement) {
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => item.classList.remove('active'));
+        navElement.classList.add('active');
+      }
+    }
     
-    
-    // ==========================================
-    // 20 NOVEMBER COUNTDOWN & GLOBAL TOKEN COUNTER
-    // ==========================================
+    // COUNTDOWN & GLOBAL STATS
     function startCountdownTimer() {
       const targetDate = new Date('November 20, 2026 00:00:00').getTime();
 
@@ -960,10 +1004,10 @@ function triggerAdAndExecute(formatType, callback) {
         const difference = targetDate - now;
 
         if (difference <= 0) {
-          document.getElementById('cd-days').innerText = "00";
-          document.getElementById('cd-hours').innerText = "00";
-          document.getElementById('cd-minutes').innerText = "00";
-          document.getElementById('cd-seconds').innerText = "00";
+          if (document.getElementById('cd-days')) document.getElementById('cd-days').innerText = "00";
+          if (document.getElementById('cd-hours')) document.getElementById('cd-hours').innerText = "00";
+          if (document.getElementById('cd-minutes')) document.getElementById('cd-minutes').innerText = "00";
+          if (document.getElementById('cd-seconds')) document.getElementById('cd-seconds').innerText = "00";
           return;
         }
 
@@ -982,19 +1026,18 @@ function triggerAdAndExecute(formatType, callback) {
     }
 
     function listenGlobalStats() {
-    database.ref('users').on('value', (snapshot) => {
+      database.ref('users').on('value', (snapshot) => {
         let globalTotalMined = 0;
         let activeMiners = 0;
 
         if (snapshot.exists()) {
-            const users = snapshot.val();
-            activeMiners = Object.keys(users).length;
+          const users = snapshot.val();
+          activeMiners = Object.keys(users).length;
 
-            Object.values(users).forEach(u => {
-                // u.totalMined er bodole u.balance va u.totalMined duitai check kora hocche
-                const userToken = u.balance !== undefined ? u.balance : (u.totalMined || 0);
-                globalTotalMined += Number(userToken) || 0;
-            });
+          Object.values(users).forEach(u => {
+            const userToken = u.balance !== undefined ? u.balance : (u.totalMined || 0);
+            globalTotalMined += Number(userToken) || 0;
+          });
         }
 
         const globalEl = document.getElementById('globalMinedDisplay');
@@ -1002,134 +1045,103 @@ function triggerAdAndExecute(formatType, callback) {
 
         const minersEl = document.getElementById('globalMinersDisplay');
         if (minersEl) minersEl.innerText = activeMiners.toLocaleString();
-    });
-}
-
-
-    // ==========================================
-// NOTIFICATION SYSTEM (UPDATED FOR GLOBAL_NOTIFICATION)
-// ==========================================
-
-function openNotificationModal() {
-    const modal = document.getElementById('notificationModal');
-    if (modal) {
-        modal.style.display = 'flex';
+      });
     }
 
-    // দেখা মাত্রই দেখার টাইম সেভ হবে এবং লাল ডট বন্ধ হবে
-    localStorage.setItem('lastNotifSeenTime', Date.now());
-    const notifBadge = document.getElementById('notifRedBadge');
-    if (notifBadge) {
-        notifBadge.style.display = 'none';
+    // NOTIFICATION SYSTEM
+    function openNotificationModal() {
+      const modal = document.getElementById('notificationModal');
+      if (modal) modal.style.display = 'flex';
+
+      localStorage.setItem('lastNotifSeenTime', Date.now());
+      const notifBadge = document.getElementById('notifRedBadge');
+      if (notifBadge) notifBadge.style.display = 'none';
+
+      loadNotificationHistory();
     }
 
-    loadNotificationHistory();
-}
-
-function closeNotificationModal() {
-    const modal = document.getElementById('notificationModal');
-    if (modal) {
-        modal.style.display = 'none';
+    function closeNotificationModal() {
+      const modal = document.getElementById('notificationModal');
+      if (modal) modal.style.display = 'none';
     }
-}
 
-function listenForNewNotifications() {
-    if (typeof database === 'undefined' || !database.ref) return;
+    function listenForNewNotifications() {
+      if (typeof database === 'undefined' || !database.ref) return;
 
-    let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime')) || 0;
+      let lastReadTime = Number(localStorage.getItem('lastNotifSeenTime')) || 0;
 
-    // global_notification নোড কল করা হচ্ছে
-    database.ref('global_notification').on('value', (snapshot) => {
+      database.ref('global_notification').on('value', (snapshot) => {
         let hasUnseen = false;
 
         if (snapshot.exists()) {
-            const item = snapshot.val();
-            // যদি এটি সরাসরি অবজেক্ট হয়
-            if (item.title || item.message) {
-                if (!item.timestamp || item.timestamp > lastReadTime) {
-                    hasUnseen = true;
-                }
-            } else {
-                // যদি ভেতরে অনেকগুলো চাইল্ড থাকে
-                Object.keys(item).forEach(key => {
-                    const child = item[key];
-                    if (child.timestamp && child.timestamp > lastReadTime) {
-                        hasUnseen = true;
-                    }
-                });
+          const item = snapshot.val();
+          if (item.title || item.message) {
+            if (!item.timestamp || item.timestamp > lastReadTime) {
+              hasUnseen = true;
             }
+          } else {
+            Object.keys(item).forEach(key => {
+              const child = item[key];
+              if (child.timestamp && child.timestamp > lastReadTime) {
+                hasUnseen = true;
+              }
+            });
+          }
         }
 
         const notifBadge = document.getElementById('notifRedBadge');
-        if (notifBadge) {
-            notifBadge.style.display = hasUnseen ? 'block' : 'none';
-        }
-    });
-}
-
-function loadNotificationHistory() {
-    const container = document.getElementById('notificationHistoryList');
-    if (!container) return;
-
-    container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">Loading notifications...</p>';
-
-    if (typeof database !== 'undefined' && database.ref) {
-        database.ref('global_notification').once('value', (snapshot) => {
-            if (!snapshot.exists()) {
-                container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
-                return;
-            }
-
-            const data = snapshot.val();
-            let html = '';
-            const notifList = [];
-
-            // data সরাসরি অবজেক্ট নাকি লিস্ট তা হ্যান্ডেল করা
-            if (data.title || data.message) {
-                notifList.push(data);
-            } else {
-                Object.keys(data).forEach(key => {
-                    notifList.push(data[key]);
-                });
-            }
-
-            notifList.forEach(item => {
-                const title = item.title || 'Notification';
-                const message = item.message || '';
-                
-                // Timestamp কনভার্সন
-                let timeStr = '';
-                if (item.timestamp) {
-                    timeStr = new Date(Number(item.timestamp)).toLocaleString();
-                }
-
-                html += `
-                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin-bottom: 8px; text-align: left;">
-                        <div style="font-weight: bold; font-size: 14px; color: #ffffff; margin-bottom: 4px;">${title}</div>
-                        <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${message}</div>
-                        ${timeStr ? `<div style="font-size: 10px; color: #888;">${timeStr}</div>` : ''}
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }).catch((err) => {
-            console.error(err);
-            container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
-        });
-    } else {
-        container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+        if (notifBadge) notifBadge.style.display = hasUnseen ? 'block' : 'none';
+      });
     }
-}
 
-// Global Listener Call
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', listenForNewNotifications);
-} else {
-    listenForNewNotifications();
-              }
-    API Key Security: Public code-e (বিশেষ করে Frontend-এ) API Key প্রকাশ করলে অন্য কেউ ব্যবহার করে আপনার ফ্রি ক্রেডিটের কোটা শেষ করে দিতে পারে।
-    // FEATURE 1: DAILY STREAK SYSTEM & BONUS MULTIPLIER
+    function loadNotificationHistory() {
+      const container = document.getElementById('notificationHistoryList');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">Loading notifications...</p>';
+
+      if (typeof database !== 'undefined' && database.ref) {
+        database.ref('global_notification').once('value', (snapshot) => {
+          if (!snapshot.exists()) {
+            container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+            return;
+          }
+
+          const data = snapshot.val();
+          let html = '';
+          const notifList = [];
+
+          if (data.title || data.message) {
+            notifList.push(data);
+          } else {
+            Object.keys(data).forEach(key => notifList.push(data[key]));
+          }
+
+          notifList.forEach(item => {
+            const title = item.title || 'Notification';
+            const message = item.message || '';
+            let timeStr = item.timestamp ? new Date(Number(item.timestamp)).toLocaleString() : '';
+
+            html += `
+              <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin-bottom: 8px; text-align: left;">
+                <div style="font-weight: bold; font-size: 14px; color: #ffffff; margin-bottom: 4px;">${title}</div>
+                <div style="font-size: 12px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${message}</div>
+                ${timeStr ? `<div style="font-size: 10px; color: #888;">${timeStr}</div>` : ''}
+              </div>
+            `;
+          });
+
+          container.innerHTML = html;
+        }).catch((err) => {
+          console.error(err);
+          container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+        });
+      } else {
+        container.innerHTML = '<p style="text-align:center; color:#888; font-size:13px; margin:20px 0;">No notifications found.</p>';
+      }
+    }
+
+    // DAILY STREAK
     function processStreakCheck(userData) {
       const lastDateStr = userData.lastMineDate || "";
       streakCount = userData.streakCount || 0;
@@ -1140,15 +1152,11 @@ if (document.readyState === 'loading') {
         const diffTime = Math.abs(currentDate - lastDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 1) {
-          // Maintained Streak
-        } else if (diffDays > 1) {
-          // Missed day -> Reset Streak
+        if (diffDays > 1) {
           streakCount = 0;
         }
       }
 
-      // Calculate Multiplier according to Streaks (3, 7, 30 days)
       if (streakCount >= 30) {
         multiplier = 2.0;
       } else if (streakCount >= 7) {
@@ -1160,13 +1168,10 @@ if (document.readyState === 'loading') {
       }
 
       const streakEl = document.getElementById('homeMultiplierText');
-      if (streakEl) {
-        streakEl.innerText = `Speed: ${multiplier}x | Streak: ${streakCount} Days 🔥`;
-      }
+      if (streakEl) streakEl.innerText = `Speed: ${multiplier}x | Streak: ${streakCount} Days 🔥`;
+
       const rateEl = document.getElementById('mineRateDisplay');
-      if (rateEl) {
-        rateEl.innerText = `Current Rate: ${Math.round(100 * multiplier)} ADI / 4 Hours`;
-      }
+      if (rateEl) rateEl.innerText = `Current Rate: ${Math.round(100 * multiplier)} ADI / 4 Hours`;
     }
 
     function claimDailyReward() {
@@ -1197,203 +1202,107 @@ if (document.readyState === 'loading') {
 
       database.ref().update(updates).then(() => {
         showAlert(`Congratulations! Claimed ${totalReward} ADI$ (${streakCount} Day Streak Bonus!)`);
+        updateUI();
       });
     }
+   // SPIN WHEEL
+    function drawWheel() {
+      const wheelCanvas = document.getElementById('wheelCanvas');
+      if (!wheelCanvas) return;
 
-    // FEATURE 2: LUCKY SPIN WHEEL
-    // FEATURE 3: LUCKY SPIN WHEEL
-const wheelRewards = [2, 5, 19, 50, 2, 5, 19, 50];
-let isSpinning = false;
+      const ctx = wheelCanvas.getContext('2d');
+      const numSegments = segments.length;
+      const anglePerSegment = (2 * Math.PI) / numSegments;
+      const center = 110;
 
-function drawWheel() {
-    const canvas = document.getElementById('wheelCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const numSegments = wheelRewards.length;
-    const anglePerSegment = (2 * Math.PI) / numSegments;
+      ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
 
-    ctx.clearRect(0, 0, 200, 200);
+      for (let i = 0; i < numSegments; i++) {
+        const startAngle = i * anglePerSegment - Math.PI / 2;
+        const endAngle = startAngle + anglePerSegment;
 
-    for (let i = 0; i < numSegments; i++) {
-        const angle = i * anglePerSegment;
         ctx.beginPath();
-        ctx.fillStyle = (i % 2 === 0) ? '#121212' : '#0a0a0a';
-        ctx.moveTo(100, 100);
-        ctx.arc(100, 100, 95, angle, angle + anglePerSegment);
-        ctx.lineTo(100, 100);
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, center, startAngle, endAngle);
+        ctx.fillStyle = colors[i];
         ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         ctx.save();
-        ctx.translate(100, 100);
-        ctx.rotate(angle + anglePerSegment / 2);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = (i % 2 === 0) ? '#ffffff' : '#aaaaaa';
-        ctx.font = 'bold 11px Plus Jakarta Sans';
-        ctx.fillText(wheelRewards[i] + ' ADI', 85, 4);
+        ctx.translate(center, center);
+        ctx.rotate(startAngle + anglePerSegment / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px Plus Jakarta Sans, sans-serif";
+        ctx.fillText(segments[i], center - 12, 4);
         ctx.restore();
+      }
     }
-}
 
-// ENGLISH POPUP MODAL
-function showCustomModal(wonAmount) {
-    const oldModal = document.getElementById('winModal');
-    if (oldModal) oldModal.remove();
-
-    const modalHtml = `
-        <div id="winModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:99999;">
-            <div style="background:#1e1e1e; color:#fff; padding:25px; border-radius:15px; text-align:center; max-width:320px; width:85%; border:1px solid #333; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
-                <h2 style="color:#4CAF50; margin-top:0; margin-bottom:10px;">Congratulations! 🎉</h2>
-                <p style="font-size:16px; margin-bottom:20px; color:#ddd;">You have successfully won <strong style="color:#fff;">${wonAmount} ADI$</strong> tokens!</p>
-                <button id="claimModalBtn" style="background:#fff; color:#000; border:none; padding:12px 25px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; width:100%;">Claim Reward</button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    document.getElementById('claimModalBtn').onclick = function() {
-        document.getElementById('winModal').remove();
-    };
-}
-
-function spinWheel() {
-    if (isSpinning) return;
-
-    if (lastSpinDate === todayDate && spinsLeft <= 0) {
-        if (typeof showAlert === 'function') {
-            showAlert("Daily spin limit reached! Come back tomorrow.");
-        } else {
-            alert("Daily spin limit reached! Come back tomorrow.");
-        }
+    function spinWheelNow() {
+      if (spinsLeft <= 0) {
+        showAlert("No spins left today!");
         return;
+      }
+
+      const btn = document.getElementById('spinBtn');
+      const wheelCanvas = document.getElementById('wheelCanvas');
+      if (btn) btn.disabled = true;
+
+      const randomIndex = Math.floor(Math.random() * segments.length);
+      const degreesPerSegment = 360 / segments.length;
+      
+      currentRotation += (360 * 5) + (randomIndex * degreesPerSegment);
+      if (wheelCanvas) {
+        wheelCanvas.style.transition = 'transform 4s ease-out';
+        wheelCanvas.style.transform = `rotate(${currentRotation}deg)`;
+      }
+
+      setTimeout(() => {
+        spinsLeft--;
+        const spinsText = document.getElementById('spinsLeftText');
+        if (spinsText) spinsText.innerText = `Spins Left Today: ${spinsLeft}/2`;
+        showAlert(`🎉 You won ${segments[randomIndex]}!`);
+        if (btn) btn.disabled = false;
+      }, 4000);
     }
 
-    isSpinning = true;
-    const btn = document.getElementById('spinBtn');
-    if (btn) btn.disabled = true;
+    // MINI TAPPER
+    function startChallenge() {
+      if (tapperTimeLeft > 0 && tapperInterval !== null) return;
 
-    const randomIndex = Math.floor(Math.random() * wheelRewards.length);
-    const selectedReward = wheelRewards[randomIndex];
-  // Top Pointer Center Angle Alignment
-    const numSegments = wheelRewards.length;
-    const segmentDegrees = 360 / numSegments;
-    const targetDegree = (360 * 5) + (270 - (randomIndex * segmentDegrees) - (segmentDegrees / 2));
-
-    const canvas = document.getElementById('wheelCanvas');
-    if (canvas) {
-        canvas.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)';
-        canvas.style.transform = `rotate(${targetDegree}deg)`;
-    }
-
-    setTimeout(() => {
-        userBalance += selectedReward;
-        spinsLeft = Math.max(0, spinsLeft - 1);
-        lastSpinDate = todayDate;
-
-        const histId = 'hist_' + Date.now();
-        let updates = {};
-        updates['users/' + userId + '/balance'] = userBalance;
-        updates['users/' + userId + '/spinsLeft'] = spinsLeft;
-        updates['users/' + userId + '/lastSpinDate'] = lastSpinDate;
-        updates['users/' + userId + '/history/' + histId] = {
-            title: "Lucky Spin Reward",
-            amount: "+" + selectedReward + " ADI$",
-            date: new Date().toLocaleString(),
-            type: "Spin Win",
-            timestamp: Date.now()
-        };
-
-        const finishSpin = () => {
-            showCustomModal(selectedReward);
-            if (canvas) {
-                canvas.style.transition = 'none';
-                canvas.style.transform = 'rotate(0deg)';
-                drawWheel();
-            }
-            isSpinning = false;
-            if (btn && spinsLeft > 0) btn.disabled = false;
-            updateSpinUI();
-        };
-
-        if (typeof database !== 'undefined' && database.ref) {
-            database.ref().update(updates).then(finishSpin).catch((err) => {
-                console.error(err);
-                finishSpin();
-            });
-        } else {
-            finishSpin();
-        }
-    }, 4000);
-}
-
-function updateSpinUI() {
-    const txt = document.getElementById('spinLimitText');
-    if (txt) {
-        txt.innerText = `Spins Left Today: ${spinsLeft}/2`;
-    }
-}
-
-// Page Load-e Wheel Draw kora
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', drawWheel);
-} else {
-    drawWheel();
-}
-
-    
-                             
-        // FEATURE 4: MINI TAPPER GAME CHALLENGE
-    function startTapperGame() {
       tapperScore = 0;
       tapperTimeLeft = 15;
-      document.getElementById('tapperScoreDisplay').innerText = "Score: 0";
-      document.getElementById('tapperTimerDisplay').innerText = "Time Left: 15s";
+      
+      const scoreEl = document.getElementById('tapperScore');
+      const timeEl = document.getElementById('tapperTime');
+      if (scoreEl) scoreEl.innerText = `Score: ${tapperScore}`;
+      if (timeEl) timeEl.innerText = `Time Left: ${tapperTimeLeft}s`;
 
-      document.getElementById('tapperTapBtn').disabled = false;
-      document.getElementById('startTapperBtn').disabled = true;
-
+      clearInterval(tapperInterval);
       tapperInterval = setInterval(() => {
         tapperTimeLeft--;
-        document.getElementById('tapperTimerDisplay').innerText = `Time Left: ${tapperTimeLeft}s`;
+        if (timeEl) timeEl.innerText = `Time Left: ${tapperTimeLeft}s`;
 
         if (tapperTimeLeft <= 0) {
           clearInterval(tapperInterval);
-          document.getElementById('tapperTapBtn').disabled = true;
-          document.getElementById('startTapperBtn').disabled = false;
-
-          const earnedTokens = Math.min(50, Math.floor(tapperScore / 2));
-          if (earnedTokens > 0) {
-            userBalance += earnedTokens;
-            const histId = 'hist_' + Date.now();
-            let updates = {};
-            updates['users/' + userId + '/balance'] = userBalance;
-            updates['users/' + userId + '/history/' + histId] = {
-              title: "Mini Tapper Game",
-              amount: "+" + earnedTokens + " ADI$",
-              date: new Date().toLocaleString(),
-              type: "Mini Game",
-              timestamp: Date.now()
-            };
-            database.ref().update(updates).then(() => {
-              showAlert(`🎮 Time's up! Score: ${tapperScore}. Earned +${earnedTokens} ADI$!`);
-            });
-          } else {
-            showAlert(`Time's up! Tap faster next time.`);
-          }
+          tapperInterval = null;
+          showAlert(`Time's up! Total Score: ${tapperScore}`);
         }
       }, 1000);
     }
 
-    function registerTap() {
+    function handleTap() {
       if (tapperTimeLeft > 0) {
         tapperScore++;
-        document.getElementById('tapperScoreDisplay').innerText = `Score: ${tapperScore}`;
+        const scoreEl = document.getElementById('tapperScore');
+        if (scoreEl) scoreEl.innerText = `Score: ${tapperScore}`;
       }
     }
 
-    // Start Mining Function (4 Hours Duration)
+    // MINING
     function startMining() {
       const now = Date.now();
       if (typeof miningEndTime !== 'undefined' && miningEndTime > now) {
@@ -1429,6 +1338,7 @@ if (document.readyState === 'loading') {
         database.ref().update(updates).then(() => {
           showAlert(`Mined +${yieldAmount} ADI$ Tokens!`);
           checkMiningState();
+          updateUI();
         }).catch((error) => {
           showAlert("Error: " + error.message);
         });
@@ -1456,8 +1366,9 @@ if (document.readyState === 'loading') {
         });
       }
     }
+
     function checkMiningState() {
-      if (typeof miningInterval !== 'undefined') {
+      if (typeof miningInterval !== 'undefined' && miningInterval) {
         clearInterval(miningInterval);
       }
 
@@ -1531,7 +1442,7 @@ if (document.readyState === 'loading') {
 
     function processBoostDeduction() {
       if (!userId) {
-        alert("User ID not found!");
+        showAlert("User ID not found!");
         return;
       }
 
@@ -1542,7 +1453,7 @@ if (document.readyState === 'loading') {
         const currentBalance = userData && userData.balance ? Number(userData.balance) : 0;
         
         if (currentBalance < 10) {
-          alert("You don't have enough tokens! At least 10 ADI$ is required to boost.");
+          showAlert("You don't have enough tokens! At least 10 ADI$ is required to boost.");
           return;
         }
 
@@ -1560,9 +1471,11 @@ if (document.readyState === 'loading') {
         };
 
         database.ref().update(updates).then(() => {
-          alert("Mining boosted successfully! 10 ADI$ has been deducted from your account.");
+          showAlert("Mining boosted successfully! 10 ADI$ has been deducted from your account.");
+          userBalance = newBalance;
+          updateUI();
         }).catch((error) => {
-          alert("Error occurred: " + error.message);
+          showAlert("Error occurred: " + error.message);
         });
       });
     }
@@ -1598,7 +1511,8 @@ if (document.readyState === 'loading') {
     }
 
     function openReferralModal() {
-      document.getElementById('referralModal').style.display = 'flex';
+      const modal = document.getElementById('referralModal');
+      if (modal) modal.style.display = 'flex';
       const botUsername = "ADIAridropbot";
       const appShortName = "app"; 
       const refLink = `https://t.me/${botUsername}/${appShortName}?startapp=${userId}`;
@@ -1608,7 +1522,8 @@ if (document.readyState === 'loading') {
     }
 
     function closeReferralModal() {
-      document.getElementById('referralModal').style.display = 'none';
+      const modal = document.getElementById('referralModal');
+      if (modal) modal.style.display = 'none';
     }
 
     function shareReferralLink() {
@@ -1627,8 +1542,9 @@ if (document.readyState === 'loading') {
           prompt("Copy your referral link:", refLink);
         });
       }
-      }
-      function copyReferralLink() {
+    }
+
+    function copyReferralLink() {
       const refInput = document.getElementById('refLinkInput');
       if (refInput && refInput.value) {
         navigator.clipboard.writeText(refInput.value).then(() => {
@@ -1643,245 +1559,40 @@ if (document.readyState === 'loading') {
   
     function loadReferralData() {
       const refListEl = document.getElementById('referralList');
-      const refCountEl = document.getElementById('refCount');
-      const refEarnEl = document.getElementById('refEarnings');
+      if (!refListEl) return;
 
-      database.ref('users/' + userId + '/referrals').on('value', (snapshot) => {
-        const refs = snapshot.val();
-        refListEl.innerHTML = "";
-
-        if (refs) {
-          const keys = Object.keys(refs);
-          refCountEl.innerText = keys.length;
-
-          database.ref('users').once('value', (usersSnap) => {
-            const allUsers = usersSnap.val() || {};
-            let totalEarned = 0;
-            refListEl.innerHTML = "";
-
-            keys.reverse().forEach((refUid) => {
-              const item = refs[refUid];
-              const reward = item.reward || 50;
-              totalEarned += reward;
-
-              const refUserData = allUsers[refUid] || {};
-              const isBanned = refUserData.banned === true;
-              const statusBadge = isBanned ? 
-                `<span style="color:#ef4444; font-size:10px; font-weight:bold; background:rgba(239,68,68,0.15); padding:2px 6px; border-radius:4px;">Banned</span>` : 
-                `<span style="color:#22c55e; font-size:10px; font-weight:bold; background:rgba(34,197,94,0.15); padding:2px 6px; border-radius:4px;">Active</span>`;
-
-              refListEl.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:10px; background:#1b1b1b; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                  <div>
-                    <div style="font-weight:bold; color:#fff; font-size:13px;">@${item.username || 'User'} ${statusBadge}</div>
-                    <div style="font-size:10px; color:#888;">${item.timestamp || ''}</div>
-                  </div>
-                  <div style="color:var(--accent-green); font-weight:bold; font-size:12px;">+${reward} ADI$</div>
-                </div>
-              `;
-            });
-
-            refEarnEl.innerText = totalEarned.toLocaleString() + " ADI$";
-          });
-        } else {
-          refCountEl.innerText = "0";
-          refEarnEl.innerText = "0 ADI$";
-          refListEl.innerHTML = "<p style='color:#888; text-align:center; font-size:12px;'>No referrals yet. Share your link!</p>";
-        }
-      });
-    }
-
-    function checkReferralBonus() {
-      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
-        const referrerId = tg.initDataUnsafe.start_param;
-
-        if (referrerId && referrerId !== userId) {
-          database.ref('users/' + userId + '/referredBy').once('value').then((snapshot) => {
-            if (!snapshot.exists()) {
-              const bonusAmount = 50;
-
-              database.ref('users/' + userId + '/referredBy').set(referrerId);
-
-              database.ref('users/' + referrerId + '/balance').transaction((currentBalance) => {
-                return (currentBalance || 0) + bonusAmount;
-              });
-
-              database.ref('users/' + referrerId + '/referrals/' + userId).set({
-                username: userName,
-                reward: bonusAmount,
-                timestamp: new Date().toLocaleString()
-              });
-
-              const histId = 'hist_' + Date.now();
-              database.ref('users/' + referrerId + '/history/' + histId).set({
-                title: "Referral Bonus",
-                amount: "+" + bonusAmount + " ADI$",
-                date: new Date().toLocaleString(),
-                type: "Referral Reward",
-                timestamp: Date.now()
-              });
-            }
-          });
-        }
-      }
-    }
-
-        
-      // User Sync & Initialization Listener
-    const userRef = database.ref('users/' + userId);
-    userRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        if (data.banned === true) {
-          document.getElementById('banOverlay').style.display = 'flex';
-          return;
-        } else {
-          document.getElementById('banOverlay').style.display = 'none';
-        }
-
-        userBalance = Number(data.balance) || 0;
-        totalMinedAmount = Number(data.totalMined) || 0;
-        lastClaimDate = data.lastClaimDate || "";
-        lastMineDate = data.lastMineDate || "";
-        miningEndTime = data.miningEndTime || 0;
-        walletAddress = data.walletAddress || "";
-        spinsLeft = data.spinsLeft !== undefined ? data.spinsLeft : 2;
-        lastSpinDate = data.lastSpinDate || "";
-        pushNotificationSent = data.pushNotificationSent || false;
-
-        processStreakCheck(data);
-      } else {
-        userRef.set({ 
-          username: userName, 
-          balance: 0, 
-          totalMined: 0,
-          lastClaimDate: "", 
-          lastMineDate: "", 
-          miningEndTime: 0, 
-          walletAddress: "",
-          spinsLeft: 2,
-          lastSpinDate: "",
-          streakCount: 0,
-          banned: false
-        });
-        userBalance = 0;
-        totalMinedAmount = 0;
-      }
-      updateUI();
-      checkMiningState();
-      checkReferralBonus();
-      checkSubmittedProofs();
-      updateSpinUI();
-      loadUserHistory(userId);
-    });
-
-    function updateUI() {
-      if (document.getElementById('userName')) document.getElementById('userName').innerText = userName;
-      if (document.getElementById('userAvatar')) document.getElementById('userAvatar').innerText = userName[0].toUpperCase();
-      if (document.getElementById('profUser')) document.getElementById('profUser').innerText = userName;
-      if (document.getElementById('profId')) document.getElementById('profId').innerText = userId;
-
-      document.getElementById('totalBalance').innerHTML = userBalance.toLocaleString() + ' <span>ADI$</span>';
-      document.getElementById('usdValue').innerText = '≈ $' + (userBalance * 0.0001).toFixed(2) + ' USD';
-      document.getElementById('profBalance').innerText = userBalance.toLocaleString() + ' ADI$';
-
-      if (walletAddress) {
-        document.getElementById('connectedWalletAddr').innerText = walletAddress;
-        document.getElementById('walletConnBtn').innerHTML = '<i class="fa-solid fa-check-circle"></i> Wallet Connected';
-        document.getElementById('walletConnBtn').disabled = true;
-      }
-
-      const claimBtn = document.getElementById('dailyClaimBtn');
-      if (claimBtn) {
-        if (lastClaimDate === todayDate) {
-          claimBtn.innerText = "Claimed";
-          claimBtn.disabled = true;
-          claimBtn.style.opacity = "0.4";
-        } else {
-          claimBtn.innerText = "Claim";
-          claimBtn.disabled = false;
-          claimBtn.style.opacity = "1";
-        }
-      }
-    }
-
-    function switchTab(pageId, navElement) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-
-      if (navElement) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        navElement.classList.add('active');
-      }
-    }
-
-    function loadUserHistory(userId) {
-      const profileContainer = document.getElementById('history-list-container');
-      const mineContainer = document.getElementById('mineHistoryList');
-      const modalContainer = document.getElementById('historyList');
-
-      if (!profileContainer && !mineContainer && !modalContainer) return;
-
-      const historyRef = database.ref('users/' + userId + '/history').limitToLast(30);
-
-      historyRef.on('value', (snapshot) => {
-        if (profileContainer) profileContainer.innerHTML = '';
-        if (mineContainer) mineContainer.innerHTML = '';
-        if (modalContainer) modalContainer.innerHTML = '';
-
+      database.ref('users/' + userId + '/referrals').once('value', (snapshot) => {
         if (!snapshot.exists()) {
-          const emptyHTML = '<div style="text-align: center; color: #777; font-size: 12px; padding: 10px 0;">No activity history recorded yet.</div>';
-          if (profileContainer) profileContainer.innerHTML = emptyHTML;
-          if (mineContainer) mineContainer.innerHTML = emptyHTML;
-          if (modalContainer) modalContainer.innerHTML = emptyHTML;
+          refListEl.innerHTML = '<p style="color:#888; text-align:center; font-size:12px;">No referrals yet.</p>';
+          if (document.getElementById('refCount')) document.getElementById('refCount').innerText = "0";
+          if (document.getElementById('refEarnings')) document.getElementById('refEarnings').innerText = "0 ADI$";
           return;
         }
 
-        let historyArray = [];
-        snapshot.forEach((childSnapshot) => {
-          historyArray.push(childSnapshot.val());
-        });
+        const refs = snapshot.val();
+        const count = Object.keys(refs).length;
+        const earnings = count * 50;
 
-        historyArray.reverse();
+        if (document.getElementById('refCount')) document.getElementById('refCount').innerText = count;
+        if (document.getElementById('refEarnings')) document.getElementById('refEarnings').innerText = `${earnings} ADI$`;
 
-        let compiledHTML = '';
-        historyArray.forEach((item) => {
-          const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : (item.date || '');
-          const displayAmount = item.amount !== undefined && item.amount !== null ? String(item.amount) : '0';
-          
-          let amountClass = 'amount-plus';
-          let amountColor = '#00e676';
-
-          if (item.status === 'rejected' || displayAmount.includes('-') || Number(item.amount) < 0) {
-            amountClass = 'amount-minus';
-            amountColor = '#ff4d4d';
-          } else if (item.amount == 0) {
-            amountClass = 'amount-neutral';
-            amountColor = '#aaa';
-          }
-
-          compiledHTML += `
-            <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <div class="history-info">
-                <span class="history-title" style="display: block; font-size: 12px; font-weight: bold; color: #fff;">${item.title || 'Activity'}</span>
-                <span class="history-date" style="font-size: 10px; color: #888;">${dateStr} (${item.type || 'Transaction'})</span>
-              </div>
-              <div class="history-amount ${amountClass}" style="font-size: 12px; font-weight: 800; color: ${amountColor};">
-                ${displayAmount}
-              </div>
+        let html = '';
+        Object.values(refs).forEach(ref => {
+          html += `
+            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px;">
+              <span>${ref.name || 'User'}</span>
+              <span style="color:var(--accent-green);">+50 ADI$</span>
             </div>
           `;
         });
-
-        if (profileContainer) profileContainer.innerHTML = compiledHTML;
-        if (mineContainer) mineContainer.innerHTML = compiledHTML;
-        if (modalContainer) modalContainer.innerHTML = compiledHTML;
+        refListEl.innerHTML = html;
       });
     }
 
     function openHistoryModal() {
       const modal = document.getElementById('historyModal');
       if (modal) modal.style.display = 'flex';
+      loadHistoryData();
     }
 
     function closeHistoryModal() {
@@ -1889,163 +1600,123 @@ if (document.readyState === 'loading') {
       if (modal) modal.style.display = 'none';
     }
 
-    function openWhitepaperModal() {
-      document.getElementById('whitepaperModal').style.display = 'flex';
-    }
-    function closeWhitepaperModal() {
-      document.getElementById('whitepaperModal').style.display = 'none';
-    }
+    function loadHistoryData() {
+      const listContainer = document.getElementById('historyList');
+      if (!listContainer) return;
 
-    function openAboutModal() {
-      document.getElementById('aboutModal').style.display = 'flex';
-    }
-    function closeAboutModal() {
-      document.getElementById('aboutModal').style.display = 'none';
-    }
-
-    // TASK PROOF & AUTO APPROVAL WITH SECRET CODE
-    function submitProofOnce(proofKey, taskName, reward, inputId) {
-      const inputEl = document.getElementById(inputId);
-      const proofValue = inputEl ? inputEl.value.trim() : "";
-
-      if (!proofValue) {
-        showAlert("Please enter Secret Code, Username, or Link proof!");
-        return;
-      }
-
-      const taskKey = proofKey.replace('proof_', '');
-      
-      database.ref('custom_tasks/' + taskKey).once('value').then((taskSnap) => {
-        const taskData = taskSnap.val();
-        
-        if (taskData && taskData.code && taskData.code.trim() !== "") {
-          if (proofValue.toLowerCase() !== taskData.code.trim().toLowerCase()) {
-            showAlert("Invalid Secret Code! Task verification failed.");
-            return;
-          }
-
-          userBalance += reward;
-          const histId = 'hist_' + Date.now();
-
-          let updates = {};
-          updates['users/' + userId + '/balance'] = userBalance;
-          updates['users/' + userId + '/submittedProofs/' + proofKey] = {
-            proof: proofValue,
-            status: 'completed',
-            timestamp: Date.now()
-          };
-          updates['users/' + userId + '/history/' + histId] = {
-            title: "Task: " + taskName,
-            amount: "+" + reward + " ADI$",
-            date: new Date().toLocaleString(),
-            type: "Task Reward",
-            timestamp: Date.now()
-          };
-
-          database.ref().update(updates).then(() => {
-            showAlert("Secret Code Correct! Task completed and +" + reward + " ADI$ added to your balance!");
-            markProofAsSubmitted(proofKey, inputId, "Completed");
-          });
-
-        } else {
-          const proofRef = database.ref('users/' + userId + '/submittedProofs/' + proofKey);
-          proofRef.once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-              showAlert("You have already submitted proof for this task!");
-              return;
-            }
-
-            let updates = {};
-            updates['users/' + userId + '/submittedProofs/' + proofKey] = {
-              proof: proofValue,
-              status: 'pending',
-              timestamp: Date.now()
-            };
-            updates['pending_tasks/' + userId + '_' + proofKey] = {
-              userId: userId,
-              username: userName,
-              taskName: taskName,
-              reward: reward,
-              proof: proofValue,
-              status: 'pending',
-              timestamp: new Date().toLocaleString()
-            };
-
-            database.ref().update(updates).then(() => {
-              showAlert("Proof submitted successfully! Status: Pending Approval");
-              markProofAsSubmitted(proofKey, inputId, "Pending Approval");
-            });
-          });
+      database.ref('users/' + userId + '/history').once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+          listContainer.innerHTML = '<div style="text-align:center; color:#777; font-size:12px; padding:10px;">No history records found.</div>';
+          return;
         }
-      });
-    }
 
-    function checkSubmittedProofs() {
-      database.ref('users/' + userId + '/submittedProofs').on('value', (snapshot) => {
-        const proofs = snapshot.val();
-        if (proofs) {
-          Object.keys(proofs).forEach(pKey => {
-            const val = proofs[pKey];
-            let statusText = "Completed";
-            if (typeof val === 'object' && val.status === 'pending') {
-              statusText = "Pending Approval";
-            }
-            markProofAsSubmitted(pKey, pKey.replace('proof_', 'proof-'), statusText);
-          });
-        }
-      });
-    }
-
-    function markProofAsSubmitted(proofKey, inputId, labelText = "Completed") {
-      const btnId = 'btn-' + inputId;
-      const btn = document.getElementById(btnId);
-      const input = document.getElementById(inputId);
-
-      if (btn) {
-        btn.innerText = labelText;
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
-      }
-      if (input) {
-        input.disabled = true;
-        input.placeholder = "Task Status: " + labelText;
-      }
-    }
-
-    // Dynamic Task Rendering & Event Binding
-    database.ref('custom_tasks').on('value', (snapshot) => {
-      const container = document.getElementById('dynamicTasksContainer');
-      if (!container) return;
-      container.innerHTML = "";
-      const tasks = snapshot.val();
-      if (tasks) {
-        Object.keys(tasks).forEach(key => {
-          const t = tasks[key];
-          const inputId = `proof-${key}`;
-          const btnId = `btn-proof-${key}`;
-          const proofKey = `proof_${key}`;
-
-          container.innerHTML += `
-            <div class="task-card">
-              <div class="task-header">
-                <span class="task-title"><i class="fa-solid fa-play-circle"></i> ${t.title}</span>
-                <span class="task-reward">+${t.reward} ADI$</span>
+        let html = '';
+        const historyData = snapshot.val();
+        Object.values(historyData).reverse().forEach(item => {
+          html += `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <div>
+                <div style="font-size:12px; font-weight:bold; color:#fff;">${item.title || 'Transaction'}</div>
+                <div style="font-size:10px; color:#888;">${item.date || ''}</div>
               </div>
-              <a href="${t.link}" target="_blank" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px; text-decoration: none; margin-bottom: 6px; display:inline-block;">Open Task Link</a>
-              <input type="text" id="${inputId}" class="task-input" placeholder="${t.code ? 'Enter Secret Code' : (t.type === 'Screenshot' ? 'Paste Screenshot Link' : 'Enter Username')}">
-              <button id="${btnId}" class="btn btn-metallic" style="width: 100%; padding: 8px; font-size: 11px;" onclick="submitProofOnce('${proofKey}', '${t.title.replace(/'/g, "\\'")}', ${t.reward}, '${inputId}')">Submit Proof</button>
+              <div style="font-size:12px; font-weight:bold; color:${item.amount && item.amount.startsWith('-') ? '#ef4444' : '#22c55e'};">${item.amount}</div>
             </div>
           `;
         });
-        checkSubmittedProofs();
-      } else {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 10px 0;">No active tasks available.</div>';
-      }
-    });
+        listContainer.innerHTML = html;
+      });
+    }
 
-    // Initialize timers and listeners
-    startCountdownTimer();
-    listenGlobalStats();
+    function openWhitepaperModal() {
+      const modal = document.getElementById('whitepaperModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeWhitepaperModal() {
+      const modal = document.getElementById('whitepaperModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openAboutModal() {
+      const modal = document.getElementById('aboutModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAboutModal() {
+      const modal = document.getElementById('aboutModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function switchTaskTab(tabType) {
+      const tabNon = document.getElementById('tabNonSecret');
+      const tabSec = document.getElementById('tabSecret');
+
+      if (tabType === 'secret') {
+        if (tabNon) tabNon.classList.remove('active');
+        if (tabSec) tabSec.classList.add('active');
+      } else {
+        if (tabSec) tabSec.classList.remove('active');
+        if (tabNon) tabNon.classList.add('active');
+      }
+    }
+
+    function updateUI() {
+      const balEl = document.getElementById('totalBalance');
+      if (balEl) balEl.innerHTML = `${userBalance.toLocaleString()} <span>ADI$</span>`;
+
+      const usdEl = document.getElementById('usdValue');
+      if (usdEl) usdEl.innerText = `$${(userBalance * 0.0001).toFixed(4)} USD`;
+
+      const nameEl = document.getElementById('userName');
+      if (nameEl) nameEl.innerText = userName;
+
+      const profUser = document.getElementById('profUser');
+      if (profUser) profUser.innerText = userName;
+
+      const profId = document.getElementById('profId');
+      if (profId) profId.innerText = userId;
+
+      const profBal = document.getElementById('profBalance');
+      if (profBal) profBal.innerText = `${userBalance.toLocaleString()} ADI$`;
+
+      const connWallet = document.getElementById('connectedWalletAddr');
+      if (connWallet) connWallet.innerText = walletAddress ? walletAddress : "Not Connected";
+    }
+
+    function loadUserData() {
+      database.ref('users/' + userId).once('value', (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          userBalance = data.balance || 0;
+          totalMinedAmount = data.totalMined || 0;
+          lastClaimDate = data.lastClaimDate || "";
+          lastMineDate = data.lastMineDate || "";
+          miningEndTime = data.miningEndTime || 0;
+          walletAddress = data.walletAddress || "";
+          streakCount = data.streakCount || 0;
+          
+          processStreakCheck(data);
+          checkMiningState();
+        } else {
+          database.ref('users/' + userId).set({
+            username: userName,
+            balance: 0,
+            totalMined: 0,
+            joinedAt: Date.now()
+          });
+        }
+        updateUI();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      startCountdownTimer();
+      listenGlobalStats();
+      listenForNewNotifications();
+      drawWheel();
+      loadUserData();
+    });
   </script>
 </body>
-</html>
+</html> 
+            
